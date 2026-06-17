@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Turismo App - @yield('title', 'Inicio')</title>
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome 6 CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Reset y Variables */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --sidebar-width: 280px;
+            --primary-color: #1a1a2e;
+            --secondary-color: #16213e;
+            --accent-color: #e94560;
+            --success-color: #0f3460;
+            --warning-color: #f39c12;
+            --info-color: #3498db;
+            --background-color: #f5f6fa;
+            --card-background: #ffffff;
+            --text-primary: #2c3e50;
+            --text-secondary: #7f8c8d;
+            --border-color: #dcdde1;
+            --shadow-sm: 0 2px 4px rgba(0,0,0,0.08);
+            --shadow-md: 0 4px 6px rgba(0,0,0,0.1);
+            --shadow-lg: 0 10px 25px rgba(0,0,0,0.15);
+            --shadow-xl: 0 20px 40px rgba(0,0,0,0.2);
+            --transition-fast: all 0.2s ease;
+            --transition-normal: all 0.3s ease;
+            --transition-slow: all 0.5s ease;
+        }
+        
+        /* Base Styles */
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 50%, #2563eb 100%);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+        
+        /* Main Layout */
+        .app-container {
+            display: flex;
+            min-height: 100vh;
+            background: var(--background-color);
+        }
+        
+        /* Sidebar con efectos */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: linear-gradient(180deg, #1e3a8a 0%, #1e40af 100%);
+            color: white;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            z-index: 1000;
+            box-shadow: var(--shadow-xl);
+            transition: var(--transition-normal);
+        }
+        
+        .sidebar-header {
+            padding: 30px 25px;
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .sidebar-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, rgba(233,69,96,0.1), rgba(52,152,219,0.1));
+            animation: shimmer 3s infinite;
+        }
+        
+        .sidebar-header h3 {
+            margin: 0;
+            font-size: 1.5rem;
+            font-weight: 700;
+            position: relative;
+            z-index: 1;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .sidebar-menu {
+            padding: 30px 0;
+        }
+        
+        .sidebar-menu ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .sidebar-menu li {
+            margin-bottom: 8px;
+        }
+        
+        .sidebar-menu a {
+            display: flex;
+            align-items: center;
+            padding: 18px 30px;
+            color: white !important;
+            text-decoration: none;
+            transition: var(--transition-normal);
+            border-radius: 0 25px 25px 0;
+            margin-right: 20px;
+            position: relative;
+            font-weight: 500;
+            overflow: hidden;
+        }
+        
+        .sidebar-menu a::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 0;
+            background: linear-gradient(90deg, var(--accent-color), var(--info-color));
+            transition: var(--transition-normal);
+            z-index: -1;
+        }
+        
+        .sidebar-menu a:hover,
+        .sidebar-menu a.active {
+            color: white;
+            transform: translateX(5px);
+        }
+        
+        .sidebar-menu a:hover::before,
+        .sidebar-menu a.active::before {
+            width: 100%;
+        }
+        
+        .sidebar-menu i {
+            margin-right: 15px;
+            width: 24px;
+            text-align: center;
+            font-size: 1.1rem;
+            transition: var(--transition-fast);
+            color: white !important;
+        }
+        
+        .sidebar-menu a:hover i {
+            transform: scale(1.2);
+        }
+        
+        /* Main Content */
+        .main-wrapper {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            background: rgba(255, 255, 255, 0.92);
+            min-height: 100vh;
+            position: relative;
+        }
+        
+        .main-content {
+            padding: 0;
+            background: rgba(255, 255, 255, 0.92);
+        }
+        
+        /* Header con efectos */
+        .app-header {
+            background: white;
+            border-radius: 0 0 30px 30px;
+            padding: 30px 40px;
+            margin: 0;
+            box-shadow: var(--shadow-lg);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .app-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--accent-color), var(--info-color), var(--success-color));
+            animation: gradient 3s ease infinite;
+        }
+        
+        .app-header h1 {
+            margin: 0;
+            font-size: 2.2rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .app-header p {
+            margin: 8px 0 0 0;
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            font-weight: 400;
+        }
+        
+        /* Content Container */
+        .content-container {
+            padding: 40px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        /* Hero Section con efectos */
+        .hero-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 80px 40px;
+            margin: 0 -40px 50px -40px;
+            text-align: center;
+            border-radius: 0 0 50px 50px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--shadow-xl);
+        }
+        
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="75" cy="75" r="1" fill="rgba(255,255,255,0.1)"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+            opacity: 0.3;
+        }
+        
+        .hero-section h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 1;
+            text-shadow: 3px 3px 6px rgba(0,0,0,0.3);
+            animation: fadeInUp 1s ease-out;
+        }
+        
+        .hero-section p {
+            font-size: 1.4rem;
+            margin-bottom: 0;
+            opacity: 0.9;
+            position: relative;
+            z-index: 1;
+            animation: fadeInUp 1s ease-out 0.3s both;
+        }
+        
+        /* Cards con efectos */
+        .content-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+            gap: 30px;
+            margin-bottom: 50px;
+        }
+        
+        .card-item {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: var(--shadow-md);
+            transition: var(--transition-normal);
+            border: 1px solid var(--border-color);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .card-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--accent-color), var(--info-color));
+            transform: scaleX(0);
+            transition: var(--transition-normal);
+        }
+        
+        .card-item:hover {
+            transform: translateY(-10px);
+            box-shadow: var(--shadow-xl);
+        }
+        
+        .card-item:hover::before {
+            transform: scaleX(1);
+        }
+        
+        .card-item h3 {
+            color: var(--text-primary);
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+            font-weight: 600;
+            transition: var(--transition-fast);
+        }
+        
+        .card-item:hover h3 {
+            color: var(--accent-color);
+        }
+        
+        .card-item p {
+            color: var(--text-secondary);
+            line-height: 1.7;
+            margin-bottom: 20px;
+            font-size: 1rem;
+        }
+        
+        .card-image {
+            width: 100%;
+            height: 220px;
+            border-radius: 15px;
+            object-fit: cover;
+            margin-top: 20px;
+            transition: var(--transition-normal);
+        }
+        
+        .card-item:hover .card-image {
+            transform: scale(1.05);
+        }
+        
+        .card-image-placeholder {
+            width: 100%;
+            height: 220px;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 20px;
+            font-size: 4rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        /* Section Headers */
+        .section-header {
+            margin-bottom: 40px;
+            position: relative;
+        }
+        
+        .section-header h2 {
+            color: var(--text-primary);
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            position: relative;
+        }
+        
+        .section-header h2::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(90deg, var(--accent-color), var(--info-color));
+            border-radius: 2px;
+        }
+        
+        /* Alert Box */
+        .alert-box {
+            background: linear-gradient(135deg, #fff3cd, #ffeaa7);
+            border: 1px solid #f39c12;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 40px;
+            text-align: center;
+            box-shadow: var(--shadow-md);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .alert-box::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #f39c12, #e67e22);
+        }
+        
+        .alert-box h3 {
+            color: #92400e;
+            margin-bottom: 15px;
+            font-size: 1.4rem;
+            font-weight: 600;
+        }
+        
+        .alert-box p {
+            color: #92400e;
+            margin: 8px 0;
+            font-size: 1rem;
+        }
+        
+        /* Animaciones */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes shimmer {
+            0% { opacity: 0.3; }
+            50% { opacity: 0.6; }
+            100% { opacity: 0.3; }
+        }
+        
+        @keyframes gradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .content-grid {
+                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            }
+            
+            .sidebar {
+                width: 240px;
+            }
+            
+            .main-wrapper {
+                margin-left: 240px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                width: 280px;
+                box-shadow: 10px 0 30px rgba(0,0,0,0.5);
+            }
+            
+            .sidebar.show {
+                transform: translateX(0);
+            }
+            
+            .main-wrapper {
+                margin-left: 0;
+                background: rgba(255, 255, 255, 0.95);
+            }
+            
+            .content-container {
+                padding: 1.5rem 1rem;
+            }
+            
+            .hero-section {
+                padding: 60px 20px;
+                margin: 0 -1rem 30px -1rem;
+                border-radius: 0 0 30px 30px;
+            }
+            
+            .hero-section h1 {
+                font-size: 2.5rem;
+            }
+            
+            .hero-section p {
+                font-size: 1.1rem;
+            }
+            
+            .content-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .app-header {
+                padding: 20px;
+                border-radius: 0 0 20px 20px;
+            }
+            
+            .app-header h1 {
+                font-size: 1.8rem;
+            }
+            
+            .app-header p {
+                font-size: 0.9rem;
+            }
+            
+            .card-item {
+                padding: 1.5rem;
+            }
+            
+            .card-item h3 {
+                font-size: 1.25rem;
+            }
+            
+            .card-item p {
+                font-size: 0.9rem;
+            }
+            
+            .section-header h2 {
+                font-size: 1.75rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .sidebar {
+                width: 100%;
+                max-width: 280px;
+            }
+            
+            .hero-section {
+                padding: 40px 15px;
+                margin: 0 -0.75rem 20px -0.75rem;
+                border-radius: 0 0 20px 20px;
+            }
+            
+            .hero-section h1 {
+                font-size: 1.75rem;
+                line-height: 1.2;
+            }
+            
+            .hero-section p {
+                font-size: 1rem;
+            }
+            
+            .content-container {
+                padding: 1rem 0.75rem;
+            }
+            
+            .card-item {
+                padding: 1.25rem;
+                border-radius: 16px;
+            }
+            
+            .card-item h3 {
+                font-size: 1.125rem;
+            }
+            
+            .card-item p {
+                font-size: 0.875rem;
+            }
+            
+            .app-header {
+                padding: 15px;
+                border-radius: 0 0 15px 15px;
+            }
+            
+            .app-header h1 {
+                font-size: 1.5rem;
+            }
+            
+            .app-header p {
+                font-size: 0.875rem;
+            }
+            
+            .section-header h2 {
+                font-size: 1.5rem;
+            }
+            
+            .sidebar-header h3 {
+                font-size: 1.25rem;
+            }
+            
+            .sidebar-menu a {
+                padding: 14px 20px;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h3>🌴 TurismoApp</h3>
+            </div>
+            <nav class="sidebar-menu">
+                <ul>
+                    <li>
+                        <a href="/dashboard" class="{{ request()->is('dashboard*') ? 'active' : '' }}">
+                            <i class="fas fa-tachometer-alt"></i>
+                            Dashboard
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/departamentos" class="{{ request()->is('departamentos*') ? 'active' : '' }}">
+                            <i class="fas fa-map-marked-alt"></i>
+                            Destinos
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/categorias" class="{{ request()->is('categorias*') ? 'active' : '' }}">
+                            <i class="fas fa-th-large"></i>
+                            Categorías
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/agencias" class="{{ request()->is('agencias*') ? 'active' : '' }}">
+                            <i class="fas fa-building"></i>
+                            Agencias
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <div class="main-wrapper">
+            <main class="main-content">
+                <!-- Header -->
+                <header class="app-header">
+                    <h1>@yield('title', 'TurismoApp')</h1>
+                    <p>@yield('subtitle', 'Descubre Colombia')</p>
+                </header>
+
+                <!-- Page Content -->
+                <div class="content-container">
+                    @yield('content')
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Bootstrap 5 JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Fix for Chrome extension message channel errors
+        (function() {
+            if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.sendMessage) {
+                const originalSendMessage = chrome.runtime.sendMessage;
+                chrome.runtime.sendMessage = function(...args) {
+                    try {
+                        const callback = args[args.length - 1];
+                        if (typeof callback === 'function') {
+                            const wrappedCallback = function(response) {
+                                try {
+                                    callback(response);
+                                } catch (e) {
+                                    console.warn('Chrome extension callback error:', e);
+                                }
+                            };
+                            args[args.length - 1] = wrappedCallback;
+                        }
+                        return originalSendMessage.apply(this, args);
+                    } catch (e) {
+                        console.warn('Chrome extension sendMessage error:', e);
+                        return false;
+                    }
+                };
+            }
+
+            window.addEventListener('error', function(event) {
+                if (event.message && (event.message.includes('message channel') || event.message.includes('async response'))) {
+                    console.warn('Message channel error handled:', event.message);
+                    event.preventDefault();
+                    event.stopPropagation();
+                    return true;
+                }
+            }, true);
+
+            window.addEventListener('unhandledrejection', function(event) {
+                if (event.reason && event.reason.message && 
+                    (event.reason.message.includes('message channel') || event.reason.message.includes('async response'))) {
+                    console.warn('Promise rejection handled:', event.reason.message);
+                    event.preventDefault();
+                    return true;
+                }
+            }, true);
+        })();
+        
+        // Mobile menu toggle
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            if (sidebar) {
+                sidebar.classList.toggle('show');
+            }
+        }
+        
+        // Animaciones al cargar
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('✅ Layout con efectos cargado');
+            
+            // Animar tarjetas al hacer scroll
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.animation = 'fadeInUp 0.6s ease-out';
+                        entry.target.style.opacity = '1';
+                    }
+                });
+            });
+            
+            document.querySelectorAll('.card-item').forEach(card => {
+                card.style.opacity = '0';
+                observer.observe(card);
+            });
+        });
+    </script>
+</body>
+</html>

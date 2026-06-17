@@ -1,0 +1,206 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Helpers\ImageHelper;
+use App\Models\Museo;
+use Illuminate\Http\Request;
+
+class MuseoController extends Controller
+{
+    // Listar todos los museos
+    public function index()
+    {
+        \Log::info('Iniciando MuseoController index');
+
+        try {
+            set_time_limit(120);
+
+            // Intentar obtener museos directamente sin DESCRIBE
+            $museos = \DB::table('tabla_museos')->limit(50)->get();
+            \Log::info('Museos encontrados: ' . $museos->count());
+
+            if ($museos->count() === 0) {
+                \Log::error('La tabla tabla_museos está vacía o no existe');
+                return view('pages.museos', [
+                    'items' => collect([]),
+                    'error' => 'No hay museos registrados en la base de datos.'
+                ]);
+            }
+
+            if ($museos->count() > 0) {
+                $primerMuseo = $museos->first();
+                \Log::info('Primer museo: ' . json_encode($primerMuseo));
+                \Log::info('Columnas: ' . json_encode(array_keys((array)$primerMuseo)));
+            }
+
+            $museos_con_imagenes = $museos->map(function($museo) {
+                $columnas = array_keys((array)$museo);
+
+                // Intentar obtener nombre
+                $nombre = null;
+                foreach ($columnas as $col) {
+                    if (stripos($col, 'nombre') !== false) {
+                        $nombre = $museo->$col;
+                        break;
+                    }
+                }
+
+                // Intentar obtener descripción
+                $descripcion = null;
+                foreach ($columnas as $col) {
+                    if (stripos($col, 'desc') !== false) {
+                        $descripcion = $museo->$col;
+                        break;
+                    }
+                }
+
+                // Intentar obtener ID
+                $id = null;
+                foreach ($columnas as $col) {
+                    if (stripos($col, 'id') !== false && $col !== 'id_localities' && $col !== 'id_country') {
+                        $id = $museo->$col;
+                        break;
+                    }
+                }
+
+                $imagen = ImageHelper::getCategoriaImage('museos', $nombre);
+
+                return (object)[
+                    'id' => $id ?? $museo->{'COL 1'} ?? null,
+                    'nombre' => $nombre ?? 'Sin nombre',
+                    'descripcion' => $descripcion ?? 'Sin descripción disponible',
+                    'imagen' => $imagen,
+                    'ubicacion' => 'Colombia'
+                ];
+            });
+
+            \Log::info('Museos procesados exitosamente');
+            return view('pages.museos', ['items' => $museos_con_imagenes]);
+        } catch (\Exception $e) {
+            \Log::error('Error en MuseoController: ' . $e->getMessage());
+            \Log::error('Stack trace: ' . $e->getTraceAsString());
+            return view('pages.museos', [
+                'items' => collect([]),
+                'error' => 'Error: ' . $e->getMessage()
+            ]);
+        }
+    }
+
+    // Guardar museo
+    public function store(Request $request)
+    {
+        $request->validate([
+            'nombre_museo'   => 'required|string|max:255',
+            'id_localities'  => 'required|integer',
+            'descripcion'    => 'nullable|string',
+            'id_country'     => 'required|integer',
+        ]);
+
+        return Museo::create($request->all());
+    }
+
+    // Mostrar un museo
+    public function show($id)
+    {
+        try {
+            set_time_limit(60);
+
+            // Intentar buscar por diferentes columnas de ID
+            $museo = \DB::table('tabla_museos')->where('COL 1', $id)->first();
+
+            if (!$museo) {
+                $museo = \DB::table('tabla_museos')->where('id_museo', $id)->first();
+            }
+
+            if (!$museo) {
+                abort(404);
+            }
+
+            // Obtener todas las columnas disponibles
+            $columnas = array_keys((array)$museo);
+            \Log::info('Columnas del museo en show: ' . json_encode($columnas));
+
+            // Obtener nombre dinámicamente
+            $nombre = null;
+            foreach ($columnas as $col) {
+                if (stripos($col, 'nombre') !== false) {
+                    $nombre = $museo->$col;
+                    break;
+                }
+            }
+
+            // Obtener descripción dinámicamente
+            $descripcion = null;
+            foreach ($columnas as $col) {
+                if (stripos($col, 'desc') !== false) {
+                    $descripcion = $museo->$col;
+                    break;
+                }
+            }
+
+            // Obtener ID dinámicamente
+            $id_real = null;
+            foreach ($columnas as $col) {
+                if (stripos($col, 'id') !== false && $col !== 'id_localities' && $col !== 'id_country') {
+                    $id_real = $museo->$col;
+                    break;
+                }
+            }
+
+            $imagen = ImageHelper::getCategoriaImage('museos', $nombre);
+
+            // Obtener ubicación si existe id_localities
+            $ubicacion = 'Colombia';
+            if (isset($museo->id_localities) && $museo->id_localities) {
+                $municipio = \DB::table('tabla_municipios')->where('ID_MUNICIPIOS', $museo->id_localities)->first();
+                if ($municipio) {
+                    $departamento = \DB::table('tabla_departamentos')->where('ID_DEPARTAMENTO', $municipio->ID_DEPARTAMENTO)->first();
+                    if ($departamento) {
+                        $ubicacion = $municipio->NOMBRE_MUNICIPIOS . ', ' . $departamento->NOMBRE_DEPARTAMENTO;
+                    } else {
+                        $ubicacion = $municipio->NOMBRE_MUNICIPIOS;
+                    }
+                }
+            }
+
+            // Crear objeto con todos los datos del museo
+            $item = (object)[
+                'id' => $id_real ?? $museo->{'COL 1'} ?? null,
+                'nombre' => $nombre ?? 'Sin nombre',
+                'descripcion' => $descripcion ?? 'Sin descripción disponible',
+                'imagen' => $imagen,
+                'ubicacion' => $ubicacion,
+                'id_localities' => $museo->id_localities ?? null
+            ];
+
+            // Agregar todas las demás columnas disponibles
+            foreach ($columnas as $col) {
+                if (!isset($item->$col) && $col !== 'COL 1') {
+                    $item->$col = $museo->$col;
+                }
+            }
+
+            return view('pages.detalle-museo', compact('item'))->with('tipo', 'Museo');
+        } catch (\Exception $e) {
+            \Log::error('Error en MuseoController show: ' . $e->getMessage());
+            abort(404);
+        }
+    }
+
+    // Actualizar museo
+    public function update(Request $request, $id)
+    {
+        $museo = Museo::findOrFail($id);
+        $museo->update($request->all());
+
+        return $museo;
+    }
+
+    // Eliminar museo
+    public function destroy($id)
+    {
+        Museo::destroy($id);
+        return response()->json(['message' => 'Museo eliminado']);
+    }
+}
