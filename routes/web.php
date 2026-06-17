@@ -1,7 +1,7 @@
+```php
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\HomeController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DepartamentoController;
 use App\Http\Controllers\MunicipioController;
@@ -10,7 +10,6 @@ use App\Http\Controllers\GastronomiaController;
 use App\Http\Controllers\AlojamientoController;
 use App\Http\Controllers\RutasTuristicasController;
 use App\Http\Controllers\ConfiguracionController;
-use App\Http\Controllers\DestinosController;
 use App\Http\Controllers\ActividadesController;
 use App\Http\Controllers\EventosController;
 use App\Http\Controllers\CategoriasController;
@@ -25,144 +24,515 @@ use App\Http\Controllers\FeriaController;
 |--------------------------------------------------------------------------
 | Web Routes
 |--------------------------------------------------------------------------
+|
+| El Dashboard es la página principal de la aplicación.
+| La URL raíz "/" redirige automáticamente a "/dashboard".
+|
 */
 
+/*
+|--------------------------------------------------------------------------
+| Inicio / Dashboard
+|--------------------------------------------------------------------------
+*/
 
-// Rutas principales (home)
-Route::get('/', [HomeController::class, 'index'])->name('home');
+// Página principal real.
+Route::get('/dashboard', [DashboardController::class, 'index'])
+    ->name('dashboard');
 
-// Ruta para dashboard
-Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+// La raíz pública redirige al Dashboard.
+// Se conserva el nombre "home" por compatibilidad con enlaces antiguos.
+Route::redirect('/', '/dashboard')
+    ->name('home');
 
-// Ruta para categorías
-Route::get('/categorias', [CategoriasController::class, 'index'])->name('categorias.index');
+/*
+|--------------------------------------------------------------------------
+| Categorías
+|--------------------------------------------------------------------------
+*/
 
-// Rutas para Destinos (usando MunicipioController para mostrar municipios)
-Route::get('/destinos', [MunicipioController::class, 'index'])->name('destinos');
-Route::get('/destinos/{id}', [MunicipioController::class, 'show'])->name('destinos.show');
+Route::get('/categorias', [CategoriasController::class, 'index'])
+    ->name('categorias.index');
 
-// Rutas para Actividades
-Route::get('/actividades', [ActividadesController::class, 'index'])->name('actividades');
+/*
+|--------------------------------------------------------------------------
+| Destinos
+|--------------------------------------------------------------------------
+*/
 
-// Rutas para Gastronomía
-Route::get('/gastronomia', [GastronomiaController::class, 'index'])->name('gastronomia');
-Route::get('/gastronomia/{departmentSlug}/{platoSlug}', [GastronomiaController::class, 'show'])->name('gastronomia.show');
+Route::get('/destinos', [MunicipioController::class, 'index'])
+    ->name('destinos');
 
-// Rutas para Eventos
-Route::get('/eventos', [EventosController::class, 'index'])->name('eventos');
-Route::get('/eventos/{slug}', [EventosController::class, 'show'])->name('eventos.show');
+Route::get('/destinos/{id}', [MunicipioController::class, 'show'])
+    ->whereNumber('id')
+    ->name('destinos.show');
 
-// Rutas para Fiestas y Ferias
-Route::get('/fiestas-y-ferias', [FeriaController::class, 'index'])->name('fiestas-ferias.index');
-Route::get('/fiestas-y-ferias/{id}', [FeriaController::class, 'show'])->name('fiestas-ferias.show');
+/*
+|--------------------------------------------------------------------------
+| Actividades
+|--------------------------------------------------------------------------
+*/
 
-// Rutas para Capitales
-Route::get('/capitales', [CapitalController::class, 'index'])->name('capitales.index');
-Route::get('/capitales/{slug}', [CapitalController::class, 'show'])->name('capitales.show');
+Route::get('/actividades', [ActividadesController::class, 'index'])
+    ->name('actividades');
 
-// Rutas para Regiones Naturales
-Route::get('/regiones', [NaturalRegionsController::class, 'index'])->name('regiones');
-Route::get('/regiones/{slug}', [NaturalRegionsController::class, 'show'])->name('regiones.show');
+/*
+|--------------------------------------------------------------------------
+| Gastronomía
+|--------------------------------------------------------------------------
+*/
 
-// Rutas para Alojamiento
-Route::get('/alojamiento', [AlojamientoController::class, 'index'])->name('alojamiento');
-Route::get('/alojamiento/casas-de-huespedes', [AlojamientoController::class, 'casasDeHuespedes'])->name('alojamiento.casas-de-huespedes');
-Route::get('/alojamiento/eco-lodges', [AlojamientoController::class, 'ecoLodges'])->name('alojamiento.eco-lodges');
-Route::get('/alojamiento/resorts', [AlojamientoController::class, 'resorts'])->name('alojamiento.resorts');
+Route::get('/gastronomia', [GastronomiaController::class, 'index'])
+    ->name('gastronomia');
 
-// Rutas para Rutas Turísticas
-Route::get('/rutas-turisticas', [RutasTuristicasController::class, 'index'])->name('rutas-turisticas');
+// Debe ir después de la ruta principal de gastronomía.
+Route::get(
+    '/gastronomia/{departmentSlug}/{platoSlug}',
+    [GastronomiaController::class, 'show']
+)
+    ->where([
+        'departmentSlug' => '[A-Za-z0-9\-]+',
+        'platoSlug' => '[A-Za-z0-9\-]+',
+    ])
+    ->name('gastronomia.show');
 
-// Rutas para Agencias de Viaje
-Route::get('/agencias', function () {
-    return view('pages.agencias');
-})->name('agencias');
+/*
+|--------------------------------------------------------------------------
+| Eventos
+|--------------------------------------------------------------------------
+*/
 
-// Rutas para Configuración
-Route::get('/configuracion', [ConfiguracionController::class, 'index'])->name('configuracion');
-Route::post('/configuracion/general', [ConfiguracionController::class, 'updateGeneral'])->name('configuracion.update.general');
-Route::post('/configuracion/notificaciones', [ConfiguracionController::class, 'updateNotificaciones'])->name('configuracion.update.notificaciones');
-Route::post('/configuracion/privacidad', [ConfiguracionController::class, 'updatePrivacidad'])->name('configuracion.update.privacidad');
+Route::get('/eventos', [EventosController::class, 'index'])
+    ->name('eventos');
 
-// Rutas para Puntos de Interés
-Route::prefix('puntos-interes')->name('puntos-interes.')->group(function () {
-    Route::get('/deportes-aventura', [PuntoInteresController::class, 'deportesAventura'])->name('deportes-aventura');
-    Route::get('/deportes-aventura/{slug}', [PuntoInteresController::class, 'deportesAventuraShow'])->name('deportes-aventura.show');
-    Route::get('/desiertos-lagunas', [PuntoInteresController::class, 'desiertosLagunas'])->name('desiertos-lagunas');
-    Route::get('/desiertos-lagunas/{id}', [PuntoInteresController::class, 'desiertosLagunasShow'])->name('desiertos-lagunas.show');
-    Route::get('/iglesias', [PuntoInteresController::class, 'iglesias'])->name('iglesias');
-    Route::get('/iglesias/{id}', [PuntoInteresController::class, 'iglesiasShow'])->name('iglesias.show');
-    Route::get('/islas', [PuntoInteresController::class, 'islas'])->name('islas');
-    Route::get('/museos', [PuntoInteresController::class, 'museos'])->name('museos');
-    Route::get('/museos/{id}', [PuntoInteresController::class, 'museosShow'])->name('museos.show');
-    Route::get('/parques-tematicos', [PuntoInteresController::class, 'parquesTematicos'])->name('parques-tematicos');
-    Route::get('/parques-tematicos/{id}', [PuntoInteresController::class, 'parquesTematicosShow'])->name('parques-tematicos.show');
-    Route::get('/playas', [PuntoInteresController::class, 'playas'])->name('playas');
-    Route::get('/playas/{id}', [PuntoInteresController::class, 'playasShow'])->name('playas.show');
-    Route::get('/reservas-naturales', [PuntoInteresController::class, 'reservasNaturales'])->name('reservas-naturales');
-    Route::get('/reservas-naturales/{id}', [PuntoInteresController::class, 'reservasNaturalesShow'])->name('reservas-naturales.show');
-    Route::get('/termales', [PuntoInteresController::class, 'termales'])->name('termales');
-    Route::get('/termales/{id}', [PuntoInteresController::class, 'termalesShow'])->name('termales.show');
-    Route::get('/regiones', [PuntoInteresController::class, 'regiones'])->name('regiones');
-    Route::get('/ciclismo', [PuntoInteresController::class, 'ciclismo'])->name('ciclismo');
-    Route::get('/ciclismo/{slug}', [PuntoInteresController::class, 'showCiclismo'])->name('ciclismo.show');
-    Route::get('/fiestas-ferias', [PuntoInteresController::class, 'fiestasFerias'])->name('fiestas-ferias');
-    Route::get('/actividades-parques', [PuntoInteresController::class, 'actividadesParques'])->name('actividades-parques');
-    Route::get('/actividades-parques/{id}', [PuntoInteresController::class, 'actividadesParquesShow'])->name('actividades-parques.show');
-});
+Route::get('/eventos/{slug}', [EventosController::class, 'show'])
+    ->where('slug', '[A-Za-z0-9\-]+')
+    ->name('eventos.show');
 
-// Rutas para Reservas y Parques Naturales
-Route::get('/reservas-parques', [ReservaParqueController::class, 'index'])->name('reservas-parques.index');
-Route::get('/reservas-parques/{slug}', [ReservaParqueController::class, 'show'])->name('reservas-parques.show');
+/*
+|--------------------------------------------------------------------------
+| Fiestas y Ferias
+|--------------------------------------------------------------------------
+*/
 
-// Rutas completas para departamentos (CRUD y adicionales)
-Route::prefix('departamentos')->name('departamentos.')->group(function () {
-    // Listado y búsquedas
-    Route::get('/', [DepartamentoController::class, 'index'])->name('index');
-    Route::get('/activos', [DepartamentoController::class, 'activos'])->name('activos');
-    Route::get('/buscar', [DepartamentoController::class, 'buscar'])->name('buscar');
+Route::get('/fiestas-y-ferias', [FeriaController::class, 'index'])
+    ->name('fiestas-ferias.index');
 
-    // Creación
-    Route::get('/crear', [DepartamentoController::class, 'create'])->name('create');
-    Route::post('/', [DepartamentoController::class, 'store'])->name('store');
+Route::get('/fiestas-y-ferias/{id}', [FeriaController::class, 'show'])
+    ->whereNumber('id')
+    ->name('fiestas-ferias.show');
 
-    // Edición y actualización
-    Route::get('/{id}/editar', [DepartamentoController::class, 'edit'])->name('edit');
-    Route::put('/{id}', [DepartamentoController::class, 'update'])->name('update');
+/*
+|--------------------------------------------------------------------------
+| Capitales
+|--------------------------------------------------------------------------
+*/
 
-    // Eliminación
-    Route::delete('/{id}', [DepartamentoController::class, 'destroy'])->name('destroy');
+Route::get('/capitales', [CapitalController::class, 'index'])
+    ->name('capitales.index');
 
-    // Ver detalle por slug (debe ir antes de /{id} para evitar conflicto)
-    Route::get('/{slug}', [DepartamentoController::class, 'showBySlug'])->name('show.slug');
+Route::get('/capitales/{slug}', [CapitalController::class, 'show'])
+    ->where('slug', '[A-Za-z0-9\-]+')
+    ->name('capitales.show');
 
-    // Ver detalle individual por ID (debe ir al final para no interferir con /crear, /activos, etc.)
-    Route::get('/{id}', [DepartamentoController::class, 'show'])->name('show');
-});
+/*
+|--------------------------------------------------------------------------
+| Regiones Naturales
+|--------------------------------------------------------------------------
+*/
 
-// Rutas para municipios
-Route::prefix('municipios')->name('municipios.')->group(function () {
-    // Listado
-    Route::get('/', [MunicipioController::class, 'index'])->name('index');
+Route::get('/regiones', [NaturalRegionsController::class, 'index'])
+    ->name('regiones');
 
-    // Municipios de un departamento específico (debe ir antes de /{id})
-    Route::get('/departamento/{departamento_id}', [MunicipioController::class, 'porDepartamento'])->name('por-departamento');
+Route::get('/regiones/{slug}', [NaturalRegionsController::class, 'show'])
+    ->where('slug', '[A-Za-z0-9\-]+')
+    ->name('regiones.show');
 
-    // Ver detalle por slugs (debe ir antes de /{id})
-    Route::get('/{departmentSlug}/{municipalitySlug}', [MunicipioController::class, 'showBySlugs'])->name('show.slugs');
+/*
+|--------------------------------------------------------------------------
+| Alojamiento
+|--------------------------------------------------------------------------
+*/
 
-    // Ver detalle individual por ID
-    Route::get('/{id}', [MunicipioController::class, 'show'])->name('show');
-});
+Route::get('/alojamiento', [AlojamientoController::class, 'index'])
+    ->name('alojamiento');
 
-// Rutas para detalle de categorías con slugs (reutilizable para departamentos y municipios)
-Route::prefix('departamentos')->name('departamentos.')->group(function () {
-    Route::get('/{departmentSlug}/categorias/{categorySlug}', [CategoryDetailController::class, 'showDepartmentCategoryBySlug'])->name('categoria.slug');
-});
+Route::get(
+    '/alojamiento/casas-de-huespedes',
+    [AlojamientoController::class, 'casasDeHuespedes']
+)->name('alojamiento.casas-de-huespedes');
 
-Route::prefix('municipios')->name('municipios.')->group(function () {
-    Route::get('/{departmentSlug}/{municipalitySlug}/categorias/{categorySlug}', [CategoryDetailController::class, 'showMunicipalityCategoryBySlug'])->name('categoria.slug');
-});
+Route::get(
+    '/alojamiento/eco-lodges',
+    [AlojamientoController::class, 'ecoLodges']
+)->name('alojamiento.eco-lodges');
 
-// Rutas para reviews
-Route::post('/reviews', [ReviewController::class, 'store'])->name('reviews.store');
+Route::get(
+    '/alojamiento/resorts',
+    [AlojamientoController::class, 'resorts']
+)->name('alojamiento.resorts');
+
+/*
+|--------------------------------------------------------------------------
+| Rutas Turísticas
+|--------------------------------------------------------------------------
+*/
+
+Route::get('/rutas-turisticas', [RutasTuristicasController::class, 'index'])
+    ->name('rutas-turisticas');
+
+/*
+|--------------------------------------------------------------------------
+| Agencias
+|--------------------------------------------------------------------------
+*/
+
+Route::view('/agencias', 'pages.agencias')
+    ->name('agencias');
+
+/*
+|--------------------------------------------------------------------------
+| Configuración
+|--------------------------------------------------------------------------
+*/
+
+Route::get('/configuracion', [ConfiguracionController::class, 'index'])
+    ->name('configuracion');
+
+Route::post(
+    '/configuracion/general',
+    [ConfiguracionController::class, 'updateGeneral']
+)->name('configuracion.update.general');
+
+Route::post(
+    '/configuracion/notificaciones',
+    [ConfiguracionController::class, 'updateNotificaciones']
+)->name('configuracion.update.notificaciones');
+
+Route::post(
+    '/configuracion/privacidad',
+    [ConfiguracionController::class, 'updatePrivacidad']
+)->name('configuracion.update.privacidad');
+
+/*
+|--------------------------------------------------------------------------
+| Puntos de Interés
+|--------------------------------------------------------------------------
+*/
+
+Route::prefix('puntos-interes')
+    ->name('puntos-interes.')
+    ->group(function () {
+        // Deportes de aventura.
+        Route::get(
+            '/deportes-aventura',
+            [PuntoInteresController::class, 'deportesAventura']
+        )->name('deportes-aventura');
+
+        Route::get(
+            '/deportes-aventura/{slug}',
+            [PuntoInteresController::class, 'deportesAventuraShow']
+        )
+            ->where('slug', '[A-Za-z0-9\-]+')
+            ->name('deportes-aventura.show');
+
+        // Desiertos y lagunas.
+        Route::get(
+            '/desiertos-lagunas',
+            [PuntoInteresController::class, 'desiertosLagunas']
+        )->name('desiertos-lagunas');
+
+        Route::get(
+            '/desiertos-lagunas/{id}',
+            [PuntoInteresController::class, 'desiertosLagunasShow']
+        )
+            ->whereNumber('id')
+            ->name('desiertos-lagunas.show');
+
+        // Iglesias.
+        Route::get(
+            '/iglesias',
+            [PuntoInteresController::class, 'iglesias']
+        )->name('iglesias');
+
+        Route::get(
+            '/iglesias/{id}',
+            [PuntoInteresController::class, 'iglesiasShow']
+        )
+            ->whereNumber('id')
+            ->name('iglesias.show');
+
+        // Islas.
+        Route::get(
+            '/islas',
+            [PuntoInteresController::class, 'islas']
+        )->name('islas');
+
+        // Museos.
+        Route::get(
+            '/museos',
+            [PuntoInteresController::class, 'museos']
+        )->name('museos');
+
+        Route::get(
+            '/museos/{id}',
+            [PuntoInteresController::class, 'museosShow']
+        )
+            ->whereNumber('id')
+            ->name('museos.show');
+
+        // Parques temáticos.
+        Route::get(
+            '/parques-tematicos',
+            [PuntoInteresController::class, 'parquesTematicos']
+        )->name('parques-tematicos');
+
+        Route::get(
+            '/parques-tematicos/{id}',
+            [PuntoInteresController::class, 'parquesTematicosShow']
+        )
+            ->whereNumber('id')
+            ->name('parques-tematicos.show');
+
+        // Playas.
+        Route::get(
+            '/playas',
+            [PuntoInteresController::class, 'playas']
+        )->name('playas');
+
+        Route::get(
+            '/playas/{id}',
+            [PuntoInteresController::class, 'playasShow']
+        )
+            ->whereNumber('id')
+            ->name('playas.show');
+
+        // Reservas naturales.
+        Route::get(
+            '/reservas-naturales',
+            [PuntoInteresController::class, 'reservasNaturales']
+        )->name('reservas-naturales');
+
+        Route::get(
+            '/reservas-naturales/{id}',
+            [PuntoInteresController::class, 'reservasNaturalesShow']
+        )
+            ->whereNumber('id')
+            ->name('reservas-naturales.show');
+
+        // Termales.
+        Route::get(
+            '/termales',
+            [PuntoInteresController::class, 'termales']
+        )->name('termales');
+
+        Route::get(
+            '/termales/{id}',
+            [PuntoInteresController::class, 'termalesShow']
+        )
+            ->whereNumber('id')
+            ->name('termales.show');
+
+        // Regiones dentro de puntos de interés.
+        Route::get(
+            '/regiones',
+            [PuntoInteresController::class, 'regiones']
+        )->name('regiones');
+
+        // Ciclismo.
+        Route::get(
+            '/ciclismo',
+            [PuntoInteresController::class, 'ciclismo']
+        )->name('ciclismo');
+
+        Route::get(
+            '/ciclismo/{slug}',
+            [PuntoInteresController::class, 'showCiclismo']
+        )
+            ->where('slug', '[A-Za-z0-9\-]+')
+            ->name('ciclismo.show');
+
+        // Fiestas y ferias dentro de puntos de interés.
+        Route::get(
+            '/fiestas-ferias',
+            [PuntoInteresController::class, 'fiestasFerias']
+        )->name('fiestas-ferias');
+
+        // Actividades en parques.
+        Route::get(
+            '/actividades-parques',
+            [PuntoInteresController::class, 'actividadesParques']
+        )->name('actividades-parques');
+
+        Route::get(
+            '/actividades-parques/{id}',
+            [PuntoInteresController::class, 'actividadesParquesShow']
+        )
+            ->whereNumber('id')
+            ->name('actividades-parques.show');
+    });
+
+/*
+|--------------------------------------------------------------------------
+| Reservas y Parques Naturales
+|--------------------------------------------------------------------------
+*/
+
+Route::get(
+    '/reservas-parques',
+    [ReservaParqueController::class, 'index']
+)->name('reservas-parques.index');
+
+Route::get(
+    '/reservas-parques/{slug}',
+    [ReservaParqueController::class, 'show']
+)
+    ->where('slug', '[A-Za-z0-9\-]+')
+    ->name('reservas-parques.show');
+
+/*
+|--------------------------------------------------------------------------
+| Departamentos
+|--------------------------------------------------------------------------
+*/
+
+Route::prefix('departamentos')
+    ->name('departamentos.')
+    ->group(function () {
+        // Listado.
+        Route::get('/', [DepartamentoController::class, 'index'])
+            ->name('index');
+
+        // Rutas específicas: deben ir antes de las rutas dinámicas.
+        Route::get('/activos', [DepartamentoController::class, 'activos'])
+            ->name('activos');
+
+        Route::get('/buscar', [DepartamentoController::class, 'buscar'])
+            ->name('buscar');
+
+        Route::get('/crear', [DepartamentoController::class, 'create'])
+            ->name('create');
+
+        Route::post('/', [DepartamentoController::class, 'store'])
+            ->name('store');
+
+        // Categoría dentro de un departamento.
+        Route::get(
+            '/{departmentSlug}/categorias/{categorySlug}',
+            [CategoryDetailController::class, 'showDepartmentCategoryBySlug']
+        )
+            ->where([
+                'departmentSlug' => '[A-Za-z0-9\-]+',
+                'categorySlug' => '[A-Za-z0-9\-]+',
+            ])
+            ->name('categoria.slug');
+
+        // Edición por ID.
+        Route::get(
+            '/{id}/editar',
+            [DepartamentoController::class, 'edit']
+        )
+            ->whereNumber('id')
+            ->name('edit');
+
+        Route::put(
+            '/{id}',
+            [DepartamentoController::class, 'update']
+        )
+            ->whereNumber('id')
+            ->name('update');
+
+        Route::delete(
+            '/{id}',
+            [DepartamentoController::class, 'destroy']
+        )
+            ->whereNumber('id')
+            ->name('destroy');
+
+        /*
+         * Detalle por ID.
+         *
+         * La restricción whereNumber evita el conflicto con la ruta por slug.
+         */
+        Route::get(
+            '/{id}',
+            [DepartamentoController::class, 'show']
+        )
+            ->whereNumber('id')
+            ->name('show');
+
+        /*
+         * Detalle por slug.
+         *
+         * Debe quedar después de las rutas específicas y de la ruta numérica.
+         */
+        Route::get(
+            '/{slug}',
+            [DepartamentoController::class, 'showBySlug']
+        )
+            ->where('slug', '[A-Za-z][A-Za-z0-9\-]*')
+            ->name('show.slug');
+    });
+
+/*
+|--------------------------------------------------------------------------
+| Municipios
+|--------------------------------------------------------------------------
+*/
+
+Route::prefix('municipios')
+    ->name('municipios.')
+    ->group(function () {
+        // Listado.
+        Route::get('/', [MunicipioController::class, 'index'])
+            ->name('index');
+
+        // Municipios pertenecientes a un departamento.
+        Route::get(
+            '/departamento/{departamento_id}',
+            [MunicipioController::class, 'porDepartamento']
+        )
+            ->whereNumber('departamento_id')
+            ->name('por-departamento');
+
+        // Categoría dentro de un municipio.
+        Route::get(
+            '/{departmentSlug}/{municipalitySlug}/categorias/{categorySlug}',
+            [CategoryDetailController::class, 'showMunicipalityCategoryBySlug']
+        )
+            ->where([
+                'departmentSlug' => '[A-Za-z0-9\-]+',
+                'municipalitySlug' => '[A-Za-z0-9\-]+',
+                'categorySlug' => '[A-Za-z0-9\-]+',
+            ])
+            ->name('categoria.slug');
+
+        // Detalle por departamento y municipio.
+        Route::get(
+            '/{departmentSlug}/{municipalitySlug}',
+            [MunicipioController::class, 'showBySlugs']
+        )
+            ->where([
+                'departmentSlug' => '[A-Za-z0-9\-]+',
+                'municipalitySlug' => '[A-Za-z0-9\-]+',
+            ])
+            ->name('show.slugs');
+
+        // Detalle antiguo por ID.
+        Route::get(
+            '/{id}',
+            [MunicipioController::class, 'show']
+        )
+            ->whereNumber('id')
+            ->name('show');
+    });
+
+/*
+|--------------------------------------------------------------------------
+| Reviews
+|--------------------------------------------------------------------------
+*/
+
+Route::post('/reviews', [ReviewController::class, 'store'])
+    ->name('reviews.store');
+
