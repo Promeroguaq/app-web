@@ -41,8 +41,9 @@ Route::get('/dashboard', [DashboardController::class, 'index'])
 
 // La raíz pública redirige al Dashboard.
 // Se conserva el nombre "home" por compatibilidad con enlaces antiguos.
-Route::redirect('/', '/dashboard')
-    ->name('home');
+Route::get('/', function () {
+    return redirect()->route('dashboard');
+})->name('home');
 
 /*
 |--------------------------------------------------------------------------
