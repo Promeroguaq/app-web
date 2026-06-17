@@ -44,11 +44,27 @@ class DashboardController extends Controller
         // Destinos destacados (hasta 8)
         $destinosDestacados = $this->getDestinosDestacados();
 
+        // Tipos de exploración para categorías
+        $explorarTipos = $this->getExplorarTipos();
+
+        // Hoteles destacados (simulados - no hay modelo de hoteles)
+        $hotelesDestacados = $this->getHotelesDestacados();
+
+        // Experiencias gastronómicas destacadas
+        $gastronomiaDestacada = $this->getGastronomiaDestacada();
+
+        // Eventos destacados
+        $eventosDestacados = $this->getEventosDestacados();
+
         return view('pages.dashboard', compact(
             'stats',
             'destinosPorCategoria',
             'comparacionPorDepartamento',
-            'destinosDestacados'
+            'destinosDestacados',
+            'explorarTipos',
+            'hotelesDestacados',
+            'gastronomiaDestacada',
+            'eventosDestacados'
         ));
     }
 
@@ -231,5 +247,111 @@ class DashboardController extends Controller
         } catch (\Throwable $e) {
             return 0;
         }
+    }
+
+    /**
+     * Obtener tipos de exploración para categorías
+     */
+    private function getExplorarTipos()
+    {
+        return [
+            ['nombre' => 'Gastronomía', 'url' => route('gastronomia')],
+            ['nombre' => 'Alojamiento', 'url' => route('alojamiento')],
+            ['nombre' => 'Rutas Turísticas', 'url' => route('rutas-turisticas')],
+            ['nombre' => 'Eventos', 'url' => route('eventos')],
+            ['nombre' => 'Agencias', 'url' => route('agencias')],
+            ['nombre' => 'Departamentos', 'url' => route('departamentos.index')],
+            ['nombre' => 'Actividades', 'url' => route('actividades')],
+            ['nombre' => 'Categorías', 'url' => route('categorias.index')],
+        ];
+    }
+
+    /**
+     * Obtener hoteles destacados (simulados - no hay modelo de hoteles)
+     */
+    private function getHotelesDestacados()
+    {
+        return [
+            [
+                'nombre' => 'Eco-Lodge Tayrona',
+                'categoria' => 'Eco-Lodge',
+                'ubicacion' => 'Santa Marta, Magdalena',
+                'imagen' => 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=400&h=300&fit=crop',
+                'calificacion' => 4.9,
+                'precio' => 250000,
+            ],
+            [
+                'nombre' => 'Hotel Boutique Cartagena',
+                'categoria' => 'Boutique',
+                'ubicacion' => 'Cartagena, Bolívar',
+                'imagen' => 'https://images.unsplash.com/photo-1582719508461-905c673771fd?w=400&h=300&fit=crop',
+                'calificacion' => 4.8,
+                'precio' => 320000,
+            ],
+            [
+                'nombre' => 'Reserva Natural Coffee',
+                'categoria' => 'Reserva',
+                'ubicacion' => 'Salento, Quindío',
+                'imagen' => 'https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=400&h=300&fit=crop',
+                'calificacion' => 4.7,
+                'precio' => 180000,
+            ],
+        ];
+    }
+
+    /**
+     * Obtener experiencias gastronómicas destacadas
+     */
+    private function getGastronomiaDestacada()
+    {
+        return [
+            [
+                'nombre' => 'Bandeja Paisa',
+                'categoria' => 'Plato Típico',
+                'imagen' => 'https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=400&h=300&fit=crop',
+            ],
+            [
+                'nombre' => 'Arepas de Huevo',
+                'categoria' => 'Desayuno',
+                'imagen' => 'https://images.unsplash.com/photo-1585109649139-36641532e43e?w=400&h=300&fit=crop',
+            ],
+            [
+                'nombre' => 'Sancocho de Gallina',
+                'categoria' => 'Sopa',
+                'imagen' => 'https://images.unsplash.com/photo-1547592166-23ac45744acd?w=400&h=300&fit=crop',
+            ],
+            [
+                'nombre' => 'Lechona Tolimense',
+                'categoria' => 'Plato Festivo',
+                'imagen' => 'https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?w=400&h=300&fit=crop',
+            ],
+        ];
+    }
+
+    /**
+     * Obtener eventos destacados
+     */
+    private function getEventosDestacados()
+    {
+        return [
+            [
+                'nombre' => 'Feria de las Flores',
+                'ubicacion' => 'Medellín, Antioquia',
+                'fecha' => 'Agosto 2026',
+                'imagen' => 'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=400&h=300&fit=crop',
+            ],
+            [
+                'nombre' => 'Carnaval de Barranquilla',
+                'ubicacion' => 'Barranquilla, Atlántico',
+                'fecha' => 'Marzo 2027',
+                'imagen' => 'https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?w=400&h=300&fit=crop',
+            ],
+            [
+                'nombre' => 'Festival de Música',
+                'ubicacion' => 'Bogotá, Cundinamarca',
+                'fecha' => 'Septiembre 2026',
+                'imagen' => 'https://images.unsplash.com/photo-1459749411175-04bf5292ceea?w=400&h=300&fit=crop',
+            ],
+        ];
     }
 }
