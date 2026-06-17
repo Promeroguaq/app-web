@@ -33,7 +33,7 @@ class HomeController extends Controller
             return $this->buildHomeData();
         });
 
-        return view('pages.dashboard', $data);
+         return 'Laravel funciona correctamente';
     }
 
     private function buildHomeData()
