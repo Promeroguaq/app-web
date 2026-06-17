@@ -1,4 +1,3 @@
-```dockerfile
 # syntax=docker/dockerfile:1
 
 # =========================================================
@@ -122,4 +121,3 @@ EXPOSE 8080
 # Render asigna PORT dinámicamente.
 # 8080 queda como valor de respaldo.
 CMD ["sh", "-c", "php artisan serve --host=0.0.0.0 --port=${PORT:-8080}"]
-```
