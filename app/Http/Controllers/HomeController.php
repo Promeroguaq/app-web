@@ -26,15 +26,15 @@ class HomeController extends Controller
     /**
      * Mostrar página principal
      */
-    public function index()
-    {
-        // Usar caché para optimizar rendimiento
-        $data = Cache::remember('home_data', 3600, function () {
-            return $this->buildHomeData();
-        });
+        public function index()
+        {
+            // Usar caché para optimizar rendimiento
+            $data = Cache::remember('home_data', 3600, function () {
+                return $this->buildHomeData();
+            });
 
-         return 'Laravel funciona correctamente';
-    }
+            return redirect()->route('dashboard');
+        }
 
     private function buildHomeData()
     {

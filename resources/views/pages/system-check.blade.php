@@ -99,7 +99,7 @@
     <p style="color: #666; margin-bottom: 20px;">Prueba todas estas URLs para verificar que funcionen correctamente:</p>
     
     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px;">
-        <a href="/" style="display: block; background: white; padding: 15px; border-radius: 8px; text-decoration: none; color: #333; border: 1px solid #e5e7eb; transition: all 0.3s ease;" 
+        <a href="{{ route('dashboard') }}" style="display: block; background: white; padding: 15px; border-radius: 8px; text-decoration: none; color: #333; border: 1px solid #e5e7eb; transition: all 0.3s ease;" 
            onmouseover="this.style.background='#f8f9fa'; this.style.borderColor='#3b82f6';"
            onmouseout="this.style.background='white'; this.style.borderColor='#e5e7eb';">
             <strong>🏠 Inicio</strong><br>

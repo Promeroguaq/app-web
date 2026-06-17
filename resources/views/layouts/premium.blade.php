@@ -482,7 +482,7 @@
             <img src="{{ asset('assets/logo.JPG') }}" alt="Rutas por Colombia" class="w-[90%] h-[90%] object-contain object-center">
         </div>
         <nav class="sidebar-nav">
-            <a href="/" class="nav-item {{ request()->is('/') || request()->is('dashboard') ? 'active' : '' }}" style="color: white !important;">
+            <a href="{{ route('dashboard') }}" class="nav-item {{ request()->is('dashboard') ? 'active' : '' }}" style="color: white !important;">
                 <div class="nav-icon-wrapper">
                     <i class="fas fa-home" style="color: white !important;"></i>
                 </div>

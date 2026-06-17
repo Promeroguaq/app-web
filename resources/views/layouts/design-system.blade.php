@@ -672,7 +672,7 @@
                 </div>
             </div>
             <nav class="sidebar-menu">
-                <a href="/" class="sidebar-menu-item {{ request()->is('/') ? 'active' : '' }}">
+                <a href="{{ route('dashboard') }}" class="sidebar-menu-item {{ request()->is('dashboard') ? 'active' : '' }}">
                     <i class="fas fa-home"></i>
                     Dashboard
                 </a>
