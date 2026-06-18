@@ -47,11 +47,11 @@ class ReservaParqueController extends Controller
 
             // Obtener regiones únicas con nombres
             $regiones = DB::table('tabla_reservas')
-                ->select('ID_REGION')
-                ->whereNotNull('ID_REGION')
+                ->select('ID_REGIÓN')
+                ->whereNotNull('ID_REGIÓN')
                 ->distinct()
-                ->orderBy('ID_REGION')
-                ->pluck('ID_REGION')
+                ->orderBy('ID_REGIÓN')
+                ->pluck('ID_REGIÓN')
                 ->map(function($id) use ($regionesMap) {
                     return $regionesMap->get($id) ? $regionesMap->get($id)->NOMBRE_REGION : $id;
                 });
@@ -90,7 +90,7 @@ class ReservaParqueController extends Controller
                     return $region->NOMBRE_REGION === $filterRegion;
                 });
                 if ($regionId !== false) {
-                    $query->where('ID_REGION', $regionId);
+                    $query->where('ID_REGIÓN', $regionId);
                 }
             }
 
@@ -125,7 +125,7 @@ class ReservaParqueController extends Controller
                 $nombre = trim($row->NOMBRE_RESERVAS_O_PARQUES ?? '');
                 $descripcion = trim($row->DESCRIPCION ?? '');
                 $localityId = $row->ID_LOCALITIES ?? null;
-                $regionId = $row->ID_REGION ?? null;
+                $regionId = $row->ID_REGIÓN ?? null;
 
                 // Resolver nombres reales
                 $localidadNombre = null;
@@ -195,7 +195,7 @@ class ReservaParqueController extends Controller
     /**
      * Mostrar detalle de una reserva/parque
      */
-    public function show($slug)
+    public function show($id)
     {
         try {
             // Cargar mapa de regiones una sola vez (cacheado)
@@ -221,22 +221,22 @@ class ReservaParqueController extends Controller
                     ->get();
             });
 
-            // Buscar la reserva por slug usando normalización SQL
+            // Buscar la reserva por ID
             $row = DB::table('tabla_reservas')
-                ->whereRaw("REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(LOWER(NOMBRE_RESERVAS_O_PARQUES), 'á', 'a'), 'é', 'e'), 'í', 'i'), 'ó', 'o'), 'ú', 'u') = ?", [$slug])
+                ->where('ID_RESERVAS', $id)
                 ->whereNotNull('NOMBRE_RESERVAS_O_PARQUES')
                 ->where('NOMBRE_RESERVAS_O_PARQUES', '!=', 'NOMBRE_RESERVAS_O_PARQUES')
                 ->first();
 
             if (!$row) {
-                Log::warning('Reserva parque no encontrado', ['slug' => $slug]);
+                Log::warning('Reserva parque no encontrado', ['id' => $id]);
                 abort(404);
             }
 
             $nombre = trim($row->NOMBRE_RESERVAS_O_PARQUES ?? '');
             $descripcion = trim($row->DESCRIPCION ?? '');
             $localityId = $row->ID_LOCALITIES ?? null;
-            $regionId = $row->ID_REGION ?? null;
+            $regionId = $row->ID_REGIÓN ?? null;
 
             // Resolver nombres reales
             $localidadNombre = null;
@@ -278,7 +278,7 @@ class ReservaParqueController extends Controller
                 $nombre = trim($row->NOMBRE_RESERVAS_O_PARQUES ?? '');
                 $descripcion = trim($row->DESCRIPCION ?? '');
                 $localityId = $row->ID_LOCALITIES ?? null;
-                $regionId = $row->ID_REGION ?? null;
+                $regionId = $row->ID_REGIÓN ?? null;
 
                 // Resolver nombres reales
                 $localidadNombre = null;
@@ -313,7 +313,7 @@ class ReservaParqueController extends Controller
             })->values();
 
             Log::info('Reserva parque show solicitado', [
-                'slug' => $slug,
+                'id' => $id,
                 'nombre' => $reserva->nombre,
                 'relacionados_count' => $relatedReservas->count()
             ]);
@@ -322,7 +322,7 @@ class ReservaParqueController extends Controller
         } catch (\Exception $e) {
             Log::error('Error en ReservaParqueController@show', [
                 'error' => $e->getMessage(),
-                'slug' => $slug,
+                'id' => $id,
             ]);
             abort(404);
         }
@@ -335,7 +335,7 @@ class ReservaParqueController extends Controller
             'NOMBRE_RESERVAS_O_PARQUES' => 'required|string',
             'ID_LOCALITIES' => 'required|integer',
             'DESCRIPCION' => 'nullable|string',
-            'ID_REGION' => 'required|integer',
+            'ID_REGIÓN' => 'required|integer',
         ]);
 
         return ReservaParque::create($data);

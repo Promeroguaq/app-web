@@ -115,7 +115,7 @@
     <h2 class="font-display text-2xl font-bold text-midnight-900 mb-6">Reservas y Parques Relacionados</h2>
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         @foreach($relatedReservas as $related)
-        <a href="{{ route('reservas-parques.show', $related->slug) }}" class="cinematic-card group cursor-pointer bg-white block rounded-[24px] overflow-hidden shadow-[0_8px_25px_rgba(0,0,0,0.08)] hover:-translate-y-1 hover:scale-[1.02] transition-all duration-300">
+        <a href="{{ route('reservas-parques.show', ['id' => $related->id]) }}" class="cinematic-card group cursor-pointer bg-white block rounded-[24px] overflow-hidden shadow-[0_8px_25px_rgba(0,0,0,0.08)] hover:-translate-y-1 hover:scale-[1.02] transition-all duration-300">
             <div class="relative h-40 overflow-hidden">
                 @if($related->imagen ?? null)
                     <img src="{{ $related->imagen }}" alt="{{ $related->nombre }}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">

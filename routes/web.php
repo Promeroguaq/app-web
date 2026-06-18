@@ -391,10 +391,10 @@ Route::get(
 )->name('reservas-parques.index');
 
 Route::get(
-    '/reservas-parques/{slug}',
+    '/reservas-parques/{id}',
     [ReservaParqueController::class, 'show']
 )
-    ->where('slug', '[A-Za-z0-9\-]+')
+    ->whereNumber('id')
     ->name('reservas-parques.show');
 
 /*
