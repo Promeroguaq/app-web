@@ -268,6 +268,13 @@ Route::prefix('puntos-interes')
             [PuntoInteresController::class, 'islas']
         )->name('islas');
 
+        Route::get(
+            '/islas/{id}',
+            [PuntoInteresController::class, 'islasShow']
+        )
+            ->whereNumber('id')
+            ->name('islas.show');
+
         // Museos.
         Route::get(
             '/museos',

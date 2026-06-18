@@ -257,7 +257,7 @@ class PuntoInteresController extends Controller
         try {
             // Obtener datos de la tabla tabla_islas
             $islas = \DB::table('tabla_islas')->get();
-            
+
             // Obtener imágenes de islas - CACHED
             $imagenes_islas = \Cache::remember('imagenes_islas', 1800, function () {
                 return \DB::table('tabla_imagenes')
@@ -265,7 +265,7 @@ class PuntoInteresController extends Controller
                     ->orWhere('RUTA', 'like', '%/islas/%')
                     ->get();
             });
-            
+
             // Combinar islas con sus imágenes
             $items = $islas->map(function($isla) use ($imagenes_islas) {
                 $isla_con_imagen = (object)[
@@ -274,7 +274,7 @@ class PuntoInteresController extends Controller
                     'descripcion' => $isla->DESCRIPCION,
                     'imagen' => null
                 ];
-                
+
                 // Buscar imagen relacionada
                 foreach($imagenes_islas as $imagen) {
                     // Buscar por nombre相似
@@ -288,16 +288,38 @@ class PuntoInteresController extends Controller
                         break;
                     }
                 }
-                
+
                 return $isla_con_imagen;
             });
-            
+
             return view('pages.islas', compact('items'));
         } catch (\Exception $e) {
             return view('pages.islas', [
                 'items' => collect([]),
                 'error' => 'La tabla de islas no está disponible en este momento.'
             ]);
+        }
+    }
+
+    public function islasShow($id)
+    {
+        try {
+            $isla = \DB::table('tabla_islas')->where('ID_ISLA', $id)->first();
+
+            if (!$isla) {
+                abort(404);
+            }
+
+            $item = (object)[
+                'id' => $isla->ID_ISLA,
+                'nombre' => $isla->NOMBRE_ISLA,
+                'descripcion' => $isla->DESCRIPCION,
+                'imagen' => $this->buscarImagen($isla->NOMBRE_ISLA, 'isla')
+            ];
+
+            return view('pages.detalle-punto-interes', compact('item'))->with('tipo', 'Isla');
+        } catch (\Exception $e) {
+            abort(404);
         }
     }
 
