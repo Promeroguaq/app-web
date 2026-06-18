@@ -37,12 +37,8 @@
         </h1>
         <div class="flex items-center gap-2 text-lg opacity-90" style="text-shadow: 1px 1px 4px rgba(0,0,0,0.5);">
             <i class="fas fa-map-marker-alt"></i>
-            @if($reserva->localidad)
-                {{ $reserva->localidad }}
-            @elseif($reserva->region)
-                {{ $reserva->region }}
-            @else
-                Ubicación por confirmar
+            @if($reserva->departamento)
+                {{ $reserva->departamento }}
             @endif
         </div>
     </div>
@@ -68,10 +64,10 @@
                 <i class="fas fa-map-marker-alt text-green-600 text-xl"></i>
             </div>
             <div>
-                <div class="text-sm text-gray-500">Localidad</div>
+                <div class="text-sm text-gray-500">Departamento</div>
                 <div class="font-semibold text-midnight-900">
-                    @if($reserva->localidad)
-                        {{ $reserva->localidad }}
+                    @if($reserva->departamento)
+                        {{ $reserva->departamento }}
                     @else
                         Por confirmar
                     @endif

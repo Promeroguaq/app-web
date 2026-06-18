@@ -40,9 +40,17 @@ class ReservaParqueController extends Controller
             // Cargar mapa de municipios una sola vez (cacheado)
             $municipiosMap = Cache::remember('municipios_map', 1800, function () {
                 return DB::table('tabla_municipios')
-                    ->select('ID_MUNICIPIOS', 'NOMBRE_MUNICIPIOS')
+                    ->select('ID_MUNICIPIOS', 'NOMBRE_MUNICIPIOS', 'ID_DEPARTAMENTO')
                     ->get()
                     ->keyBy('ID_MUNICIPIOS');
+            });
+
+            // Cargar mapa de departamentos una sola vez (cacheado)
+            $departamentosMap = Cache::remember('departamentos_map', 1800, function () {
+                return DB::table('tabla_departamentos')
+                    ->select('ID_DEPARTAMENTO', 'NOMBRE_DEPARTAMENTO')
+                    ->get()
+                    ->keyBy('ID_DEPARTAMENTO');
             });
 
             // Obtener regiones únicas con nombres
@@ -119,18 +127,21 @@ class ReservaParqueController extends Controller
                     ->get();
             });
 
-            // Mapear reservas con imágenes, regiones y municipios (evitando repeticiones)
+            // Mapear reservas con imágenes, regiones y departamentos (evitando repeticiones)
             $usedImages = [];
-            $reservas = $rawReservas->map(function ($row) use (&$usedImages, $imagenesMap, $regionesMap, $municipiosMap) {
+            $reservas = $rawReservas->map(function ($row) use (&$usedImages, $imagenesMap, $regionesMap, $municipiosMap, $departamentosMap) {
                 $nombre = trim($row->NOMBRE_RESERVAS_O_PARQUES ?? '');
                 $descripcion = trim($row->DESCRIPCION ?? '');
                 $localityId = $row->ID_LOCALITIES ?? null;
                 $regionId = $row->ID_REGIÓN ?? null;
 
-                // Resolver nombres reales
-                $localidadNombre = null;
+                // Obtener departamento desde el municipio
+                $departamentoNombre = null;
                 if ($localityId && isset($municipiosMap[$localityId])) {
-                    $localidadNombre = $municipiosMap[$localityId]->NOMBRE_MUNICIPIOS;
+                    $municipio = $municipiosMap[$localityId];
+                    if (!empty($municipio->ID_DEPARTAMENTO) && isset($departamentosMap[$municipio->ID_DEPARTAMENTO])) {
+                        $departamentoNombre = $departamentosMap[$municipio->ID_DEPARTAMENTO]->NOMBRE_DEPARTAMENTO;
+                    }
                 }
 
                 $regionNombre = null;
@@ -151,7 +162,7 @@ class ReservaParqueController extends Controller
                     'descripcion' => $descripcion,
                     'locality_id' => $localityId,
                     'region_id' => $regionId,
-                    'localidad' => $localidadNombre,
+                    'departamento' => $departamentoNombre,
                     'region' => $regionNombre,
                     'imagen' => $imagenData['url'],
                     'imagen_id' => $imagenData['id'],
@@ -209,9 +220,17 @@ class ReservaParqueController extends Controller
             // Cargar mapa de municipios una sola vez (cacheado)
             $municipiosMap = Cache::remember('municipios_map', 1800, function () {
                 return DB::table('tabla_municipios')
-                    ->select('ID_MUNICIPIOS', 'NOMBRE_MUNICIPIOS')
+                    ->select('ID_MUNICIPIOS', 'NOMBRE_MUNICIPIOS', 'ID_DEPARTAMENTO')
                     ->get()
                     ->keyBy('ID_MUNICIPIOS');
+            });
+
+            // Cargar mapa de departamentos una sola vez (cacheado)
+            $departamentosMap = Cache::remember('departamentos_map', 1800, function () {
+                return DB::table('tabla_departamentos')
+                    ->select('ID_DEPARTAMENTO', 'NOMBRE_DEPARTAMENTO')
+                    ->get()
+                    ->keyBy('ID_DEPARTAMENTO');
             });
 
             // Cargar mapa de imágenes una sola vez - CACHED
@@ -238,10 +257,13 @@ class ReservaParqueController extends Controller
             $localityId = $row->ID_LOCALITIES ?? null;
             $regionId = $row->ID_REGIÓN ?? null;
 
-            // Resolver nombres reales
-            $localidadNombre = null;
+            // Obtener departamento desde el municipio
+            $departamentoNombre = null;
             if ($localityId && isset($municipiosMap[$localityId])) {
-                $localidadNombre = $municipiosMap[$localityId]->NOMBRE_MUNICIPIOS;
+                $municipio = $municipiosMap[$localityId];
+                if (!empty($municipio->ID_DEPARTAMENTO) && isset($departamentosMap[$municipio->ID_DEPARTAMENTO])) {
+                    $departamentoNombre = $departamentosMap[$municipio->ID_DEPARTAMENTO]->NOMBRE_DEPARTAMENTO;
+                }
             }
 
             $regionNombre = null;
@@ -257,7 +279,7 @@ class ReservaParqueController extends Controller
                 'descripcion' => $descripcion,
                 'locality_id' => $localityId,
                 'region_id' => $regionId,
-                'localidad' => $localidadNombre,
+                'departamento' => $departamentoNombre,
                 'region' => $regionNombre,
                 'imagen' => $imagenData['url'],
                 'imagen_id' => $imagenData['id'],
@@ -274,16 +296,19 @@ class ReservaParqueController extends Controller
                 ->take(4)
                 ->get();
 
-            $relatedReservas = $relatedRows->map(function ($row) use (&$usedImages, $imagenesMap, $regionesMap, $municipiosMap) {
+            $relatedReservas = $relatedRows->map(function ($row) use (&$usedImages, $imagenesMap, $regionesMap, $municipiosMap, $departamentosMap) {
                 $nombre = trim($row->NOMBRE_RESERVAS_O_PARQUES ?? '');
                 $descripcion = trim($row->DESCRIPCION ?? '');
                 $localityId = $row->ID_LOCALITIES ?? null;
                 $regionId = $row->ID_REGIÓN ?? null;
 
-                // Resolver nombres reales
-                $localidadNombre = null;
+                // Obtener departamento desde el municipio
+                $departamentoNombre = null;
                 if ($localityId && isset($municipiosMap[$localityId])) {
-                    $localidadNombre = $municipiosMap[$localityId]->NOMBRE_MUNICIPIOS;
+                    $municipio = $municipiosMap[$localityId];
+                    if (!empty($municipio->ID_DEPARTAMENTO) && isset($departamentosMap[$municipio->ID_DEPARTAMENTO])) {
+                        $departamentoNombre = $departamentosMap[$municipio->ID_DEPARTAMENTO]->NOMBRE_DEPARTAMENTO;
+                    }
                 }
 
                 $regionNombre = null;
@@ -303,7 +328,7 @@ class ReservaParqueController extends Controller
                     'descripcion' => $descripcion,
                     'locality_id' => $localityId,
                     'region_id' => $regionId,
-                    'localidad' => $localidadNombre,
+                    'departamento' => $departamentoNombre,
                     'region' => $regionNombre,
                     'imagen' => $imagenData['url'],
                     'imagen_id' => $imagenData['id'],

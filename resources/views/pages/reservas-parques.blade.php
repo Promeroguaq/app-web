@@ -126,12 +126,8 @@
             </p>
             <div class="flex items-center gap-2 text-sm text-gray-500 mb-3">
                 <i class="fas fa-map-marker-alt text-green-500"></i>
-                @if($reserva->localidad)
-                    {{ $reserva->localidad }}
-                @elseif($reserva->region)
-                    {{ $reserva->region }}
-                @else
-                    Ubicación por confirmar
+                @if($reserva->departamento)
+                    {{ $reserva->departamento }}
                 @endif
             </div>
             <div class="block w-full px-4 py-2.5 bg-gradient-to-r from-green-500 to-emerald-500 text-white rounded-full font-semibold hover:shadow-lg transition-all text-sm text-center">
