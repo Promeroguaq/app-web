@@ -154,87 +154,145 @@ class DashboardController extends Controller
     }
 
     /**
-     * Obtener destinos destacados (hasta 8)
+     * Obtener destinos destacados (hasta 8) desde la base de datos
      */
     private function getDestinosDestacados()
     {
-        // Simular destinos destacados para evitar timeouts
-        $destinos = [
-            [
-                'id' => 1,
-                'nombre' => 'Cartagena de Indias',
-                'categoria' => 'Ciudad Histórica',
-                'ubicacion' => 'Bolívar',
-                'imagen' => 'https://images.unsplash.com/photo-1518182170546-0766aa6f7cf0?w=400&h=300&fit=crop',
-                'calificacion' => 4.8,
-                'tipo' => 'ciudad'
-            ],
-            [
-                'id' => 2,
-                'nombre' => 'Parque Tayrona',
+        $destinos = [];
+        
+        // 1. Municipios destacados (Cartagena, Medellín, Bogotá)
+        $municipios = \DB::table('tabla_municipios')
+            ->whereIn('NOMBRE_MUNICIPIOS', ['Cartagena', 'Medellín', 'Bogotá'])
+            ->get();
+            
+        foreach ($municipios as $municipio) {
+            $depto = \DB::table('tabla_departamentos')
+                ->where('ID_DEPARTAMENTO', $municipio->ID_DEPARTAMENTO)
+                ->first();
+            
+            if ($depto) {
+                $deptoSlug = \Illuminate\Support\Str::slug($depto->NOMBRE_DEPARTAMENTO);
+                $muniSlug = \Illuminate\Support\Str::slug($municipio->NOMBRE_MUNICIPIOS);
+                
+                $destinos[] = [
+                    'id' => $municipio->ID_MUNICIPIOS,
+                    'nombre' => $municipio->NOMBRE_MUNICIPIOS,
+                    'categoria' => 'Municipio',
+                    'ubicacion' => $depto->NOMBRE_DEPARTAMENTO,
+                    'imagen' => $this->buscarImagenEnTabla($municipio->NOMBRE_MUNICIPIOS),
+                    'calificacion' => 4.5,
+                    'tipo' => 'municipio',
+                    'url' => route('municipios.show.slugs', [
+                        'departmentSlug' => $deptoSlug,
+                        'municipalitySlug' => $muniSlug
+                    ])
+                ];
+            }
+        }
+        
+        // 2. Reservas/Parques (Parque Tayrona)
+        $reserva = \DB::table('tabla_reservas')
+            ->where('NOMBRE_RESERVAS_O_PARQUES', 'like', '%Tayrona%')
+            ->first();
+            
+        if ($reserva) {
+            $destinos[] = [
+                'id' => $reserva->ID_RESERVAS,
+                'nombre' => $reserva->NOMBRE_RESERVAS_O_PARQUES,
                 'categoria' => 'Reserva Natural',
                 'ubicacion' => 'Magdalena',
-                'imagen' => 'https://images.unsplash.com/photo-1580060839134-75a5edca2e99?w=400&h=300&fit=crop',
+                'imagen' => $this->buscarImagenEnTabla($reserva->NOMBRE_RESERVAS_O_PARQUES),
                 'calificacion' => 4.9,
-                'tipo' => 'reserva'
-            ],
-            [
-                'id' => 3,
-                'nombre' => 'Medellín',
-                'categoria' => 'Ciudad Moderna',
-                'ubicacion' => 'Antioquia',
-                'imagen' => 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=300&fit=crop',
-                'calificacion' => 4.7,
-                'tipo' => 'ciudad'
-            ],
-            [
-                'id' => 4,
-                'nombre' => 'Cafetera del Quindío',
-                'categoria' => 'Paisaje Cultural',
-                'ubicacion' => 'Quindío',
-                'imagen' => 'https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?w=400&h=300&fit=crop',
-                'calificacion' => 4.6,
-                'tipo' => 'paisaje'
-            ],
-            [
-                'id' => 5,
-                'nombre' => 'Caño Cristales',
-                'categoria' => 'Río Arcoíris',
-                'ubicacion' => 'Meta',
-                'imagen' => 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=400&h=300&fit=crop',
-                'calificacion' => 5.0,
-                'tipo' => 'rio'
-            ],
-            [
-                'id' => 6,
-                'nombre' => 'San Andrés',
+                'tipo' => 'reserva-parque',
+                'url' => route('reservas-parques.show', ['id' => $reserva->ID_RESERVAS])
+            ];
+        }
+        
+        // 3. Islas (San Andrés)
+        $isla = \DB::table('tabla_islas')
+            ->where('NOMBRE_ISLA', 'like', '%San Andrés%')
+            ->first();
+            
+        if ($isla) {
+            $destinos[] = [
+                'id' => $isla->ID_ISLA,
+                'nombre' => $isla->NOMBRE_ISLA,
                 'categoria' => 'Isla',
-                'ubicacion' => 'San Andrés',
-                'imagen' => 'https://images.unsplash.com/photo-1510414842594-a61c69b5ae57?w=400&h=300&fit=crop',
-                'calificacion' => 4.5,
-                'tipo' => 'isla'
-            ],
-            [
-                'id' => 7,
-                'nombre' => 'Bogotá',
-                'categoria' => 'Capital',
-                'ubicacion' => 'Cundinamarca',
-                'imagen' => 'https://images.unsplash.com/photo-1531566658564-6fc7b751f5c9?w=400&h=300&fit=crop',
-                'calificacion' => 4.4,
-                'tipo' => 'ciudad'
-            ],
-            [
-                'id' => 8,
-                'nombre' => 'Desierto de la Tatacoa',
+                'ubicacion' => 'Caribe',
+                'imagen' => $this->buscarImagenEnTabla($isla->NOMBRE_ISLA),
+                'calificacion' => 4.8,
+                'tipo' => 'isla',
+                'url' => route('puntos-interes.islas.show', ['id' => $isla->ID_ISLA])
+            ];
+        }
+        
+        // 4. Desiertos/Lagunas (Desierto de la Tatacoa)
+        $desierto = \DB::table('tabla_desierto_laguna')
+            ->where('NOMBRE_DESIERTO_LAGUNAS', 'like', '%Tatacoa%')
+            ->first();
+            
+        if ($desierto) {
+            $destinos[] = [
+                'id' => $desierto->ID_DESIERTO,
+                'nombre' => $desierto->NOMBRE_DESIERTO_LAGUNAS,
                 'categoria' => 'Desierto',
                 'ubicacion' => 'Huila',
-                'imagen' => 'https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?w=400&h=300&fit=crop',
-                'calificacion' => 4.3,
-                'tipo' => 'desierto'
-            ]
-        ];
-
-        return collect($destinos);
+                'imagen' => $this->buscarImagenEnTabla($desierto->NOMBRE_DESIERTO_LAGUNAS),
+                'calificacion' => 4.7,
+                'tipo' => 'desierto-laguna',
+                'url' => route('puntos-interes.desiertos-lagunas.show', ['id' => $desierto->ID_DESIERTO])
+            ];
+        }
+        
+        // 5. Caño Cristales - buscar en tabla_reservas o desiertos
+        $canoCristales = \DB::table('tabla_reservas')
+            ->where('NOMBRE_RESERVAS_O_PARQUES', 'like', '%Caño Cristales%')
+            ->first();
+            
+        if ($canoCristales) {
+            $destinos[] = [
+                'id' => $canoCristales->ID_RESERVAS,
+                'nombre' => $canoCristales->NOMBRE_RESERVAS_O_PARQUES,
+                'categoria' => 'Río Arcoíris',
+                'ubicacion' => 'Meta',
+                'imagen' => $this->buscarImagenEnTabla($canoCristales->NOMBRE_RESERVAS_O_PARQUES),
+                'calificacion' => 5.0,
+                'tipo' => 'reserva-parque',
+                'url' => route('reservas-parques.show', ['id' => $canoCristales->ID_RESERVAS])
+            ];
+        }
+        
+        // 6. Cafetera del Quindío - buscar municipio Salento o Armenia
+        $cafetera = \DB::table('tabla_municipios')
+            ->whereIn('NOMBRE_MUNICIPIOS', ['Salento', 'Armenia'])
+            ->first();
+            
+        if ($cafetera) {
+            $depto = \DB::table('tabla_departamentos')
+                ->where('ID_DEPARTAMENTO', $cafetera->ID_DEPARTAMENTO)
+                ->first();
+            
+            if ($depto) {
+                $deptoSlug = \Illuminate\Support\Str::slug($depto->NOMBRE_DEPARTAMENTO);
+                $muniSlug = \Illuminate\Support\Str::slug($cafetera->NOMBRE_MUNICIPIOS);
+                
+                $destinos[] = [
+                    'id' => $cafetera->ID_MUNICIPIOS,
+                    'nombre' => 'Eje Cafetero - ' . $cafetera->NOMBRE_MUNICIPIOS,
+                    'categoria' => 'Paisaje Cultural',
+                    'ubicacion' => $depto->NOMBRE_DEPARTAMENTO,
+                    'imagen' => $this->buscarImagenEnTabla($cafetera->NOMBRE_MUNICIPIOS),
+                    'calificacion' => 4.8,
+                    'tipo' => 'municipio',
+                    'url' => route('municipios.show.slugs', [
+                        'departmentSlug' => $deptoSlug,
+                        'municipalitySlug' => $muniSlug
+                    ])
+                ];
+            }
+        }
+        
+        return collect($destinos)->take(8);
     }
 
     /**
@@ -246,6 +304,28 @@ class DashboardController extends Controller
             return $modelo::count();
         } catch (\Throwable $e) {
             return 0;
+        }
+    }
+
+    /**
+     * Buscar imagen en tabla_imagenes por nombre
+     */
+    private function buscarImagenEnTabla($nombre)
+    {
+        try {
+            if (empty($nombre)) {
+                return null;
+            }
+
+            $nombreNormalizado = \App\Helpers\ImageHelper::cleanString($nombre);
+            $imagen = \DB::table('tabla_imagenes')
+                ->select('RUTA')
+                ->whereRaw('LOWER(NOMBRE_IMAGEN) LIKE ?', ['%' . strtolower($nombreNormalizado) . '%'])
+                ->first();
+            
+            return $imagen ? $imagen->RUTA : null;
+        } catch (\Exception $e) {
+            return null;
         }
     }
 
