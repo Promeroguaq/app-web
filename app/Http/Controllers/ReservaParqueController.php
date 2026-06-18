@@ -110,7 +110,7 @@ class ReservaParqueController extends Controller
             $offset = ($page - 1) * $perPage;
 
             $total = $query->count();
-            $rawReservas = $query->offset($offset)->limit($perPage)->get();
+            $rawReservas = $query->inRandomOrder()->offset($offset)->limit($perPage)->get();
 
             // Cargar mapa de imágenes una sola vez - CACHED
             $imagenesMap = Cache::remember('imagenes_map_global', 1800, function () {
