@@ -16,121 +16,163 @@ class NaturalRegionsController extends Controller
         try {
             set_time_limit(120);
             
-            $regions = collect([
-                (object)[
+            // Cargar departamentos desde la base de datos
+            $allDepartments = \DB::table('tabla_departamentos')
+                ->select('ID_DEPARTAMENTO', 'NOMBRE_DEPARTAMENTO')
+                ->get();
+            
+            // Cargar municipios para contar destinos
+            $municipiosCount = \DB::table('tabla_municipios')
+                ->select('ID_DEPARTAMENTO')
+                ->selectRaw('COUNT(*) as count')
+                ->groupBy('ID_DEPARTAMENTO')
+                ->pluck('count', 'ID_DEPARTAMENTO');
+            
+            // Cargar imágenes disponibles en memoria para selección determinista
+            $imagenes = \DB::table('tabla_imagenes')
+                ->select('ID_IMAGEN', 'NOMBRE_IMAGEN', 'RUTA')
+                ->get();
+            $imagenesPorNombre = $imagenes->keyBy(function($img) {
+                return ImageHelper::cleanString($img->NOMBRE_IMAGEN);
+            });
+            
+            // Definición de regiones con sus departamentos
+            $regionDefinitions = [
+                [
                     'slug' => 'caribe',
                     'name' => 'Región Caribe',
                     'shortName' => 'Caribe',
-                    'subtitle' => 'Playas paradisíacas, cultura caribeña y gastronomía única.',
                     'description' => 'La Región Caribe reúne mar, música, historia, pueblos cálidos y una identidad cultural vibrante.',
-                    'departmentCount' => 7,
-                    'climate' => 'Cálido',
-                    'heroImage' => 'https://images.unsplash.com/photo-1519046904884-53103b34b206?ixlib=rb-4.0.3&auto=format&fit=crop&w=2340&q=80',
-                    'cardImage' => 'https://images.unsplash.com/photo-1519046904884-53103b34b206?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-                    'color' => '#facc15',
-                    'departments' => collect([
-                        (object)['name' => 'La Guajira', 'slug' => 'la-guajira'],
-                        (object)['name' => 'Magdalena', 'slug' => 'magdalena'],
-                        (object)['name' => 'Atlántico', 'slug' => 'atlantico'],
-                        (object)['name' => 'Bolívar', 'slug' => 'bolivar'],
-                        (object)['name' => 'Cesar', 'slug' => 'cesar'],
-                        (object)['name' => 'Córdoba', 'slug' => 'cordoba'],
-                        (object)['name' => 'Sucre', 'slug' => 'sucre']
-                    ])
+                    'color' => '#f59e0b',
+                    'accent' => 'amber',
+                    'departments' => ['La Guajira', 'Magdalena', 'Atlántico', 'Bolívar', 'Cesar', 'Córdoba', 'Sucre'],
+                    'searchTerms' => ['caribe', 'playa', 'mar', 'cartagena', 'santa marta', 'barranquilla']
                 ],
-                (object)[
+                [
                     'slug' => 'andina',
                     'name' => 'Región Andina',
                     'shortName' => 'Andina',
-                    'subtitle' => 'Montañas, pueblos patrimoniales, café y cultura urbana.',
                     'description' => 'La Región Andina es el corazón de Colombia, donde las montañas, los pueblos coloniales, el café y la cultura urbana se encuentran.',
-                    'departmentCount' => 13,
-                    'climate' => 'Variado',
-                    'heroImage' => 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&auto=format&fit=crop&w=2340&q=80',
-                    'cardImage' => 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-                    'color' => '#10b981',
-                    'departments' => collect([
-                        (object)['name' => 'Antioquia', 'slug' => 'antioquia'],
-                        (object)['name' => 'Cundinamarca', 'slug' => 'cundinamarca'],
-                        (object)['name' => 'Boyacá', 'slug' => 'boyaca'],
-                        (object)['name' => 'Caldas', 'slug' => 'caldas'],
-                        (object)['name' => 'Risaralda', 'slug' => 'risaralda'],
-                        (object)['name' => 'Quindío', 'slug' => 'quindio']
-                    ])
+                    'color' => '#8b5cf6',
+                    'accent' => 'violet',
+                    'departments' => ['Antioquia', 'Cundinamarca', 'Boyacá', 'Caldas', 'Risaralda', 'Quindío', 'Santander', 'Norte de Santander', 'Tolima', 'Huila', 'Cauca', 'Nariño', 'Meta'],
+                    'searchTerms' => ['andina', 'montaña', 'café', 'medellin', 'bogota', 'eje cafetero']
                 ],
-                (object)[
+                [
                     'slug' => 'pacifica',
                     'name' => 'Región Pacífica',
                     'shortName' => 'Pacífica',
-                    'subtitle' => 'Selva húmeda, ballenas, biodiversidad y cultura afro.',
                     'description' => 'La Región Pacífica es un paraíso de biodiversidad donde la selva húmeda, el avistamiento de ballenas y la cultura afrocolombiana crean una experiencia única.',
-                    'departmentCount' => 4,
-                    'climate' => 'Húmedo',
-                    'heroImage' => 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?ixlib=rb-4.0.3&auto=format&fit=crop&w=2340&q=80',
-                    'cardImage' => 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-                    'color' => '#3b82f6',
-                    'departments' => collect([
-                        (object)['name' => 'Chocó', 'slug' => 'choco'],
-                        (object)['name' => 'Valle del Cauca', 'slug' => 'valle-del-cauca'],
-                        (object)['name' => 'Cauca', 'slug' => 'cauca'],
-                        (object)['name' => 'Nariño', 'slug' => 'narino']
-                    ])
+                    'color' => '#0ea5e9',
+                    'accent' => 'cyan',
+                    'departments' => ['Chocó', 'Valle del Cauca', 'Cauca', 'Nariño'],
+                    'searchTerms' => ['pacifico', 'ballena', 'selva', 'buenaventura', 'nuqui']
                 ],
-                (object)[
+                [
                     'slug' => 'amazonia',
                     'name' => 'Región Amazónica',
                     'shortName' => 'Amazonía',
-                    'subtitle' => 'Selva virgen, ríos, biodiversidad y aventura natural.',
                     'description' => 'La Región Amazónica es el pulmón del mundo, donde la selva virgen, los ríos caudalosos y la biodiversidad crean una experiencia de aventura natural inigualable.',
-                    'departmentCount' => 6,
-                    'climate' => 'Tropical',
-                    'heroImage' => 'https://images.unsplash.com/photo-1516026672322-bc52d61a55d5?ixlib=rb-4.0.3&auto=format&fit=crop&w=2340&q=80',
-                    'cardImage' => 'https://images.unsplash.com/photo-1516026672322-bc52d61a55d5?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-                    'color' => '#22c55e',
-                    'departments' => collect([
-                        (object)['name' => 'Amazonas', 'slug' => 'amazonas'],
-                        (object)['name' => 'Caquetá', 'slug' => 'caqueta'],
-                        (object)['name' => 'Putumayo', 'slug' => 'putumayo'],
-                        (object)['name' => 'Guainía', 'slug' => 'guainia'],
-                        (object)['name' => 'Guaviare', 'slug' => 'guaviare'],
-                        (object)['name' => 'Vaupés', 'slug' => 'vaupes']
-                    ])
+                    'color' => '#059669',
+                    'accent' => 'emerald',
+                    'departments' => ['Amazonas', 'Caquetá', 'Putumayo', 'Guainía', 'Guaviare', 'Vaupés'],
+                    'searchTerms' => ['amazonia', 'selva', 'rio', 'leticia', 'florecia']
                 ],
-                (object)[
+                [
                     'slug' => 'llanos',
                     'name' => 'Región Orinoquía',
                     'shortName' => 'Llanos',
-                    'subtitle' => 'Sabanas infinitas, cultura llanera y atardeceres.',
                     'description' => 'La Región Orinoquía es un horizonte de sabanas donde la cultura llanera, las cabalgatas, la música y los atardeceres espectaculares definen la identidad.',
-                    'departmentCount' => 4,
-                    'climate' => 'Tropical seco',
-                    'heroImage' => 'https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?ixlib=rb-4.0.3&auto=format&fit=crop&w=2340&q=80',
-                    'cardImage' => 'https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-                    'color' => '#f97316',
-                    'departments' => collect([
-                        (object)['name' => 'Arauca', 'slug' => 'arauca'],
-                        (object)['name' => 'Casanare', 'slug' => 'casanare'],
-                        (object)['name' => 'Meta', 'slug' => 'meta'],
-                        (object)['name' => 'Vichada', 'slug' => 'vichada']
-                    ])
+                    'color' => '#84cc16',
+                    'accent' => 'lime',
+                    'departments' => ['Arauca', 'Casanare', 'Meta', 'Vichada'],
+                    'searchTerms' => ['llanos', 'sabana', 'villavicencio', 'yopal', 'joropo']
                 ],
-                (object)[
+                [
                     'slug' => 'insular',
                     'name' => 'Región Insular',
                     'shortName' => 'Insular',
-                    'subtitle' => 'Islas caribeñas, arrecifes, buceo y cultura raizal.',
                     'description' => 'La Región Insular es un paraíso de islas caribeñas donde los arrecifes de coral, el buceo, las playas y la cultura raizal crean una experiencia tropical única.',
-                    'departmentCount' => 2,
-                    'climate' => 'Tropical',
-                    'heroImage' => 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?ixlib=rb-4.0.3&auto=format&fit=crop&w=2340&q=80',
-                    'cardImage' => 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
                     'color' => '#06b6d4',
-                    'departments' => collect([
-                        (object)['name' => 'San Andrés y Providencia', 'slug' => 'san-andres-providencia'],
-                        (object)['name' => 'Archipiélago de San Bernardo', 'slug' => 'san-bernardo']
-                    ])
+                    'accent' => 'sky',
+                    'departments' => ['San Andrés y Providencia'],
+                    'searchTerms' => ['isla', 'san andres', 'providencia', 'arrecife', 'buceo']
                 ]
-            ]);
+            ];
+            
+            $usedImageIds = [];
+            $regions = collect();
+            
+            foreach ($regionDefinitions as $def) {
+                // Buscar departamentos reales en la base de datos
+                $regionDepartments = collect();
+                $totalMunicipios = 0;
+                
+                foreach ($def['departments'] as $deptName) {
+                    $dept = $allDepartments->first(function($d) use ($deptName) {
+                        return strcasecmp(ImageHelper::cleanString($d->NOMBRE_DEPARTAMENTO), ImageHelper::cleanString($deptName)) === 0;
+                    });
+                    
+                    if ($dept) {
+                        $slug = strtolower(str_replace(' ', '-', $deptName));
+                        $regionDepartments->push((object)[
+                            'name' => $dept->NOMBRE_DEPARTAMENTO,
+                            'slug' => $slug
+                        ]);
+                        
+                        // Sumar municipios de este departamento
+                        $totalMunicipios += $municipiosCount->get($dept->ID_DEPARTAMENTO, 0);
+                    }
+                }
+                
+                // Seleccionar imagen determinista sin repetición
+                $imageUrl = null;
+                foreach ($def['searchTerms'] as $term) {
+                    $termNormalized = ImageHelper::cleanString($term);
+                    if (isset($imagenesPorNombre[$termNormalized])) {
+                        $img = $imagenesPorNombre[$termNormalized];
+                        if (!in_array($img->ID_IMAGEN, $usedImageIds)) {
+                            $imageUrl = $img->RUTA;
+                            $usedImageIds[] = $img->ID_IMAGEN;
+                            break;
+                        }
+                    }
+                }
+                
+                // Si no hay imagen por términos, buscar por departamentos
+                if (!$imageUrl) {
+                    foreach ($regionDepartments as $dept) {
+                        $deptNormalized = ImageHelper::cleanString($dept->name);
+                        if (isset($imagenesPorNombre[$deptNormalized])) {
+                            $img = $imagenesPorNombre[$deptNormalized];
+                            if (!in_array($img->ID_IMAGEN, $usedImageIds)) {
+                                $imageUrl = $img->RUTA;
+                                $usedImageIds[] = $img->ID_IMAGEN;
+                                break;
+                            }
+                        }
+                    }
+                }
+                
+                // Calcular contador de departamentos restantes
+                $visibleDepartments = $regionDepartments->take(3);
+                $remainingCount = max(0, $regionDepartments->count() - $visibleDepartments->count());
+                
+                $regions->push((object)[
+                    'slug' => $def['slug'],
+                    'name' => $def['name'],
+                    'shortName' => $def['shortName'],
+                    'description' => $def['description'],
+                    'color' => $def['color'],
+                    'accent' => $def['accent'],
+                    'image_url' => $imageUrl,
+                    'departments' => $regionDepartments,
+                    'departments_count' => $regionDepartments->count(),
+                    'visible_departments' => $visibleDepartments,
+                    'remaining_departments' => $remainingCount,
+                    'municipios_count' => $totalMunicipios
+                ]);
+            }
             
             return view('pages.regiones', compact('regions'));
         } catch (\Exception $e) {

@@ -48,183 +48,63 @@
     <h2 class="font-display text-2xl md:text-3xl font-bold text-midnight-900">Regiones Naturales</h2>
 </div>
 
-@php
-$regionImages = [];
-$regionImages[] = \App\Helpers\ImageHelper::getRandomImageByCategory('playas');
-$regionImages[] = \App\Helpers\ImageHelper::getRandomImageByCategory('turismo_cultural', $regionImages);
-$regionImages[] = \App\Helpers\ImageHelper::getRandomImageByCategory('turismo_naturaleza', $regionImages);
-$regionImages[] = \App\Helpers\ImageHelper::getRandomImageByCategory('turismo_naturaleza', $regionImages);
-$regionImages[] = \App\Helpers\ImageHelper::getRandomImageByCategory('turismo_naturaleza', $regionImages);
-$regionImages[] = \App\Helpers\ImageHelper::getRandomImageByCategory('islas', $regionImages);
-@endphp
-
 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 mb-8 md:mb-12">
-
-    <!-- Caribe -->
-    <div class="rounded-[20px] md:rounded-[32px] overflow-hidden bg-white shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300 w-full">
-        <a href="/regiones/caribe" class="block">
-            <div class="relative h-48 sm:h-56 md:h-64 overflow-hidden w-full" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 50%, #b45309 100%);">
+    @foreach($regions as $region)
+    <a href="{{ route('regiones.show', ['slug' => $region->slug]) }}" class="group block">
+        <div class="rounded-[20px] md:rounded-[32px] overflow-hidden bg-white shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300 w-full h-full">
+            <!-- Image Area -->
+            <div class="relative h-48 sm:h-56 md:h-64 overflow-hidden w-full" @if($region->image_url) style="background-image: url('{{ $region->image_url }}'); background-size: cover; background-position: center;" @else style="background: linear-gradient(135deg, {{ $region->color }} 0%, {{ $region->color }}dd 50%, {{ $region->color }}bb 100%);" @endif>
+                @if($region->image_url)
+                <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent"></div>
+                @endif
+                
+                <!-- Top Left Badge -->
                 <div class="absolute top-3 left-3 md:top-4 md:left-4 bg-white/90 backdrop-blur-sm px-3 py-1 md:px-4 md:py-2 rounded-full text-xs md:text-sm font-semibold text-gray-800 shadow-md z-10">
-                    🌴 Caribe
+                    {{ $region->shortName }}
                 </div>
+                
+                <!-- Top Right Counter -->
                 <div class="absolute top-3 right-3 md:top-4 md:right-4 bg-black/50 backdrop-blur-sm px-2 py-0.5 md:px-3 md:py-1 rounded-full text-[10px] md:text-xs font-medium text-white z-10">
-                    7 deptos
+                    {{ $region->departments_count }} {{ $region->departments_count == 1 ? 'depto' : 'deptos' }}
                 </div>
             </div>
+            
+            <!-- Content Area -->
             <div class="p-4 md:p-6 bg-white">
-                <h3 class="text-lg md:text-xl lg:text-2xl font-bold text-gray-900 mb-2">Región Caribe</h3>
-                <p class="text-xs md:text-sm text-gray-600 mb-3 md:mb-4 line-clamp-2">Playas paradisíacas, cultura caribeña y gastronomía única</p>
+                <h3 class="text-lg md:text-xl lg:text-2xl font-bold text-gray-900 mb-2">{{ $region->name }}</h3>
+                <p class="text-xs md:text-sm text-gray-600 mb-3 md:mb-4 line-clamp-2">{{ $region->description }}</p>
+                
+                <!-- Department Chips -->
                 <div class="flex flex-wrap gap-2 mb-3 md:mb-4">
-                    <a href="/departamentos/la-guajira" class="px-2 py-1 md:px-3 md:py-1 bg-amber-100 text-amber-700 rounded-full text-[10px] md:text-xs font-medium hover:bg-amber-200 transition-colors">La Guajira</a>
-                    <a href="/departamentos/magdalena" class="px-2 py-1 md:px-3 md:py-1 bg-amber-100 text-amber-700 rounded-full text-[10px] md:text-xs font-medium hover:bg-amber-200 transition-colors">Magdalena</a>
-                    <span class="px-2 py-1 md:px-3 md:py-1 bg-amber-100 text-amber-700 rounded-full text-[10px] md:text-xs font-medium">+5</span>
+                    @foreach($region->visible_departments as $dept)
+                    <span class="px-2 py-1 md:px-3 md:py-1 bg-{{ $region->accent }}-100 text-{{ $region->accent }}-700 rounded-full text-[10px] md:text-xs font-medium">
+                        {{ $dept->name }}
+                    </span>
+                    @endforeach
+                    @if($region->remaining_departments > 0)
+                    <span class="px-2 py-1 md:px-3 md:py-1 bg-{{ $region->accent }}-100 text-{{ $region->accent }}-700 rounded-full text-[10px] md:text-xs font-medium">
+                        +{{ $region->remaining_departments }}
+                    </span>
+                    @endif
                 </div>
+                
+                <!-- Mini Statistics -->
+                @if($region->municipios_count > 0)
+                <div class="flex items-center gap-2 mb-3 md:mb-4 text-xs md:text-sm text-gray-600">
+                    <span class="font-semibold text-{{ $region->accent }}-600">{{ $region->municipios_count }} municipios</span>
+                </div>
+                @endif
+                
+                <!-- Action -->
                 <div class="flex items-center justify-between pt-2 md:pt-3 border-t border-gray-200">
-                    <span class="text-amber-600 font-semibold text-xs md:text-sm flex items-center gap-2 hover:gap-3 transition-all">
+                    <span class="text-{{ $region->accent }}-600 font-semibold text-xs md:text-sm flex items-center gap-2 group-hover:gap-3 transition-all">
                         Explorar región <i class="fas fa-arrow-right text-xs md:text-sm"></i>
                     </span>
                 </div>
             </div>
-        </a>
-    </div>
-
-    <!-- Andina -->
-    <div class="rounded-[20px] md:rounded-[32px] overflow-hidden bg-white shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300 w-full">
-        <a href="/regiones/andina" class="block">
-            <div class="relative h-48 sm:h-56 md:h-64 overflow-hidden w-full" style="background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 50%, #6d28d9 100%);">
-                <div class="absolute top-3 left-3 md:top-4 md:left-4 bg-white/90 backdrop-blur-sm px-3 py-1 md:px-4 md:py-2 rounded-full text-xs md:text-sm font-semibold text-gray-800 shadow-md z-10">
-                    ⛰️ Andina
-                </div>
-                <div class="absolute top-3 right-3 md:top-4 md:right-4 bg-black/50 backdrop-blur-sm px-2 py-0.5 md:px-3 md:py-1 rounded-full text-[10px] md:text-xs font-medium text-white z-10">
-                    9 deptos
-                </div>
-            </div>
-            <div class="p-4 md:p-6 bg-white">
-                <h3 class="text-lg md:text-xl lg:text-2xl font-bold text-gray-900 mb-2">Región Andina</h3>
-                <p class="text-xs md:text-sm text-gray-600 mb-3 md:mb-4 line-clamp-2">Montañas, valles y el corazón cultural de Colombia</p>
-                <div class="flex flex-wrap gap-2 mb-3 md:mb-4">
-                    <a href="/departamentos/antioquia" class="px-2 py-1 md:px-3 md:py-1 bg-blue-100 text-blue-700 rounded-full text-[10px] md:text-xs font-medium hover:bg-blue-200 transition-colors">Antioquia</a>
-                    <a href="/departamentos/cundinamarca" class="px-2 py-1 md:px-3 md:py-1 bg-blue-100 text-blue-700 rounded-full text-[10px] md:text-xs font-medium hover:bg-blue-200 transition-colors">Cundinamarca</a>
-                    <span class="px-2 py-1 md:px-3 md:py-1 bg-blue-100 text-blue-700 rounded-full text-[10px] md:text-xs font-medium">+7</span>
-                </div>
-                <div class="flex items-center justify-between pt-2 md:pt-3 border-t border-gray-200">
-                    <span class="text-blue-600 font-semibold text-xs md:text-sm flex items-center gap-2 hover:gap-3 transition-all">
-                        Explorar región <i class="fas fa-arrow-right text-xs md:text-sm"></i>
-                    </span>
-                </div>
-            </div>
-        </a>
-    </div>
-
-    <!-- Pacífica -->
-    <div class="rounded-[20px] md:rounded-[32px] overflow-hidden bg-white shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300 w-full">
-        <a href="/regiones/pacifica" class="block">
-            <div class="relative h-48 sm:h-56 md:h-64 overflow-hidden w-full" style="background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 50%, #0369a1 100%);">
-                <div class="absolute top-3 left-3 md:top-4 md:left-4 bg-white/90 backdrop-blur-sm px-3 py-1 md:px-4 md:py-2 rounded-full text-xs md:text-sm font-semibold text-gray-800 shadow-md z-10">
-                    🌊 Pacífica
-                </div>
-                <div class="absolute top-3 right-3 md:top-4 md:right-4 bg-black/50 backdrop-blur-sm px-2 py-0.5 md:px-3 md:py-1 rounded-full text-[10px] md:text-xs font-medium text-white z-10">
-                    4 deptos
-                </div>
-            </div>
-            <div class="p-4 md:p-6 bg-white">
-                <h3 class="text-lg md:text-xl lg:text-2xl font-bold text-gray-900 mb-2">Región Pacífica</h3>
-                <p class="text-xs md:text-sm text-gray-600 mb-3 md:mb-4 line-clamp-2">Bosques húmedos, ballenas jorobadas y biodiversidad</p>
-                <div class="flex flex-wrap gap-2 mb-3 md:mb-4">
-                    <a href="/departamentos/choco" class="px-2 py-1 md:px-3 md:py-1 bg-cyan-100 text-cyan-700 rounded-full text-[10px] md:text-xs font-medium hover:bg-cyan-200 transition-colors">Chocó</a>
-                    <a href="/departamentos/valle-del-cauca" class="px-2 py-1 md:px-3 md:py-1 bg-cyan-100 text-cyan-700 rounded-full text-[10px] md:text-xs font-medium hover:bg-cyan-200 transition-colors">Valle</a>
-                    <span class="px-2 py-1 md:px-3 md:py-1 bg-cyan-100 text-cyan-700 rounded-full text-[10px] md:text-xs font-medium">+2</span>
-                </div>
-                <div class="flex items-center justify-between pt-2 md:pt-3 border-t border-gray-200">
-                    <span class="text-cyan-600 font-semibold text-xs md:text-sm flex items-center gap-2 hover:gap-3 transition-all">
-                        Explorar región <i class="fas fa-arrow-right text-xs md:text-sm"></i>
-                    </span>
-                </div>
-            </div>
-        </a>
-    </div>
-
-    <!-- Amazonía -->
-    <div class="rounded-[20px] md:rounded-[32px] overflow-hidden bg-white shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300 w-full">
-        <a href="/regiones/amazonia" class="block">
-            <div class="relative h-48 sm:h-56 md:h-64 overflow-hidden w-full" style="background: linear-gradient(135deg, #059669 0%, #047857 50%, #065f46 100%);">
-                <div class="absolute top-3 left-3 md:top-4 md:left-4 bg-white/90 backdrop-blur-sm px-3 py-1 md:px-4 md:py-2 rounded-full text-xs md:text-sm font-semibold text-gray-800 shadow-md z-10">
-                    🌿 Amazonía
-                </div>
-                <div class="absolute top-3 right-3 md:top-4 md:right-4 bg-black/50 backdrop-blur-sm px-2 py-0.5 md:px-3 md:py-1 rounded-full text-[10px] md:text-xs font-medium text-white z-10">
-                    2 deptos
-                </div>
-            </div>
-            <div class="p-4 md:p-6 bg-white">
-                <h3 class="text-lg md:text-xl lg:text-2xl font-bold text-gray-900 mb-2">Región Amazonía</h3>
-                <p class="text-xs md:text-sm text-gray-600 mb-3 md:mb-4 line-clamp-2">Selva tropical, ríos caudalosos y naturaleza virgen</p>
-                <div class="flex flex-wrap gap-2 mb-3 md:mb-4">
-                    <a href="/departamentos/amazonas" class="px-2 py-1 md:px-3 md:py-1 bg-[#1D4ED8]/10 text-[#1D4ED8] rounded-full text-[10px] md:text-xs font-medium hover:bg-[#1D4ED8]/20 transition-colors">Amazonas</a>
-                    <a href="/departamentos/vaupes" class="px-2 py-1 md:px-3 md:py-1 bg-[#1D4ED8]/10 text-[#1D4ED8] rounded-full text-[10px] md:text-xs font-medium hover:bg-[#1D4ED8]/20 transition-colors">Vaupés</a>
-                </div>
-                <div class="flex items-center justify-between pt-2 md:pt-3 border-t border-gray-200">
-                    <span class="text-[#1D4ED8] font-semibold text-xs md:text-sm flex items-center gap-2 hover:gap-3 transition-all">
-                        Explorar región <i class="fas fa-arrow-right text-xs md:text-sm"></i>
-                    </span>
-                </div>
-            </div>
-        </a>
-    </div>
-
-    <!-- Llanos -->
-    <div class="rounded-[20px] md:rounded-[32px] overflow-hidden bg-white shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300 w-full">
-        <a href="/regiones/llanos" class="block">
-            <div class="relative h-48 sm:h-56 md:h-64 overflow-hidden w-full" style="background: linear-gradient(135deg, #84cc16 0%, #65a30d 50%, #4d7c0f 100%);">
-                <div class="absolute top-3 left-3 md:top-4 md:left-4 bg-white/90 backdrop-blur-sm px-3 py-1 md:px-4 md:py-2 rounded-full text-xs md:text-sm font-semibold text-gray-800 shadow-md z-10">
-                    🌾 Llanos
-                </div>
-                <div class="absolute top-3 right-3 md:top-4 md:right-4 bg-black/50 backdrop-blur-sm px-2 py-0.5 md:px-3 md:py-1 rounded-full text-[10px] md:text-xs font-medium text-white z-10">
-                    4 deptos
-                </div>
-            </div>
-            <div class="p-4 md:p-6 bg-white">
-                <h3 class="text-lg md:text-xl lg:text-2xl font-bold text-gray-900 mb-2">Región Llanos</h3>
-                <p class="text-xs md:text-sm text-gray-600 mb-3 md:mb-4 line-clamp-2">Sabanas infinitas, ganadería y cultura llanera</p>
-                <div class="flex flex-wrap gap-2 mb-3 md:mb-4">
-                    <a href="/departamentos/meta" class="px-2 py-1 md:px-3 md:py-1 bg-lime-100 text-lime-700 rounded-full text-[10px] md:text-xs font-medium hover:bg-lime-200 transition-colors">Meta</a>
-                    <a href="/departamentos/casanare" class="px-2 py-1 md:px-3 md:py-1 bg-lime-100 text-lime-700 rounded-full text-[10px] md:text-xs font-medium hover:bg-lime-200 transition-colors">Casanare</a>
-                    <span class="px-2 py-1 md:px-3 md:py-1 bg-lime-100 text-lime-700 rounded-full text-[10px] md:text-xs font-medium">+2</span>
-                </div>
-                <div class="flex items-center justify-between pt-2 md:pt-3 border-t border-gray-200">
-                    <span class="text-lime-600 font-semibold text-xs md:text-sm flex items-center gap-2 hover:gap-3 transition-all">
-                        Explorar región <i class="fas fa-arrow-right text-xs md:text-sm"></i>
-                    </span>
-                </div>
-            </div>
-        </a>
-    </div>
-
-    <!-- Insular -->
-    <div class="rounded-[20px] md:rounded-[32px] overflow-hidden bg-white shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300 w-full">
-        <a href="/regiones/insular" class="block">
-            <div class="relative h-48 sm:h-56 md:h-64 overflow-hidden w-full" style="background: linear-gradient(135deg, #06b6d4 0%, #0891b2 50%, #0e7490 100%);">
-                <div class="absolute top-3 left-3 md:top-4 md:left-4 bg-white/90 backdrop-blur-sm px-3 py-1 md:px-4 md:py-2 rounded-full text-xs md:text-sm font-semibold text-gray-800 shadow-md z-10">
-                    🏝️ Insular
-                </div>
-                <div class="absolute top-3 right-3 md:top-4 md:right-4 bg-black/50 backdrop-blur-sm px-2 py-0.5 md:px-3 md:py-1 rounded-full text-[10px] md:text-xs font-medium text-white z-10">
-                    2 deptos
-                </div>
-            </div>
-            <div class="p-4 md:p-6 bg-white">
-                <h3 class="text-lg md:text-xl lg:text-2xl font-bold text-gray-900 mb-2">Región Insular</h3>
-                <p class="text-xs md:text-sm text-gray-600 mb-3 md:mb-4 line-clamp-2">Islas caribeñas, arrecifes de coral y paraíso tropical</p>
-                <div class="flex flex-wrap gap-2 mb-3 md:mb-4">
-                    <a href="/departamentos/san-andres-providencia" class="px-2 py-1 md:px-3 md:py-1 bg-violet-100 text-violet-700 rounded-full text-[10px] md:text-xs font-medium hover:bg-violet-200 transition-colors">San Andrés</a>
-                    <a href="/departamentos/san-andres-providencia" class="px-2 py-1 md:px-3 md:py-1 bg-violet-100 text-violet-700 rounded-full text-[10px] md:text-xs font-medium hover:bg-violet-200 transition-colors">Providencia</a>
-                </div>
-                <div class="flex items-center justify-between pt-2 md:pt-3 border-t border-gray-200">
-                    <span class="text-violet-600 font-semibold text-xs md:text-sm flex items-center gap-2 hover:gap-3 transition-all">
-                        Explorar región <i class="fas fa-arrow-right text-xs md:text-sm"></i>
-                    </span>
-                </div>
-            </div>
-        </a>
-    </div>
+        </div>
+    </a>
+    @endforeach
 </div>
 
 <!-- CTA Section -->
