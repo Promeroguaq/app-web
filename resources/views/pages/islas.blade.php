@@ -54,7 +54,7 @@
 @else
 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6 mb-6 md:mb-8">
     @foreach($items as $item)
-    <a href="{{ route('islas.show', ['id' => $item->id]) }}" class="block rounded-[20px] md:rounded-[28px] overflow-hidden bg-white shadow-lg hover:shadow-xl hover:-translate-y-2 transition-all duration-300 group cursor-pointer">
+    <a href="{{ route('puntos-interes.islas.show', ['id' => $item->id]) }}" class="block rounded-[20px] md:rounded-[28px] overflow-hidden bg-white shadow-lg hover:shadow-xl hover:-translate-y-2 transition-all duration-300 group cursor-pointer">
         <div class="relative h-48 md:h-56 overflow-hidden bg-gradient-to-br from-cyan-400 to-blue-500">
             @if($item->imagen)
             <img src="{{ $item->imagen }}" alt="{{ $item->nombre }}" class="w-full h-full object-cover">
