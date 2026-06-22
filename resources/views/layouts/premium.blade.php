@@ -74,6 +74,167 @@
             overflow-x: hidden;
             width: 100%;
             max-width: 100vw;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        /* Dark Mode - Complete Application */
+        .dark body {
+            background: #0f172a;
+            color: #f1f5f9;
+        }
+
+        .dark .sidebar {
+            background: #1e293b;
+            border-right-color: rgba(255,255,255,0.1);
+        }
+
+        .dark .main {
+            background: #0f172a;
+        }
+
+        .dark .bg-white {
+            background: #1e293b !important;
+        }
+
+        .dark .text-midnight-900,
+        .dark .text-gray-700,
+        .dark .text-gray-900,
+        .dark .text-gray-800 {
+            color: #f1f5f9 !important;
+        }
+
+        .dark .text-gray-500,
+        .dark .text-gray-600 {
+            color: #94a3b8 !important;
+        }
+
+        .dark .border-gray-200,
+        .dark .border-gray-300 {
+            border-color: rgba(255,255,255,0.1) !important;
+        }
+
+        .dark .bg-gray-50 {
+            background: #334155 !important;
+        }
+
+        .dark .bg-gray-100 {
+            background: #1e293b !important;
+        }
+
+        .dark input,
+        .dark select,
+        .dark textarea {
+            background: #334155 !important;
+            color: #f1f5f9 !important;
+            border-color: rgba(255,255,255,0.1) !important;
+        }
+
+        .dark input::placeholder,
+        .dark select::placeholder,
+        .dark textarea::placeholder {
+            color: #94a3b8 !important;
+        }
+
+        .dark input:focus,
+        .dark select:focus,
+        .dark textarea:focus {
+            border-color: #10b981 !important;
+            outline: none;
+        }
+
+        .dark .from-[#07111F],
+        .dark .to-[#0B1F2A],
+        .dark .to-[#063B32] {
+            filter: brightness(1.2);
+        }
+
+        .dark .bg-gradient-to-br {
+            filter: brightness(1.1);
+        }
+
+        /* Comfortable Font Size */
+        .font-size-comfortable {
+            font-size: 110%;
+        }
+
+        .font-size-comfortable p,
+        .font-size-comfortable span,
+        .font-size-comfortable label,
+        .font-size-comfortable h3,
+        .font-size-comfortable h4,
+        .font-size-comfortable h5,
+        .font-size-comfortable h6,
+        .font-size-comfortable .text-sm,
+        .font-size-comfortable .text-base {
+            font-size: 1.1em;
+        }
+
+        .font-size-comfortable h1,
+        .font-size-comfortable h2 {
+            font-size: 1.05em;
+        }
+
+        /* Reduce Motion */
+        .reduce-motion *,
+        .reduce-motion *::before,
+        .reduce-motion *::after {
+            animation-duration: 0.01ms !important;
+            animation-iteration-count: 1 !important;
+            transition-duration: 0.01ms !important;
+            scroll-behavior: auto !important;
+        }
+
+        .reduce-motion .sidebar {
+            transition: none !important;
+        }
+
+        .reduce-motion .sidebar:hover {
+            width: 80px !important;
+        }
+
+        .reduce-motion .hover:-translate-y-[2px],
+        .reduce-motion .hover:shadow-lg {
+            transform: none !important;
+            box-shadow: none !important;
+        }
+
+        .reduce-motion .animate-float {
+            animation: none !important;
+        }
+
+        .reduce-motion .counter-anim {
+            animation: none !important;
+        }
+
+        /* Feedback Animations */
+        @keyframes fade-in {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fade-out {
+            from {
+                opacity: 1;
+                transform: translateY(0);
+            }
+            to {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+        }
+
+        .animate-fade-in {
+            animation: fade-in 0.3s ease-out;
+        }
+
+        .animate-fade-out {
+            animation: fade-out 0.3s ease-out forwards;
         }
         
         /* Premium Sidebar */
@@ -538,19 +699,31 @@
                 </div>
                 <span>Categorías</span>
             </a>
-            <a href="/eventos" class="nav-item {{ request()->is('eventos*') || request()->is('fiestas*') ? 'active' : '' }}">
+            <a href="{{ route('configuracion') }}" class="nav-item {{ request()->is('configuracion*') ? 'active' : '' }}">
                 <div class="nav-icon-wrapper">
-                    <i class="fas fa-calendar-alt"></i>
+                    <i class="fas fa-cog"></i>
                 </div>
-                <span>Eventos</span>
-            </a>
-            <a href="/alojamiento" class="nav-item {{ request()->is('alojamiento*') || request()->is('hoteles*') ? 'active' : '' }}">
-                <div class="nav-icon-wrapper">
-                    <i class="fas fa-building"></i>
-                </div>
-                <span>Agencias</span>
+                <span>Configuración</span>
             </a>
         </nav>
+
+        <!-- Lema editorial inferior -->
+        <div class="mt-auto px-3 pb-6">
+            <div class="relative">
+                <!-- Línea decorativa -->
+                <div class="h-px bg-slate-200 mb-3"></div>
+                <!-- Lema principal -->
+                <p class="text-xs font-medium tracking-wide leading-relaxed text-slate-600 text-center">
+                    Colombia se descubre paso a paso
+                </p>
+                <!-- Decoración minimalista de puntos de ruta -->
+                <div class="flex justify-center gap-1 mt-2 opacity-30">
+                    <div class="w-1 h-1 rounded-full bg-emerald-500"></div>
+                    <div class="w-1 h-1 rounded-full bg-slate-400"></div>
+                    <div class="w-1 h-1 rounded-full bg-emerald-500"></div>
+                </div>
+            </div>
+        </div>
     </aside>
 
     <!-- Mobile Overlay -->
@@ -567,6 +740,9 @@
             @yield('content')
         </div>
     </main>
+
+    <!-- Preferences System -->
+    <script src="{{ asset('js/preferences.js') }}"></script>
 
     <script>
         // Mobile menu

@@ -492,7 +492,7 @@
     </div>
 
     <!-- Experiencias Gastronómicas -->
-    <div class="mb-6 md:mb-8 lg:mb-12">
+    <div class="mb-6 md:mb-8 lg:mb-12" data-preference-section="gastronomy">
         <div class="flex items-center justify-between mb-4 md:mb-6">
             <h2 class="font-display text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold text-midnight-900">Experiencias Gastronómicas</h2>
             <a href="{{ route('gastronomia') }}" class="text-sm md:text-base font-medium text-gray-600 hover:text-midnight-900 transition-colors">
@@ -560,7 +560,7 @@
         </div>
 
         <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 md:gap-3 lg:gap-6">
-            <a href="{{ route('puntos-interes.playas') }}" class="cinematic-card block group w-full card-anim">
+            <a href="{{ route('puntos-interes.playas') }}" class="cinematic-card block group w-full card-anim" data-preference-section="nature">
                 <div class="relative h-32 sm:h-36 md:h-40 lg:h-48 overflow-hidden rounded-2xl md:rounded-3xl w-full premium-card-3d premium-image-hover">
                     <img src="{{ $inspiracionImages['playas'] }}" alt="Playas del Caribe" class="absolute inset-0 w-full h-full object-cover">
                     <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent"></div>
@@ -574,7 +574,7 @@
                     </div>
                 </div>
             </a>
-            <a href="{{ route('puntos-interes.museos') }}" class="cinematic-card block group w-full card-anim">
+            <a href="{{ route('puntos-interes.museos') }}" class="cinematic-card block group w-full card-anim" data-preference-section="culture">
                 <div class="relative h-32 sm:h-36 md:h-40 lg:h-48 overflow-hidden rounded-2xl md:rounded-3xl w-full premium-card-3d premium-image-hover">
                     <img src="{{ $inspiracionImages['museos'] }}" alt="Museos & Cultura" class="absolute inset-0 w-full h-full object-cover">
                     <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent"></div>
@@ -588,7 +588,7 @@
                     </div>
                 </div>
             </a>
-            <a href="{{ route('puntos-interes.deportes-aventura') }}" class="cinematic-card block group w-full card-anim">
+            <a href="{{ route('puntos-interes.deportes-aventura') }}" class="cinematic-card block group w-full card-anim" data-preference-section="nature">
                 <div class="relative h-32 sm:h-36 md:h-40 lg:h-48 overflow-hidden rounded-2xl md:rounded-3xl w-full premium-card-3d premium-image-hover">
                     <img src="{{ $inspiracionImages['aventura'] }}" alt="Aventura & Naturaleza" class="absolute inset-0 w-full h-full object-cover">
                     <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent"></div>
