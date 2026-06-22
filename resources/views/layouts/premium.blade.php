@@ -80,7 +80,7 @@
         .sidebar {
             width: 80px;
             min-height: 100vh;
-            background: linear-gradient(180deg, #07111F 0%, #081927 50%, #03101A 100%);
+            background: #FCFBF8;
             position: fixed;
             left: 0;
             top: 0;
@@ -90,8 +90,8 @@
             flex-direction: column;
             align-items: center;
             padding: 1.5rem 0;
-            box-shadow: 12px 0 40px rgba(0,0,0,0.25);
-            border-right: 1px solid rgba(255,255,255,0.1);
+            box-shadow: 4px 0 24px rgba(0,0,0,0.08);
+            border-right: 1px solid rgba(0,0,0,0.06);
             overflow: hidden;
         }
 
@@ -99,7 +99,7 @@
             content: '';
             position: absolute;
             inset: 0;
-            background: radial-gradient(circle at top left, rgba(37,99,235,0.18), transparent 35%);
+            background: radial-gradient(circle at top left, rgba(16,185,129,0.06), transparent 40%);
             pointer-events: none;
         }
         
@@ -108,65 +108,86 @@
         }
         
         .sidebar-logo {
-            width: 80px;
-            height: 64px;
-            background: white;
-            border-radius: 22px;
+            width: 100%;
+            max-width: 70px;
+            height: auto;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-bottom: 2.5rem;
+            margin-bottom: 2rem;
             flex-shrink: 0;
-            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
-            border: 1px solid rgba(255,255,255,0.6);
-            overflow: hidden;
-            position: relative;
-            z-index: 10;
+            padding: 0 0.5rem;
+        }
+
+        .sidebar-logo img {
+            width: 100%;
+            height: auto;
+            object-fit: contain;
         }
 
         @media (min-width: 768px) {
             .sidebar-logo {
-                width: 112px;
-                height: 96px;
+                max-width: 90px;
+                margin-bottom: 2.5rem;
             }
         }
         
         .sidebar-nav {
             display: flex;
             flex-direction: column;
-            gap: 0.75rem;
+            gap: 0.5rem;
             width: 100%;
-            padding: 0 1rem;
+            padding: 0 0.75rem;
+        }
+
+        .nav-label {
+            font-size: 0.65rem;
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            color: #64748b;
+            text-transform: uppercase;
+            padding: 0 0.5rem;
+            margin-bottom: 0.5rem;
+            white-space: nowrap;
+        }
+
+        @media (min-width: 768px) {
+            .nav-label {
+                font-size: 0.7rem;
+                padding: 0 0.75rem;
+            }
         }
         
         .nav-item {
             display: flex;
             align-items: center;
-            gap: 1rem;
-            padding: 1rem;
-            border-radius: 20px;
-            color: rgba(255,255,255,0.65) !important;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            border-radius: 12px;
+            color: #334155 !important;
             text-decoration: none;
-            transition: all 0.3s ease-out;
+            transition: all 0.25s ease-out;
             white-space: nowrap;
             overflow: hidden;
             position: relative;
+            min-height: 44px;
         }
 
         .nav-item i {
-            font-size: 1.25rem;
-            min-width: 24px;
+            font-size: 1.1rem;
+            min-width: 20px;
             text-align: center;
-            color: rgba(255,255,255,0.8) !important;
+            color: #64748b !important;
+            transition: color 0.25s ease-out;
         }
 
         .nav-item span {
             opacity: 0;
-            transform: translateX(-10px);
-            transition: all 0.3s ease-out;
+            transform: translateX(-8px);
+            transition: all 0.25s ease-out;
             font-weight: 500;
-            font-size: 0.9rem;
-            color: rgba(255,255,255,0.75) !important;
+            font-size: 0.875rem;
+            color: #1e293b !important;
         }
 
         .sidebar:hover .nav-item span {
@@ -175,18 +196,19 @@
         }
 
         .nav-item:hover {
-            background: rgba(255,255,255,0.05);
-            color: white !important;
-            transform: translateX(4px);
+            background: #f1f5f9;
+            color: #0f172a !important;
+            transform: translateX(2px);
         }
 
         .nav-item:hover i {
-            color: white !important;
+            color: #0ea5e9 !important;
         }
 
         .nav-item.active {
-            background: rgba(255,255,255,0.05);
+            background: linear-gradient(135deg, #0c4a6e 0%, #1e3a5f 100%);
             color: white !important;
+            box-shadow: 0 4px 12px rgba(12, 74, 110, 0.2);
         }
 
         .nav-item.active::before {
@@ -195,15 +217,15 @@
             left: 0;
             top: 50%;
             transform: translateY(-50%);
-            height: 28px;
+            height: 24px;
             width: 3px;
-            background: linear-gradient(to bottom, #67e8f9, #3b82f6);
-            border-radius: 0 4px 4px 0;
-            box-shadow: 0 0 14px rgba(59, 130, 246, 0.55);
+            background: #10b981;
+            border-radius: 0 3px 3px 0;
+            box-shadow: 0 0 8px rgba(16, 185, 129, 0.4);
         }
 
         .nav-item.active i {
-            color: white !important;
+            color: rgba(255,255,255,0.9) !important;
         }
 
         .nav-item.active span {
@@ -212,28 +234,30 @@
             color: white !important;
         }
 
+        .nav-item:focus-visible {
+            outline: 2px solid #10b981;
+            outline-offset: 2px;
+        }
+
         .nav-icon-wrapper {
-            width: 40px;
-            height: 40px;
-            border-radius: 16px;
-            background: rgba(255,255,255,0.08);
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            background: #e2e8f0;
             display: flex;
             align-items: center;
             justify-content: center;
             flex-shrink: 0;
-            transition: all 0.3s ease-out;
-            border: 1px solid rgba(255,255,255,0.05);
+            transition: all 0.25s ease-out;
         }
 
         .nav-item:hover .nav-icon-wrapper {
-            background: rgba(255,255,255,0.12);
-            border-color: rgba(255,255,255,0.1);
+            background: #cbd5e1;
         }
 
         .nav-item.active .nav-icon-wrapper {
-            background: rgba(255,255,255,0.15);
-            border: 1px solid rgba(255,255,255,0.15);
-            box-shadow: inset 0 1px 0 rgba(255,255,255,0.15), 0 8px 20px rgba(0,0,0,0.22);
+            background: rgba(255,255,255,0.2);
+            border: 1px solid rgba(255,255,255,0.1);
         }
         
         /* Main Content */
@@ -329,12 +353,17 @@
                 height: 60vh;
                 min-height: 450px;
             }
+
+            .nav-item {
+                min-height: 40px;
+            }
         }
         
         @media (max-width: 768px) {
             .sidebar {
                 transform: translateX(-100%);
                 width: 280px;
+                background: #FCFBF8;
             }
 
             .sidebar.show {
@@ -342,12 +371,16 @@
             }
 
             .nav-item {
-                color: white !important;
+                color: #334155 !important;
             }
 
             .nav-item span {
                 opacity: 1 !important;
                 transform: translateX(0) !important;
+            }
+
+            .nav-item i {
+                color: #64748b !important;
             }
 
             .main {
@@ -370,6 +403,10 @@
             .glass-badge {
                 padding: 0.3rem 0.6rem;
                 font-size: 0.7rem;
+            }
+
+            .nav-label {
+                opacity: 1;
             }
         }
         
@@ -479,38 +516,39 @@
     <!-- Sidebar -->
     <aside class="sidebar" id="sidebar">
         <div class="sidebar-logo">
-            <img src="{{ asset('assets/logo.JPG') }}" alt="Rutas por Colombia" class="w-[90%] h-[90%] object-contain object-center">
+            <img src="{{ asset('assets/logo.JPG') }}" alt="Rutas por Colombia">
         </div>
         <nav class="sidebar-nav">
-            <a href="{{ route('dashboard') }}" class="nav-item {{ request()->is('dashboard') ? 'active' : '' }}" style="color: white !important;">
+            <div class="nav-label">NAVEGACIÓN</div>
+            <a href="{{ route('dashboard') }}" class="nav-item {{ request()->is('dashboard') ? 'active' : '' }}">
                 <div class="nav-icon-wrapper">
-                    <i class="fas fa-home" style="color: white !important;"></i>
+                    <i class="fas fa-home"></i>
                 </div>
-                <span style="color: white !important;">Inicio</span>
+                <span>Inicio</span>
             </a>
-            <a href="/departamentos" class="nav-item {{ request()->is('departamentos*') || request()->is('municipios*') || request()->is('puntos-interes*') || request()->is('playas*') ? 'active' : '' }}" style="color: white !important;">
+            <a href="/departamentos" class="nav-item {{ request()->is('departamentos*') || request()->is('municipios*') || request()->is('puntos-interes*') || request()->is('playas*') ? 'active' : '' }}">
                 <div class="nav-icon-wrapper">
-                    <i class="fas fa-map-marked-alt" style="color: white !important;"></i>
+                    <i class="fas fa-map-marked-alt"></i>
                 </div>
-                <span style="color: white !important;">Destinos</span>
+                <span>Destinos</span>
             </a>
-            <a href="/categorias" class="nav-item {{ request()->is('categorias*') ? 'active' : '' }}" style="color: white !important;">
+            <a href="/categorias" class="nav-item {{ request()->is('categorias*') ? 'active' : '' }}">
                 <div class="nav-icon-wrapper">
-                    <i class="fas fa-th-large" style="color: white !important;"></i>
+                    <i class="fas fa-th-large"></i>
                 </div>
-                <span style="color: white !important;">Categorías</span>
+                <span>Categorías</span>
             </a>
-            <a href="/eventos" class="nav-item {{ request()->is('eventos*') || request()->is('fiestas*') ? 'active' : '' }}" style="color: white !important;">
+            <a href="/eventos" class="nav-item {{ request()->is('eventos*') || request()->is('fiestas*') ? 'active' : '' }}">
                 <div class="nav-icon-wrapper">
-                    <i class="fas fa-calendar-alt" style="color: white !important;"></i>
+                    <i class="fas fa-calendar-alt"></i>
                 </div>
-                <span style="color: white !important;">Eventos</span>
+                <span>Eventos</span>
             </a>
-            <a href="/alojamiento" class="nav-item {{ request()->is('alojamiento*') || request()->is('hoteles*') ? 'active' : '' }}" style="color: white !important;">
+            <a href="/alojamiento" class="nav-item {{ request()->is('alojamiento*') || request()->is('hoteles*') ? 'active' : '' }}">
                 <div class="nav-icon-wrapper">
-                    <i class="fas fa-bed" style="color: white !important;"></i>
+                    <i class="fas fa-bed"></i>
                 </div>
-                <span style="color: white !important;">Alojamiento</span>
+                <span>Alojamiento</span>
             </a>
         </nav>
     </aside>
