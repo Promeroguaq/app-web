@@ -3,25 +3,63 @@
 @section('title', 'Deportes de Aventura')
 
 @section('content')
-<!-- Hero Premium -->
-<div class="relative h-[420px] md:h-[480px] rounded-[32px] overflow-hidden mb-12 md:mb-16 max-w-7xl mx-auto" style="background: linear-gradient(135deg, #ea580c 0%, #c2410c 50%, #9a3412 100%);">
-    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
-    <div class="absolute bottom-0 left-0 right-0 p-8 md:p-16 text-white">
-        <div class="glass-badge inline-block mb-6">
-            🧗 Turismo y Aventura
-        </div>
-        <h1 class="font-display text-4xl md:text-5xl lg:text-6xl font-bold mb-4 leading-tight">
-            Deportes de Aventura
-        </h1>
-        <p class="text-lg md:text-xl opacity-90 max-w-2xl">
-            Vive la adrenalina en los paisajes más espectaculares de Colombia
-        </p>
-        <div class="flex flex-wrap gap-3 mt-6">
-            <span class="glass-badge text-sm">Aventura</span>
-            <span class="glass-badge text-sm">Adrenalina</span>
-            <span class="glass-badge text-sm">Naturaleza</span>
-            <span class="glass-badge text-sm">Extremo</span>
-            <span class="glass-badge text-sm">Seguro</span>
+<!-- Hero Premium Redesign - Full Background Image -->
+<div class="relative h-[230px] sm:h-[250px] md:h-[280px] lg:h-[300px] xl:h-[340px] overflow-hidden rounded-[32px] mb-8 md:mb-12 max-w-7xl mx-auto">
+    <!-- Full background image - Adventure landscape -->
+    <img
+        src="https://m.rutascolombia.com/Imagenes_app/turismo_de_salud/termales_de_san_juan_purace.jpg"
+        alt="Paisaje de aventura en Colombia"
+        class="absolute inset-0 w-full h-full object-cover"
+        loading="eager"
+        fetchpriority="high"
+    >
+
+    <!-- Progressive overlay - left to right gradient for text legibility -->
+    <div class="absolute inset-0" style="background: linear-gradient(to right, #c2410c 0%, #c2410c 40%, rgba(194, 65, 12, 0.7) 60%, rgba(194, 65, 12, 0.3) 80%, rgba(194, 65, 12, 0.1) 100%);"></div>
+
+    <!-- Bottom overlay for content integration -->
+    <div class="absolute inset-0 bg-gradient-to-t from-[#c2410c]/30 via-transparent to-transparent"></div>
+
+    <!-- Decorative texture overlay - subtle geographic pattern -->
+    <div class="absolute inset-0 opacity-5" style="background-image: radial-gradient(circle at 20% 50%, rgba(255,255,255,0.1) 0%, transparent 50%), radial-gradient(circle at 80% 50%, rgba(255,255,255,0.05) 0%, transparent 50%);"></div>
+
+    <!-- Main content - centered vertically -->
+    <div class="absolute inset-0 flex items-center p-6 md:p-10 lg:p-16">
+        <div class="relative z-10 max-w-2xl">
+            <!-- Badge -->
+            <div class="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/20 px-4 py-2 rounded-full mb-4 md:mb-6">
+                <span class="w-2 h-2 bg-orange-400 rounded-full animate-pulse"></span>
+                <span class="text-white/90 text-xs md:text-sm font-medium tracking-wide uppercase">🧗 Turismo y Aventura</span>
+            </div>
+
+            <!-- Title -->
+            <h1 class="font-display text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold text-white mb-3 md:mb-4 leading-tight" style="text-shadow: 0 2px 20px rgba(0,0,0,0.3);">
+                Deportes de Aventura
+            </h1>
+
+            <!-- Description -->
+            <p class="text-white/80 text-sm md:text-base lg:text-lg mb-6 md:mb-8 max-w-xl leading-relaxed">
+                Vive la adrenalina en los paisajes más espectaculares de Colombia
+            </p>
+
+            <!-- Chips -->
+            <div class="flex flex-wrap gap-2 md:gap-3">
+                <span class="inline-flex items-center gap-1.5 px-3 py-1.5 md:px-4 md:py-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full text-white/90 text-xs md:text-sm font-medium hover:bg-white/15 transition-all cursor-default">
+                    <i class="fas fa-hiking text-xs md:text-sm"></i> Aventura
+                </span>
+                <span class="inline-flex items-center gap-1.5 px-3 py-1.5 md:px-4 md:py-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full text-white/90 text-xs md:text-sm font-medium hover:bg-white/15 transition-all cursor-default">
+                    <i class="fas fa-bolt text-xs md:text-sm"></i> Adrenalina
+                </span>
+                <span class="inline-flex items-center gap-1.5 px-3 py-1.5 md:px-4 md:py-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full text-white/90 text-xs md:text-sm font-medium hover:bg-white/15 transition-all cursor-default">
+                    <i class="fas fa-leaf text-xs md:text-sm"></i> Naturaleza
+                </span>
+                <span class="inline-flex items-center gap-1.5 px-3 py-1.5 md:px-4 md:py-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full text-white/90 text-xs md:text-sm font-medium hover:bg-white/15 transition-all cursor-default">
+                    <i class="fas fa-mountain text-xs md:text-sm"></i> Extremo
+                </span>
+                <span class="inline-flex items-center gap-1.5 px-3 py-1.5 md:px-4 md:py-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full text-white/90 text-xs md:text-sm font-medium hover:bg-white/15 transition-all cursor-default">
+                    <i class="fas fa-shield-alt text-xs md:text-sm"></i> Seguro
+                </span>
+            </div>
         </div>
     </div>
 </div>
@@ -58,13 +96,23 @@
             <div class="relative h-56 overflow-hidden">
                 @if($item->imagen)
                     <img src="{{ $item->imagen }}" alt="{{ $item->nombre }}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                    <!-- Elegant blue overlay -->
+                    <div class="absolute inset-0 bg-gradient-to-br from-[#0c4a6e]/70 via-[#1e3a5f]/50 to-[#1D4ED8]/40"></div>
+                    <!-- Bottom gradient for text legibility -->
+                    <div class="absolute inset-0 bg-gradient-to-t from-[#0c4a6e]/80 via-transparent to-transparent"></div>
                 @else
-                    <div class="w-full h-full bg-gradient-to-br from-[#1D4ED8] to-[#1E40AF] flex items-center justify-center">
-                        <i class="fas fa-mountain text-white text-6xl"></i>
+                    <!-- Premium fallback with geographic pattern -->
+                    <div class="w-full h-full bg-gradient-to-br from-[#0c4a6e] via-[#1e3a5f] to-[#1D4ED8] relative overflow-hidden">
+                        <!-- Subtle geographic texture -->
+                        <div class="absolute inset-0 opacity-10" style="background-image: radial-gradient(circle at 30% 40%, rgba(255,255,255,0.1) 0%, transparent 50%), radial-gradient(circle at 70% 60%, rgba(255,255,255,0.05) 0%, transparent 50%);"></div>
+                        <!-- Mountain silhouette -->
+                        <div class="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-[#0c4a6e]/50 to-transparent"></div>
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <i class="fas fa-mountain text-white/20 text-8xl"></i>
+                        </div>
                     </div>
                 @endif
-                <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
-                <div class="absolute top-4 left-4 bg-[#1D4ED8]/90 backdrop-blur-sm px-3 py-1.5 rounded-full text-xs text-white font-semibold">
+                <div class="absolute top-4 left-4 bg-white/10 backdrop-blur-md border border-white/20 px-3 py-1.5 rounded-full text-xs text-white font-semibold">
                     🧗 Aventura
                 </div>
                 <div class="absolute bottom-0 left-0 right-0 p-4 text-white">
@@ -81,10 +129,28 @@
             <div class="p-5 md:p-6">
                 <h3 class="font-display text-lg md:text-xl font-bold text-gray-900 mb-2">{{ $item->nombre }}</h3>
                 <p class="text-gray-600 text-sm mb-4 line-clamp-3">{{ $item->descripcion }}</p>
-                <div class="flex items-center gap-2 text-sm text-gray-500 mb-2">
-                    <i class="fas fa-map-marker-alt text-[#1D4ED8]"></i>
-                    <span>{{ $item->localidad ?? 'Colombia' }}</span>
-                </div>
+                
+                @if(!empty($item->municipios))
+                    @php
+                        $localidadesArray = array_map('trim', explode(',', $item->municipios));
+                        $localidadesMostrar = array_slice($localidadesArray, 0, 3);
+                        $totalLocalidades = count($localidadesArray);
+                        $adicional = $totalLocalidades > 3 ? ($totalLocalidades - 3) : 0;
+                    @endphp
+                    <div class="flex flex-wrap gap-2 mb-3">
+                        @foreach($localidadesMostrar as $localidad)
+                            <span class="inline-flex items-center gap-1 text-xs text-gray-600 bg-gray-50 px-2 py-1 rounded-full">
+                                📍 {{ $localidad }}
+                            </span>
+                        @endforeach
+                        @if($adicional > 0)
+                            <span class="inline-flex items-center gap-1 text-xs text-[#1D4ED8] font-medium bg-blue-50 px-2 py-1 rounded-full">
+                                + {{ $adicional }} {{ $adicional == 1 ? 'destino más' : 'destinos más' }}
+                            </span>
+                        @endif
+                    </div>
+                @endif
+                
                 <a href="{{ route('puntos-interes.deportes-aventura.show', $item->slug) }}" class="block w-full mt-4 px-4 py-2.5 bg-gradient-to-r from-[#1D4ED8] to-[#1E40AF] text-white rounded-full font-semibold hover:shadow-lg transition-all text-sm text-center">
                     Ver actividad
                 </a>
