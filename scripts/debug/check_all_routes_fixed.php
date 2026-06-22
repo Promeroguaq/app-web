@@ -58,7 +58,7 @@ function getSampleName($sample, $table) {
     
     $name_fields = [
         'tabla_deporte_aventura' => 'NOMBRE_DEPORTES_AVENTURA',
-        'tabla_desierto_laguna' => 'NOMBRE_DESIERTO_LAGUNAS',
+        'tabla_desierto_laguna' => 'COL 2',
         'tabla_gastronomia' => 'PLATOS_TIPICOS',
         'tabla_iglesias' => 'NOMBRE_IGLESIA',
         'tabla_islas' => 'NOMBRE_ISLA',

@@ -14,9 +14,10 @@ class DesiertoLaguna extends Model
     protected $primaryKey = 'id';
 
     protected $fillable = [
-        'id_desierto',
-        'nombre_desierto_lagunas',
-        'id_localities',
-        'descripcion'
+        'COL 1',
+        'COL 2',
+        'COL 3',
+        'COL 4',
+        'COL 5'
     ];
 }
