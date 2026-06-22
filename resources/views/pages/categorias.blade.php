@@ -61,11 +61,6 @@
                 </span>
             </div>
 
-            <!-- Scroll button -->
-            <a href="#filtros" class="inline-flex items-center gap-2 text-white/70 hover:text-white/90 text-sm font-medium transition-all group">
-                <span>Explorar categorías</span>
-                <svg class="w-4 h-4 transform group-hover:translate-y-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/></svg>
-            </a>
         </div>
     </div>
 </div>
@@ -127,8 +122,7 @@
             'Departamentos' => 'linear-gradient(135deg, #3b82f6 0%, #2563eb 50%, #1d4ed8 100%)',
             'Municipios' => 'linear-gradient(135deg, #8b5cf6 0%, #7c3aed 50%, #6d28d9 100%)',
             'Eventos' => 'linear-gradient(135deg, #ec4899 0%, #db2777 50%, #be185d 100%)',
-            'Alojamiento' => 'linear-gradient(135deg, #6366f1 0%, #4f46e5 50%, #4338ca 100%)',
-            'Agencias' => 'linear-gradient(135deg, #14b8a6 0%, #0d9488 50%, #0f766e 100%)'
+            'Alojamiento' => 'linear-gradient(135deg, #6366f1 0%, #4f46e5 50%, #4338ca 100%)'
         ];
         $categoriaGradient = $categoriaGradients[$categoria['nombre']] ?? 'linear-gradient(135deg, #3b82f6 0%, #2563eb 50%, #1d4ed8 100%)';
 
@@ -147,8 +141,7 @@
             'Departamentos' => 'https://m.rutascolombia.com/Imagenes_app/capital_cities/bogota/bogoteatro.jpg',
             'Municipios' => 'https://m.rutascolombia.com/Imagenes_app/capital_cities/medellin/medellin.jpg',
             'Eventos' => 'https://m.rutascolombia.com/Imagenes_app/categorias/ferias.png',
-            'Alojamiento' => 'https://m.rutascolombia.com/Imagenes_app/capital_cities/armenia/armenia.jpg',
-            'Agencias' => 'https://m.rutascolombia.com/Imagenes_app/categorias/Rutas.jpeg'
+            'Alojamiento' => 'https://m.rutascolombia.com/Imagenes_app/capital_cities/armenia/armenia.jpg'
         ];
         $categoriaImage = $categoriaImages[$categoria['nombre']] ?? 'https://m.rutascolombia.com/Imagenes_app/fotos_regions/regioncafetera.jpg';
     @endphp
