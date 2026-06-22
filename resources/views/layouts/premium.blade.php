@@ -15,6 +15,8 @@
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
     <script>
         tailwind.config = {
             theme: {
@@ -740,9 +742,6 @@
             @yield('content')
         </div>
     </main>
-
-    <!-- Preferences System -->
-    <script src="{{ asset('js/preferences.js') }}"></script>
 
     <script>
         // Mobile menu

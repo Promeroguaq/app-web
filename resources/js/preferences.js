@@ -41,8 +41,8 @@ const Preferences = {
         // Sincronizar controles en la página de configuración
         this.syncControls();
         
-        // Configurar botones de guardado
-        this.setupSaveButtons();
+        // Configurar formularios
+        this.setupForms();
         
         // Escuchar cambios en preferencias del sistema
         this.watchSystemPreferences();
@@ -151,283 +151,194 @@ const Preferences = {
     // Sincronizar controles visuales con localStorage
     syncControls() {
         // Región preferida
-        const regionSelect = document.querySelector('[data-setting="preferred-region"]');
+        const regionSelect = document.querySelector('[name="preferred-region"]');
         if (regionSelect) {
             const preferredRegion = this.get(this.KEYS.PREFERRED_REGION);
             regionSelect.value = preferredRegion || '';
         }
 
         // Vista predeterminada
-        const viewSelect = document.querySelector('[data-setting="default-explore-view"]');
+        const viewSelect = document.querySelector('[name="default-explore-view"]');
         if (viewSelect) {
             const defaultView = this.get(this.KEYS.DEFAULT_EXPLORE_VIEW);
             viewSelect.value = defaultView || 'destacados';
         }
 
         // Switches de contenido
-        const cultureSwitch = document.querySelector('[data-setting="show-culture"]');
+        const cultureSwitch = document.querySelector('[name="show-culture"]');
         if (cultureSwitch) {
             cultureSwitch.checked = this.get(this.KEYS.SHOW_CULTURE);
         }
 
-        const natureSwitch = document.querySelector('[data-setting="show-nature"]');
+        const natureSwitch = document.querySelector('[name="show-nature"]');
         if (natureSwitch) {
             natureSwitch.checked = this.get(this.KEYS.SHOW_NATURE);
         }
 
-        const gastronomySwitch = document.querySelector('[data-setting="show-gastronomy"]');
+        const gastronomySwitch = document.querySelector('[name="show-gastronomy"]');
         if (gastronomySwitch) {
             gastronomySwitch.checked = this.get(this.KEYS.SHOW_GASTRONOMY);
         }
 
         // Recordar preferencias
-        const rememberSwitch = document.querySelector('[data-setting="remember-preferences"]');
+        const rememberSwitch = document.querySelector('[name="remember-preferences"]');
         if (rememberSwitch) {
             rememberSwitch.checked = this.get(this.KEYS.REMEMBER_PREFERENCES);
         }
 
         // Tema
-        const themeRadios = document.querySelectorAll('[data-setting="theme"]');
+        const themeRadios = document.querySelectorAll('[name="theme"]');
         const currentTheme = this.get(this.KEYS.THEME);
         themeRadios.forEach(radio => {
             radio.checked = radio.value === currentTheme;
         });
 
         // Tamaño de fuente
-        const fontSizeSelect = document.querySelector('[data-setting="font-size"]');
+        const fontSizeSelect = document.querySelector('[name="font-size"]');
         if (fontSizeSelect) {
             const currentFontSize = this.get(this.KEYS.FONT_SIZE);
             fontSizeSelect.value = currentFontSize || 'normal';
         }
 
         // Reducir animaciones
-        const motionSwitch = document.querySelector('[data-setting="reduce-motion"]');
+        const motionSwitch = document.querySelector('[name="reduce-motion"]');
         if (motionSwitch) {
             motionSwitch.checked = this.get(this.KEYS.REDUCE_MOTION);
         }
     },
 
-    // Configurar botones de guardado
-    setupSaveButtons() {
-        // Botón Guardar General
-        const btnSaveGeneral = document.getElementById('btn-save-general');
-        if (btnSaveGeneral) {
-            btnSaveGeneral.addEventListener('click', () => {
-                this.saveGeneral();
+    // Configurar formularios
+    setupForms() {
+        const forms = document.querySelectorAll('[data-preferences-form]');
+        
+        forms.forEach(form => {
+            // Event listener para submit
+            form.addEventListener('submit', (e) => {
+                e.preventDefault();
+                this.handleFormSubmit(form);
             });
-        }
 
-        // Botón Restablecer General
-        const btnResetGeneral = document.getElementById('btn-reset-general');
-        if (btnResetGeneral) {
-            btnResetGeneral.addEventListener('click', () => {
-                this.resetGeneral();
-            });
-        }
-
-        // Botón Guardar Preferencias
-        const btnSavePreferencias = document.getElementById('btn-save-preferencias');
-        if (btnSavePreferencias) {
-            btnSavePreferencias.addEventListener('click', () => {
-                this.savePreferencias();
-            });
-        }
-
-        // Botón Restablecer Preferencias
-        const btnResetPreferencias = document.getElementById('btn-reset-preferencias');
-        if (btnResetPreferencias) {
-            btnResetPreferencias.addEventListener('click', () => {
-                this.resetPreferencias();
-            });
-        }
-
-        // Botón Guardar Privacidad
-        const btnSavePrivacidad = document.getElementById('btn-save-privacidad');
-        if (btnSavePrivacidad) {
-            btnSavePrivacidad.addEventListener('click', () => {
-                this.savePrivacidad();
-            });
-        }
-
-        // Botón Restablecer Privacidad
-        const btnResetPrivacidad = document.getElementById('btn-reset-privacidad');
-        if (btnResetPrivacidad) {
-            btnResetPrivacidad.addEventListener('click', () => {
-                this.resetPrivacidad();
-            });
-        }
-
-        // Botón Guardar Apariencia
-        const btnSaveApariencia = document.getElementById('btn-save-apariencia');
-        if (btnSaveApariencia) {
-            btnSaveApariencia.addEventListener('click', () => {
-                this.saveApariencia();
-            });
-        }
-
-        // Botón Restablecer Apariencia
-        const btnResetApariencia = document.getElementById('btn-reset-apariencia');
-        if (btnResetApariencia) {
-            btnResetApariencia.addEventListener('click', () => {
-                this.resetApariencia();
-            });
-        }
-    },
-
-    // Guardar General
-    saveGeneral() {
-        const regionSelect = document.querySelector('[data-setting="preferred-region"]');
-        if (regionSelect) {
-            this.set(this.KEYS.PREFERRED_REGION, regionSelect.value || null);
-        }
-        this.showFeedback('Preferencias guardadas en este dispositivo');
-    },
-
-    // Restablecer General
-    resetGeneral() {
-        this.remove(this.KEYS.PREFERRED_REGION);
-        const regionSelect = document.querySelector('[data-setting="preferred-region"]');
-        if (regionSelect) {
-            regionSelect.value = '';
-        }
-        this.showFeedback('Preferencias restablecidas');
-    },
-
-    // Guardar Preferencias
-    savePreferencias() {
-        const viewSelect = document.querySelector('[data-setting="default-explore-view"]');
-        if (viewSelect) {
-            this.set(this.KEYS.DEFAULT_EXPLORE_VIEW, viewSelect.value);
-        }
-
-        const cultureSwitch = document.querySelector('[data-setting="show-culture"]');
-        if (cultureSwitch) {
-            this.set(this.KEYS.SHOW_CULTURE, cultureSwitch.checked);
-        }
-
-        const natureSwitch = document.querySelector('[data-setting="show-nature"]');
-        if (natureSwitch) {
-            this.set(this.KEYS.SHOW_NATURE, natureSwitch.checked);
-        }
-
-        const gastronomySwitch = document.querySelector('[data-setting="show-gastronomy"]');
-        if (gastronomySwitch) {
-            this.set(this.KEYS.SHOW_GASTRONOMY, gastronomySwitch.checked);
-        }
-
-        this.applyDashboardPreferences();
-        this.showFeedback('Preferencias guardadas en este dispositivo');
-    },
-
-    // Restablecer Preferencias
-    resetPreferencias() {
-        this.remove(this.KEYS.DEFAULT_EXPLORE_VIEW);
-        this.remove(this.KEYS.SHOW_CULTURE);
-        this.remove(this.KEYS.SHOW_NATURE);
-        this.remove(this.KEYS.SHOW_GASTRONOMY);
-
-        const viewSelect = document.querySelector('[data-setting="default-explore-view"]');
-        if (viewSelect) {
-            viewSelect.value = 'destacados';
-        }
-
-        const cultureSwitch = document.querySelector('[data-setting="show-culture"]');
-        if (cultureSwitch) {
-            cultureSwitch.checked = true;
-        }
-
-        const natureSwitch = document.querySelector('[data-setting="show-nature"]');
-        if (natureSwitch) {
-            natureSwitch.checked = true;
-        }
-
-        const gastronomySwitch = document.querySelector('[data-setting="show-gastronomy"]');
-        if (gastronomySwitch) {
-            gastronomySwitch.checked = true;
-        }
-
-        this.applyDashboardPreferences();
-        this.showFeedback('Preferencias restablecidas');
-    },
-
-    // Guardar Privacidad
-    savePrivacidad() {
-        const rememberSwitch = document.querySelector('[data-setting="remember-preferences"]');
-        if (rememberSwitch) {
-            this.set(this.KEYS.REMEMBER_PREFERENCES, rememberSwitch.checked);
-            
-            if (!rememberSwitch.checked) {
-                this.clearAll();
-                this.syncControls();
-                this.showFeedback('Preferencias eliminadas de este dispositivo');
-            } else {
-                this.showFeedback('Preferencias guardadas en este dispositivo');
-            }
-        }
-    },
-
-    // Restablecer Privacidad
-    resetPrivacidad() {
-        this.set(this.KEYS.REMEMBER_PREFERENCES, true);
-        const rememberSwitch = document.querySelector('[data-setting="remember-preferences"]');
-        if (rememberSwitch) {
-            rememberSwitch.checked = true;
-        }
-        this.showFeedback('Preferencias restablecidas');
-    },
-
-    // Guardar Apariencia
-    saveApariencia() {
-        const themeRadios = document.querySelectorAll('[data-setting="theme"]');
-        let selectedTheme = 'light';
-        themeRadios.forEach(radio => {
-            if (radio.checked) {
-                selectedTheme = radio.value;
+            // Botón de restablecer
+            const resetBtn = form.querySelector('[id^="btn-reset"]');
+            if (resetBtn) {
+                resetBtn.addEventListener('click', () => {
+                    this.handleFormReset(form);
+                });
             }
         });
-        this.set(this.KEYS.THEME, selectedTheme);
-        this.applyTheme();
-
-        const fontSizeSelect = document.querySelector('[data-setting="font-size"]');
-        if (fontSizeSelect) {
-            this.set(this.KEYS.FONT_SIZE, fontSizeSelect.value);
-            this.applyFontSize();
-        }
-
-        const motionSwitch = document.querySelector('[data-setting="reduce-motion"]');
-        if (motionSwitch) {
-            this.set(this.KEYS.REDUCE_MOTION, motionSwitch.checked);
-            this.applyReduceMotion();
-        }
-
-        this.showFeedback('Preferencias guardadas en este dispositivo');
     },
 
-    // Restablecer Apariencia
-    resetApariencia() {
-        this.remove(this.KEYS.THEME);
-        this.remove(this.KEYS.FONT_SIZE);
-        this.remove(this.KEYS.REDUCE_MOTION);
-
-        const themeRadios = document.querySelectorAll('[data-setting="theme"]');
-        themeRadios.forEach(radio => {
-            radio.checked = radio.value === 'light';
-        });
-
-        const fontSizeSelect = document.querySelector('[data-setting="font-size"]');
-        if (fontSizeSelect) {
-            fontSizeSelect.value = 'normal';
+    // Manejar submit de formulario
+    handleFormSubmit(form) {
+        const formId = form.id;
+        
+        // Obtener valores del formulario
+        const preferences = this.getFormPreferences(form);
+        
+        // Verificar si se deben recordar preferencias
+        if (!preferences.rememberPreferences) {
+            this.clearAll();
+            this.applyDefaultPreferences();
+            this.syncControls();
+            this.showFeedback('Preferencias eliminadas de este dispositivo');
+            return;
         }
-
-        const motionSwitch = document.querySelector('[data-setting="reduce-motion"]');
-        if (motionSwitch) {
-            motionSwitch.checked = false;
-        }
-
+        
+        // Guardar preferencias
+        this.savePreferences(preferences);
+        
+        // Aplicar cambios
         this.applyTheme();
         this.applyFontSize();
         this.applyReduceMotion();
+        this.applyDashboardPreferences();
+        
+        this.showFeedback('Preferencias guardadas en este dispositivo');
+    },
+
+    // Manejar reset de formulario
+    handleFormReset(form) {
+        const formId = form.id;
+        
+        // Eliminar preferencias según el formulario
+        if (formId === 'general') {
+            this.remove(this.KEYS.PREFERRED_REGION);
+            const regionSelect = form.querySelector('[name="preferred-region"]');
+            if (regionSelect) regionSelect.value = '';
+        } else if (formId === 'preferencias') {
+            this.remove(this.KEYS.DEFAULT_EXPLORE_VIEW);
+            this.remove(this.KEYS.SHOW_CULTURE);
+            this.remove(this.KEYS.SHOW_NATURE);
+            this.remove(this.KEYS.SHOW_GASTRONOMY);
+            
+            const viewSelect = form.querySelector('[name="default-explore-view"]');
+            if (viewSelect) viewSelect.value = 'destacados';
+            
+            form.querySelector('[name="show-culture"]').checked = true;
+            form.querySelector('[name="show-nature"]').checked = true;
+            form.querySelector('[name="show-gastronomy"]').checked = true;
+            
+            this.applyDashboardPreferences();
+        } else if (formId === 'privacidad') {
+            this.set(this.KEYS.REMEMBER_PREFERENCES, true);
+            form.querySelector('[name="remember-preferences"]').checked = true;
+        } else if (formId === 'apariencia') {
+            this.remove(this.KEYS.THEME);
+            this.remove(this.KEYS.FONT_SIZE);
+            this.remove(this.KEYS.REDUCE_MOTION);
+            
+            const themeRadios = form.querySelectorAll('[name="theme"]');
+            themeRadios.forEach(radio => {
+                radio.checked = radio.value === 'light';
+            });
+            
+            const fontSizeSelect = form.querySelector('[name="font-size"]');
+            if (fontSizeSelect) fontSizeSelect.value = 'normal';
+            
+            form.querySelector('[name="reduce-motion"]').checked = false;
+            
+            this.applyTheme();
+            this.applyFontSize();
+            this.applyReduceMotion();
+        }
+        
         this.showFeedback('Preferencias restablecidas');
+    },
+
+    // Obtener preferencias del formulario
+    getFormPreferences(form) {
+        return {
+            preferredRegion: form.querySelector('[name="preferred-region"]')?.value || null,
+            defaultExploreView: form.querySelector('[name="default-explore-view"]')?.value || 'destacados',
+            showCulture: form.querySelector('[name="show-culture"]')?.checked ?? true,
+            showNature: form.querySelector('[name="show-nature"]')?.checked ?? true,
+            showGastronomy: form.querySelector('[name="show-gastronomy"]')?.checked ?? true,
+            theme: form.querySelector('[name="theme"]:checked')?.value || 'light',
+            fontSize: form.querySelector('[name="font-size"]')?.value || 'normal',
+            reduceMotion: form.querySelector('[name="reduce-motion"]')?.checked ?? false,
+            rememberPreferences: form.querySelector('[name="remember-preferences"]')?.checked ?? true
+        };
+    },
+
+    // Guardar preferencias
+    savePreferences(preferences) {
+        this.set(this.KEYS.PREFERRED_REGION, preferences.preferredRegion);
+        this.set(this.KEYS.DEFAULT_EXPLORE_VIEW, preferences.defaultExploreView);
+        this.set(this.KEYS.SHOW_CULTURE, preferences.showCulture);
+        this.set(this.KEYS.SHOW_NATURE, preferences.showNature);
+        this.set(this.KEYS.SHOW_GASTRONOMY, preferences.showGastronomy);
+        this.set(this.KEYS.THEME, preferences.theme);
+        this.set(this.KEYS.FONT_SIZE, preferences.fontSize);
+        this.set(this.KEYS.REDUCE_MOTION, preferences.reduceMotion);
+        this.set(this.KEYS.REMEMBER_PREFERENCES, preferences.rememberPreferences);
+    },
+
+    // Aplicar preferencias por defecto
+    applyDefaultPreferences() {
+        this.applyTheme();
+        this.applyFontSize();
+        this.applyReduceMotion();
+        this.applyDashboardPreferences();
     },
 
     // Escuchar cambios en preferencias del sistema

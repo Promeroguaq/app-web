@@ -84,7 +84,7 @@
     <!-- Main Content -->
     <div class="flex-1 min-w-0">
         <!-- General Section -->
-        <div id="general" class="config-section bg-white rounded-2xl border border-gray-200 p-6 md:p-8 mb-6" style="box-shadow: 0 4px 20px rgba(0,0,0,0.06);">
+        <form id="general" class="config-section bg-white rounded-2xl border border-gray-200 p-6 md:p-8 mb-6" style="box-shadow: 0 4px 20px rgba(0,0,0,0.06);" data-preferences-form>
             <div class="flex items-center gap-3 mb-6">
                 <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-600 flex items-center justify-center">
                     <i class="fas fa-sliders-h text-white"></i>
@@ -107,7 +107,7 @@
             <!-- Región Preferida -->
             <div class="mb-6">
                 <label for="preferred-region" class="block text-sm font-medium text-gray-700 mb-2">Región preferida</label>
-                <select id="preferred-region" data-setting="preferred-region" class="w-full px-4 py-3 rounded-xl border border-gray-200 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm transition-all duration-200">
+                <select id="preferred-region" name="preferred-region" data-setting="preferred-region" class="w-full px-4 py-3 rounded-xl border border-gray-200 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm transition-all duration-200">
                     <option value="">Sin preferencia</option>
                     @foreach($regiones as $region)
                         <option value="{{ $region->slug }}">{{ $region->name }}</option>
@@ -121,14 +121,14 @@
                 <button type="button" id="btn-reset-general" class="px-6 py-3 bg-white border border-gray-200 text-gray-700 rounded-xl text-sm font-medium hover:bg-gray-50 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-emerald-500">
                     <i class="fas fa-undo mr-2"></i>Restablecer
                 </button>
-                <button type="button" id="btn-save-general" class="px-6 py-3 bg-gradient-to-r from-[#07111F] to-[#0B1F2A] text-white rounded-xl text-sm font-medium hover:shadow-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                <button type="submit" id="btn-save-general" class="px-6 py-3 bg-gradient-to-r from-[#07111F] to-[#0B1F2A] text-white rounded-xl text-sm font-medium hover:shadow-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-emerald-500">
                     <i class="fas fa-save mr-2"></i>Guardar preferencias
                 </button>
             </div>
-        </div>
+        </form>
 
         <!-- Preferencias Section -->
-        <div id="preferencias" class="config-section bg-white rounded-2xl border border-gray-200 p-6 md:p-8 mb-6 hidden lg:block" style="box-shadow: 0 4px 20px rgba(0,0,0,0.06);">
+        <form id="preferencias" class="config-section bg-white rounded-2xl border border-gray-200 p-6 md:p-8 mb-6 hidden lg:block" style="box-shadow: 0 4px 20px rgba(0,0,0,0.06);" data-preferences-form>
             <div class="flex items-center gap-3 mb-6">
                 <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center">
                     <i class="fas fa-compass text-white"></i>
@@ -142,7 +142,7 @@
             <!-- Vista Predeterminada -->
             <div class="mb-6">
                 <label for="default-explore-view" class="block text-sm font-medium text-gray-700 mb-2">Vista predeterminada</label>
-                <select id="default-explore-view" data-setting="default-explore-view" class="w-full px-4 py-3 rounded-xl border border-gray-200 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm transition-all duration-200">
+                <select id="default-explore-view" name="default-explore-view" data-setting="default-explore-view" class="w-full px-4 py-3 rounded-xl border border-gray-200 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm transition-all duration-200">
                     <option value="destacados">Destinos destacados</option>
                     <option value="regiones">Regiones naturales</option>
                     <option value="categorias">Categorías turísticas</option>
@@ -160,7 +160,7 @@
                         <p class="text-sm text-gray-500">Museos, iglesias y patrimonio</p>
                     </div>
                     <label class="relative inline-flex items-center cursor-pointer">
-                        <input type="checkbox" id="show-culture" data-setting="show-culture" checked class="sr-only peer">
+                        <input type="checkbox" name="show-culture" id="show-culture" data-setting="show-culture" checked class="sr-only peer">
                         <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-emerald-500 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-500"></div>
                     </label>
                 </div>
@@ -171,7 +171,7 @@
                         <p class="text-sm text-gray-500">Playas, parques y reservas</p>
                     </div>
                     <label class="relative inline-flex items-center cursor-pointer">
-                        <input type="checkbox" id="show-nature" data-setting="show-nature" checked class="sr-only peer">
+                        <input type="checkbox" name="show-nature" id="show-nature" data-setting="show-nature" checked class="sr-only peer">
                         <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-emerald-500 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-500"></div>
                     </label>
                 </div>
@@ -182,7 +182,7 @@
                         <p class="text-sm text-gray-500">Platos típicos y sabores</p>
                     </div>
                     <label class="relative inline-flex items-center cursor-pointer">
-                        <input type="checkbox" id="show-gastronomy" data-setting="show-gastronomy" checked class="sr-only peer">
+                        <input type="checkbox" name="show-gastronomy" id="show-gastronomy" data-setting="show-gastronomy" checked class="sr-only peer">
                         <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-emerald-500 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-500"></div>
                     </label>
                 </div>
@@ -193,14 +193,14 @@
                 <button type="button" id="btn-reset-preferencias" class="px-6 py-3 bg-white border border-gray-200 text-gray-700 rounded-xl text-sm font-medium hover:bg-gray-50 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-emerald-500">
                     <i class="fas fa-undo mr-2"></i>Restablecer
                 </button>
-                <button type="button" id="btn-save-preferencias" class="px-6 py-3 bg-gradient-to-r from-[#07111F] to-[#0B1F2A] text-white rounded-xl text-sm font-medium hover:shadow-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                <button type="submit" id="btn-save-preferencias" class="px-6 py-3 bg-gradient-to-r from-[#07111F] to-[#0B1F2A] text-white rounded-xl text-sm font-medium hover:shadow-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-emerald-500">
                     <i class="fas fa-save mr-2"></i>Guardar preferencias
                 </button>
             </div>
-        </div>
+        </form>
 
         <!-- Privacidad Section -->
-        <div id="privacidad" class="config-section bg-white rounded-2xl border border-gray-200 p-6 md:p-8 mb-6 hidden lg:block" style="box-shadow: 0 4px 20px rgba(0,0,0,0.06);">
+        <form id="privacidad" class="config-section bg-white rounded-2xl border border-gray-200 p-6 md:p-8 mb-6 hidden lg:block" style="box-shadow: 0 4px 20px rgba(0,0,0,0.06);" data-preferences-form>
             <div class="flex items-center gap-3 mb-6">
                 <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500 to-purple-600 flex items-center justify-center">
                     <i class="fas fa-shield-alt text-white"></i>
@@ -217,7 +217,7 @@
                     <p class="text-sm text-gray-500">Mantén tus ajustes al recargar o cerrar el navegador</p>
                 </div>
                 <label class="relative inline-flex items-center cursor-pointer">
-                    <input type="checkbox" id="remember-preferences" data-setting="remember-preferences" checked class="sr-only peer">
+                    <input type="checkbox" name="remember-preferences" id="remember-preferences" data-setting="remember-preferences" checked class="sr-only peer">
                     <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-emerald-500 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-500"></div>
                 </label>
             </div>
@@ -232,14 +232,14 @@
                 <button type="button" id="btn-reset-privacidad" class="px-6 py-3 bg-white border border-gray-200 text-gray-700 rounded-xl text-sm font-medium hover:bg-gray-50 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-emerald-500">
                     <i class="fas fa-undo mr-2"></i>Restablecer
                 </button>
-                <button type="button" id="btn-save-privacidad" class="px-6 py-3 bg-gradient-to-r from-[#07111F] to-[#0B1F2A] text-white rounded-xl text-sm font-medium hover:shadow-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                <button type="submit" id="btn-save-privacidad" class="px-6 py-3 bg-gradient-to-r from-[#07111F] to-[#0B1F2A] text-white rounded-xl text-sm font-medium hover:shadow-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-emerald-500">
                     <i class="fas fa-save mr-2"></i>Guardar preferencias
                 </button>
             </div>
-        </div>
+        </form>
 
         <!-- Apariencia Section -->
-        <div id="apariencia" class="config-section bg-white rounded-2xl border border-gray-200 p-6 md:p-8 mb-6 hidden lg:block" style="box-shadow: 0 4px 20px rgba(0,0,0,0.06);">
+        <form id="apariencia" class="config-section bg-white rounded-2xl border border-gray-200 p-6 md:p-8 mb-6 hidden lg:block" style="box-shadow: 0 4px 20px rgba(0,0,0,0.06);" data-preferences-form>
             <div class="flex items-center gap-3 mb-6">
                 <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-pink-500 to-pink-600 flex items-center justify-center">
                     <i class="fas fa-palette text-white"></i>
@@ -281,7 +281,7 @@
             <!-- Tamaño de Fuente -->
             <div class="mb-6">
                 <label for="font-size" class="block text-sm font-medium text-gray-700 mb-2">Tamaño de texto</label>
-                <select id="font-size" data-setting="font-size" class="w-full px-4 py-3 rounded-xl border border-gray-200 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm transition-all duration-200">
+                <select id="font-size" name="font-size" data-setting="font-size" class="w-full px-4 py-3 rounded-xl border border-gray-200 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm transition-all duration-200">
                     <option value="normal">Normal</option>
                     <option value="comfortable">Cómodo</option>
                 </select>
@@ -295,7 +295,7 @@
                     <p class="text-sm text-gray-500">Desactiva efectos decorativos y transiciones</p>
                 </div>
                 <label class="relative inline-flex items-center cursor-pointer">
-                    <input type="checkbox" id="reduce-motion" data-setting="reduce-motion" class="sr-only peer">
+                    <input type="checkbox" name="reduce-motion" id="reduce-motion" data-setting="reduce-motion" class="sr-only peer">
                     <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-emerald-500 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-500"></div>
                 </label>
             </div>
@@ -305,11 +305,11 @@
                 <button type="button" id="btn-reset-apariencia" class="px-6 py-3 bg-white border border-gray-200 text-gray-700 rounded-xl text-sm font-medium hover:bg-gray-50 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-emerald-500">
                     <i class="fas fa-undo mr-2"></i>Restablecer
                 </button>
-                <button type="button" id="btn-save-apariencia" class="px-6 py-3 bg-gradient-to-r from-[#07111F] to-[#0B1F2A] text-white rounded-xl text-sm font-medium hover:shadow-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                <button type="submit" id="btn-save-apariencia" class="px-6 py-3 bg-gradient-to-r from-[#07111F] to-[#0B1F2A] text-white rounded-xl text-sm font-medium hover:shadow-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-emerald-500">
                     <i class="fas fa-save mr-2"></i>Guardar preferencias
                 </button>
             </div>
-        </div>
+        </form>
     </div>
 </div>
 
@@ -327,8 +327,8 @@ document.querySelectorAll('.config-tab-mobile').forEach(tab => {
         this.classList.remove('bg-white', 'text-gray-600', 'border', 'border-gray-200');
         this.classList.add('active', 'bg-gradient-to-r', 'from-[#07111F]', 'to-[#0B1F2A]', 'text-white', 'shadow-md');
         
-        document.querySelectorAll('.config-section').forEach(section => {
-            section.classList.add('hidden');
+        document.querySelectorAll('[data-preferences-form]').forEach(form => {
+            form.classList.add('hidden');
         });
         
         const targetId = this.getAttribute('data-target');
@@ -350,8 +350,8 @@ document.querySelectorAll('.config-nav-item').forEach(item => {
         this.classList.remove('text-gray-600', 'hover:bg-gray-100');
         this.classList.add('active', 'bg-gradient-to-r', 'from-[#07111F]', 'to-[#0B1F2A]', 'text-white', 'shadow-md');
         
-        document.querySelectorAll('.config-section').forEach(section => {
-            section.classList.add('hidden');
+        document.querySelectorAll('[data-preferences-form]').forEach(form => {
+            form.classList.add('hidden');
         });
         
         document.getElementById(targetId).classList.remove('hidden');
