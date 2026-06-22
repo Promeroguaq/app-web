@@ -572,24 +572,60 @@
         /* Mobile Responsive */
         @media (max-width: 1024px) {
             .sidebar {
-                width: 70px;
+                width: 72px;
             }
-            
+
             .sidebar:hover {
+                width: 72px;
+            }
+
+            /* Collapsed rail mode - icon only */
+            .sidebar .nav-label,
+            .sidebar .category-group-title,
+            .sidebar .nav-item span,
+            .sidebar .categories-toggle span,
+            .sidebar .categories-toggle .fa-chevron-down {
+                display: none;
+            }
+
+            .sidebar .nav-item,
+            .sidebar .categories-toggle {
+                justify-content: center;
+                padding: 0.75rem;
+            }
+
+            .sidebar .nav-icon-wrapper {
+                margin-right: 0;
+            }
+
+            .sidebar .categories-submenu {
+                display: none;
+            }
+
+            .sidebar .categories-toggle:hover .categories-submenu {
+                display: block;
+                position: absolute;
+                left: 72px;
+                top: 0;
                 width: 220px;
+                background: #FCFBF8;
+                border-radius: 0 16px 16px 0;
+                box-shadow: 4px 0 20px rgba(0,0,0,0.1);
+                z-index: 50;
+                padding: 1rem;
             }
-            
+
             .main {
-                margin-left: 70px;
+                margin-left: 72px;
             }
-            
+
             .hero-section {
                 height: 60vh;
                 min-height: 450px;
             }
 
             .nav-item {
-                min-height: 40px;
+                min-height: 48px;
             }
         }
         
@@ -923,28 +959,66 @@
     </main>
 
     <script>
-        // Mobile menu
+        // Mobile menu with sessionStorage persistence
         const mobileMenuBtn = document.getElementById('mobileMenuBtn');
         const sidebar = document.getElementById('sidebar');
         const mobileOverlay = document.getElementById('mobileOverlay');
+        const STORAGE_KEY = 'rutas-colombia.mobile-sidebar-open';
+
+        // Restore sidebar state from sessionStorage on page load
+        function restoreSidebarState() {
+            const wasOpen = sessionStorage.getItem(STORAGE_KEY) === 'true';
+            if (wasOpen && window.innerWidth <= 768) {
+                sidebar.classList.add('show');
+                mobileOverlay.classList.add('show');
+            }
+        }
+
+        // Save sidebar state to sessionStorage
+        function saveSidebarState(isOpen) {
+            sessionStorage.setItem(STORAGE_KEY, isOpen ? 'true' : 'false');
+        }
+
+        // Close sidebar (used by overlay, close button, Escape)
+        function closeSidebar() {
+            sidebar.classList.remove('show');
+            mobileOverlay.classList.remove('show');
+            saveSidebarState(false);
+        }
+
+        // Open sidebar
+        function openSidebar() {
+            sidebar.classList.add('show');
+            mobileOverlay.classList.add('show');
+            saveSidebarState(true);
+        }
 
         if (mobileMenuBtn && sidebar && mobileOverlay) {
+            // Restore state on load
+            restoreSidebarState();
+
+            // Toggle sidebar with hamburger button
             mobileMenuBtn.addEventListener('click', () => {
-                sidebar.classList.toggle('show');
-                mobileOverlay.classList.toggle('show');
+                const isOpen = sidebar.classList.contains('show');
+                if (isOpen) {
+                    closeSidebar();
+                } else {
+                    openSidebar();
+                }
             });
 
-            mobileOverlay.addEventListener('click', () => {
-                sidebar.classList.remove('show');
-                mobileOverlay.classList.remove('show');
+            // Close sidebar when clicking overlay
+            mobileOverlay.addEventListener('click', closeSidebar);
+
+            // Close sidebar with Escape key
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && sidebar.classList.contains('show')) {
+                    closeSidebar();
+                }
             });
 
-            document.querySelectorAll('.nav-item').forEach(item => {
-                item.addEventListener('click', () => {
-                    sidebar.classList.remove('show');
-                    mobileOverlay.classList.remove('show');
-                });
-            });
+            // IMPORTANT: Do NOT close sidebar when clicking nav items
+            // Links will navigate naturally, and sidebar state persists via sessionStorage
         }
 
         // Categories dropdown toggle
@@ -952,7 +1026,9 @@
         const categoriesSubmenu = document.getElementById('categories-submenu');
 
         if (categoriesToggle && categoriesSubmenu) {
-            categoriesToggle.addEventListener('click', () => {
+            categoriesToggle.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
                 const isOpen = categoriesSubmenu.classList.contains('open');
                 categoriesSubmenu.classList.toggle('open');
                 categoriesToggle.setAttribute('aria-expanded', !isOpen);

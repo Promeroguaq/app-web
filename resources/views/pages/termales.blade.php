@@ -3,103 +3,148 @@
 @section('title', 'Termales')
 
 @section('content')
-<!-- Hero Section -->
-<div style="height: 350px; border-radius: 20px; overflow: hidden; position: relative; margin-bottom: 48px; box-shadow: 0 20px 40px rgba(0,0,0,0.15); background: linear-gradient(135deg, #0f2d1a 0%, #10b981 50%, #059669 100%);">
-    <div style="position: absolute; bottom: 0; left: 0; right: 0; padding: 48px; color: white;">
-        <div style="background: rgba(255, 255, 255, 0.2); backdrop-filter: blur(10px); padding: 6px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; color: white; display: inline-block; margin-bottom: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
-            <i class="fas fa-hot-tub"></i> Naturaleza
+<!-- Hero Premium Redesign - Full Background Image -->
+<div class="relative h-[230px] sm:h-[250px] md:h-[280px] lg:h-[300px] xl:h-[340px] overflow-hidden rounded-[32px] mb-8 md:mb-12 max-w-7xl mx-auto">
+    <!-- Full background image - Thermal waters landscape -->
+    <img
+        src="https://m.rutascolombia.com/Imagenes_app/turismo_de_salud/termales_de_san_juan_purace.jpg"
+        alt="Aguas termales en Colombia"
+        class="absolute inset-0 w-full h-full object-cover"
+        loading="eager"
+        fetchpriority="high"
+    >
+
+    <!-- Progressive overlay - left to right gradient for text legibility -->
+    <div class="absolute inset-0" style="background: linear-gradient(to right, #0d9488 0%, #0d9488 40%, rgba(13, 148, 136, 0.7) 60%, rgba(13, 148, 136, 0.3) 80%, rgba(13, 148, 136, 0.1) 100%);"></div>
+
+    <!-- Bottom overlay for content integration -->
+    <div class="absolute inset-0 bg-gradient-to-t from-[#0d9488]/30 via-transparent to-transparent"></div>
+
+    <!-- Decorative texture overlay - subtle water/steam pattern -->
+    <div class="absolute inset-0 opacity-5" style="background-image: radial-gradient(circle at 20% 50%, rgba(255,255,255,0.1) 0%, transparent 50%), radial-gradient(circle at 80% 50%, rgba(255,255,255,0.05) 0%, transparent 50%);"></div>
+
+    <!-- Main content - centered vertically -->
+    <div class="absolute inset-0 flex items-center p-6 md:p-10 lg:p-16">
+        <div class="relative z-10 max-w-2xl">
+            <!-- Badge -->
+            <div class="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/20 px-4 py-2 rounded-full mb-4 md:mb-6">
+                <span class="w-2 h-2 bg-teal-400 rounded-full animate-pulse"></span>
+                <span class="text-white/90 text-xs md:text-sm font-medium tracking-wide uppercase">🧖 Naturaleza</span>
+            </div>
+
+            <!-- Title -->
+            <h1 class="font-display text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold text-white mb-3 md:mb-4 leading-tight" style="text-shadow: 0 2px 20px rgba(0,0,0,0.3);">
+                Aguas Termales
+            </h1>
+
+            <!-- Description -->
+            <p class="text-white/80 text-sm md:text-base lg:text-lg mb-6 md:mb-8 max-w-xl leading-relaxed">
+                Relájate en los manantiales de aguas calientes de Colombia
+            </p>
         </div>
-        <h1 style="font-family: 'Inter', sans-serif; font-size: 3rem; font-weight: 700; margin-bottom: 12px; line-height: 1.1; text-shadow: 2px 2px 4px rgba(0,0,0,0.5);">Aguas Termales</h1>
-        <p style="font-size: 1.25rem; opacity: 0.9;">Relájate en los manantiales de aguas calientes de Colombia</p>
     </div>
 </div>
 
 <!-- Estadísticas -->
-<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 24px; margin-bottom: 48px;">
-    <div style="background: white; padding: 24px; border-radius: 16px; text-align: center; box-shadow: 0 4px 12px rgba(0,0,0,0.08);">
-        <div style="font-size: 2.5rem; font-weight: 800; color: #2563eb; font-family: 'Inter', sans-serif; margin-bottom: 8px;">{{ $items->count() }}</div>
-        <div style="color: #64748b; font-size: 0.9rem;">Termales</div>
-    </div>
-    <div style="background: white; padding: 24px; border-radius: 16px; text-align: center; box-shadow: 0 4px 12px rgba(0,0,0,0.08);">
-        <div style="font-size: 2.5rem; font-weight: 800; color: #2563eb; font-family: 'Inter', sans-serif; margin-bottom: 8px;">38°C</div>
-        <div style="color: #64748b; font-size: 0.9rem;">Temperatura Promedio</div>
-    </div>
-    <div style="background: white; padding: 24px; border-radius: 16px; text-align: center; box-shadow: 0 4px 12px rgba(0,0,0,0.08);">
-        <div style="font-size: 2.5rem; font-weight: 800; color: #2563eb; font-family: 'Inter', sans-serif; margin-bottom: 8px;">6</div>
-        <div style="color: #64748b; font-size: 0.9rem;">Departamentos</div>
-    </div>
-    <div style="background: white; padding: 24px; border-radius: 16px; text-align: center; box-shadow: 0 4px 12px rgba(0,0,0,0.08);">
-        <div style="font-size: 2.5rem; font-weight: 800; color: #2563eb; font-family: 'Inter', sans-serif; margin-bottom: 8px;">100%</div>
-        <div style="color: #64748b; font-size: 0.9rem;">Natural</div>
+<div class="max-w-7xl mx-auto mb-8 md:mb-12">
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+        <div class="bg-white rounded-[24px] p-4 md:p-6 text-center shadow-sm">
+            <div class="text-3xl md:text-5xl font-bold text-[#0d9488] mb-2">{{ $items->count() }}</div>
+            <div class="text-gray-600 text-xs md:text-sm font-medium">Termales</div>
+        </div>
+        <div class="bg-white rounded-[24px] p-4 md:p-6 text-center shadow-sm">
+            <div class="text-3xl md:text-5xl font-bold text-[#0d9488] mb-2">38°C</div>
+            <div class="text-gray-600 text-xs md:text-sm font-medium">Temperatura Promedio</div>
+        </div>
+        <div class="bg-white rounded-[24px] p-4 md:p-6 text-center shadow-sm">
+            <div class="text-3xl md:text-5xl font-bold text-[#0d9488] mb-2">6</div>
+            <div class="text-gray-600 text-xs md:text-sm font-medium">Departamentos</div>
+        </div>
+        <div class="bg-white rounded-[24px] p-4 md:p-6 text-center shadow-sm">
+            <div class="text-3xl md:text-5xl font-bold text-[#0d9488] mb-2">100%</div>
+            <div class="text-gray-600 text-xs md:text-sm font-medium">Natural</div>
+        </div>
     </div>
 </div>
 
 <!-- Termales Destacados -->
-<h2 style="font-family: 'Inter', sans-serif; font-size: 2rem; font-weight: 600; color: #0f172a; margin-bottom: 32px; text-align: center;">Termales Destacados</h2>
+<div class="max-w-7xl mx-auto mb-8 md:mb-12">
+    <h2 class="font-display text-2xl md:text-3xl lg:text-4xl font-bold text-midnight-900 mb-8 text-center">Termales Destacados</h2>
 
-<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 24px; margin-bottom: 48px;">
-    
-    @forelse($items as $item)
-    <a href="{{ route('puntos-interes.termales.show', $item->id) }}" style="text-decoration: none; color: inherit;">
-    <div style="border-radius: 16px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.08); transition: all 0.3s ease; cursor: pointer; background: white;" onmouseover="this.style.transform='translateY(-8px)'; this.style.boxShadow='0 12px 24px rgba(0,0,0,0.15)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 12px rgba(0,0,0,0.08)'">
-        <div style="height: 220px; position: relative; overflow: hidden;">
-            @if($item->imagen)
-                <img src="{{ $item->imagen }}" alt="{{ $item->nombre }}" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
-            @else
-                <div style="width: 100%; height: 100%; background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%); display: flex; align-items: center; justify-content: center;">
-                    <i class="fas fa-hot-tub" style="color: white; font-size: 4rem;"></i>
-                </div>
-            @endif
-            <div style="position: absolute; top: 12px; left: 12px; background: rgba(37, 99, 235, 0.95); backdrop-filter: blur(10px); padding: 6px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; color: white; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
-                <i class="fas fa-hot-tub"></i> Termales
-            </div>
-            <div style="position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, transparent 100%); padding: 16px; color: white;">
-                <div style="display: flex; gap: 16px; font-size: 0.875rem; font-weight: 500;">
-                    <span style="display: flex; align-items: center; gap: 4px;">
-                        <i class="fas fa-temperature-high"></i> Aguas Calientes
-                    </span>
-                    <span style="display: flex; align-items: center; gap: 4px;">
-                        <i class="fas fa-spa"></i> Relax
-                    </span>
-                </div>
-            </div>
-        </div>
-        <div style="padding: 20px;">
-            <h3 style="font-family: 'Inter', sans-serif; font-size: 1.25rem; font-weight: 600; color: #0f172a; margin-bottom: 8px; line-height: 1.3;">
-                {{ $item->nombre }}
-            </h3>
-            <p style="color: #64748b; margin-bottom: 12px; line-height: 1.6; font-size: 0.95rem;">
-                {{ $item->descripcion }}
-            </p>
-            <div style="display: flex; align-items: center; gap: 8px; font-size: 0.875rem; color: #64748b;">
-                <i class="fas fa-map-marker-alt" style="color: #2563eb;"></i>
-                <span>Colombia</span>
-            </div>
-        </div>
-    </div>
-    </a>
-    @empty
-    <div style="grid-column: 1 / -1; text-align: center; padding: 40px; color: #64748b;">
-        No hay termales registrados en este momento.
-    </div>
-    @endforelse
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-5 md:gap-6">
 
+        @forelse($items as $item)
+        <a href="{{ route('puntos-interes.termales.show', $item->id) }}" class="block text-decoration-none">
+            <div class="rounded-[28px] overflow-hidden bg-white shadow-[0_10px_35px_rgba(0,0,0,0.10)] hover:-translate-y-2 hover:scale-[1.01] transition-all duration-500 cursor-pointer group flex flex-col h-full">
+                <div class="relative h-[160px] sm:h-[180px] overflow-hidden">
+                    @if($item->imagen)
+                        <img src="{{ $item->imagen }}" alt="{{ $item->nombre }}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                        <!-- Elegant teal overlay -->
+                        <div class="absolute inset-0 bg-gradient-to-br from-[#0f766e]/70 via-[#0d9488]/50 to-[#14b8a6]/40"></div>
+                        <!-- Bottom gradient for text legibility -->
+                        <div class="absolute inset-0 bg-gradient-to-t from-[#0f766e]/80 via-transparent to-transparent"></div>
+                    @else
+                        <!-- Premium fallback with water/steam pattern -->
+                        <div class="w-full h-full bg-gradient-to-br from-[#0f766e] via-[#0d9488] to-[#14b8a6] relative overflow-hidden">
+                            <!-- Subtle water texture -->
+                            <div class="absolute inset-0 opacity-10" style="background-image: radial-gradient(circle at 30% 40%, rgba(255,255,255,0.1) 0%, transparent 50%), radial-gradient(circle at 70% 60%, rgba(255,255,255,0.05) 0%, transparent 50%);"></div>
+                            <!-- Steam effect -->
+                            <div class="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-[#0f766e]/50 to-transparent"></div>
+                            <div class="absolute inset-0 flex items-center justify-center">
+                                <i class="fas fa-hot-tub text-white/20 text-8xl"></i>
+                            </div>
+                        </div>
+                    @endif
+                    <div class="absolute top-4 left-4 bg-white/10 backdrop-blur-md border border-white/20 px-3 py-1.5 rounded-full text-xs text-white font-semibold">
+                        🧖 Termales
+                    </div>
+                    <div class="absolute bottom-0 left-0 right-0 p-4 text-white">
+                        <div class="flex gap-4 text-sm font-medium">
+                            <span class="flex items-center gap-2">
+                                <i class="fas fa-temperature-high"></i> Aguas Calientes
+                            </span>
+                            <span class="flex items-center gap-2">
+                                <i class="fas fa-spa"></i> Relax
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="p-5 md:p-6 flex flex-col flex-grow">
+                    <h3 class="font-display text-lg md:text-xl font-bold text-gray-900 mb-2">{{ $item->nombre }}</h3>
+                    <p class="text-gray-600 text-sm mb-4 line-clamp-3 flex-grow">{{ $item->descripcion }}</p>
+                    <div class="flex items-center gap-2 text-sm text-gray-600 mt-auto">
+                        <i class="fas fa-map-marker-alt text-[#0d9488]"></i>
+                        <span>Colombia</span>
+                    </div>
+                </div>
+            </div>
+        </a>
+        @empty
+        <div class="col-span-full text-center py-16 text-gray-500">
+            <i class="fas fa-hot-tub text-6xl mb-4 text-gray-300"></i>
+            <p class="text-lg">No hay termales registrados en este momento.</p>
+        </div>
+        @endforelse
+
+    </div>
 </div>
 
 <!-- Explorar Más -->
-<div style="background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%); border-radius: 20px; padding: 48px; text-align: center; color: white; box-shadow: 0 8px 24px rgba(37, 99, 235, 0.3);">
-    <h2 style="font-family: 'Inter', sans-serif; font-size: 2rem; font-weight: 600; margin-bottom: 16px;">Explora Más Destinos</h2>
-    <p style="margin-bottom: 32px; opacity: 0.9; font-size: 1.1rem;">Descubre otras categorías de naturaleza en Colombia</p>
-    <div style="display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;">
-        <button style="background: white; color: #2563eb; padding: 12px 24px; border: none; border-radius: 25px; cursor: pointer; font-weight: 600; font-size: 0.9rem; transition: all 0.3s ease;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 12px rgba(0,0,0,0.15)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
-            <i class="fas fa-umbrella-beach"></i> Playas
-        </button>
-        <button style="background: rgba(255,255,255,0.2); color: white; padding: 12px 24px; border: 2px solid rgba(255,255,255,0.3); border-radius: 25px; cursor: pointer; font-weight: 600; font-size: 0.9rem; transition: all 0.3s ease;" onmouseover="this.style.background='rgba(255,255,255,0.3)'" onmouseout="this.style.background='rgba(255,255,255,0.2)'">
-            <i class="fas fa-water"></i> Islas
-        </button>
-        <button style="background: rgba(255,255,255,0.2); color: white; padding: 12px 24px; border: 2px solid rgba(255,255,255,0.3); border-radius: 25px; cursor: pointer; font-weight: 600; font-size: 0.9rem; transition: all 0.3s ease;" onmouseover="this.style.background='rgba(255,255,255,0.3)'" onmouseout="this.style.background='rgba(255,255,255,0.2)'">
-            <i class="fas fa-tree"></i> Reservas Naturales
-        </button>
+<div class="max-w-7xl mx-auto mb-8 md:mb-12">
+    <div class="bg-gradient-to-r from-[#0d9488] to-[#0f766e] rounded-[32px] p-8 md:p-12 text-center text-white">
+        <h2 class="font-display text-2xl md:text-3xl lg:text-4xl font-bold mb-4">Explora Más Destinos</h2>
+        <p class="text-lg opacity-90 mb-6 max-w-2xl mx-auto">Descubre otras categorías de naturaleza en Colombia</p>
+        <div class="flex gap-4 justify-center flex-wrap">
+            <a href="{{ route('puntos-interes.playas') }}" class="px-8 py-3 bg-white text-[#0d9488] rounded-full font-semibold hover:shadow-lg transition-all">
+                🏖️ Playas
+            </a>
+            <a href="{{ route('puntos-interes.islas') }}" class="px-8 py-3 bg-white/20 backdrop-blur-sm text-white rounded-full font-semibold hover:bg-white/30 transition-all">
+                🏝️ Islas
+            </a>
+            <a href="{{ route('puntos-interes.reservas-naturales') }}" class="px-8 py-3 bg-white/20 backdrop-blur-sm text-white rounded-full font-semibold hover:bg-white/30 transition-all">
+                🏞️ Reservas Naturales
+            </a>
+        </div>
     </div>
 </div>
 @endsection
