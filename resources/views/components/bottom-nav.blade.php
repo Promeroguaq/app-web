@@ -99,13 +99,13 @@
       <i class="fas fa-map-marked-alt"></i>
       <span>Destinos</span>
     </a>
-    <a href="/categorias" class="nav-link {{ request()->is('categorias*') ? 'active' : '' }}">
+    <a href="{{ route('departamentos.index') }}" class="nav-link {{ request()->is('departamentos*') ? 'active' : '' }}">
       <i class="fas fa-th-large"></i>
       <span>Categorías</span>
     </a>
-    <a href="/agencias" class="nav-link {{ request()->is('agencias*') ? 'active' : '' }}">
-      <i class="fas fa-building"></i>
-      <span>Agencias</span>
+    <a href="{{ route('configuracion') }}" class="nav-link {{ request()->is('configuracion*') ? 'active' : '' }}">
+      <i class="fas fa-cog"></i>
+      <span>Configuración</span>
     </a>
   </div>
 </nav>

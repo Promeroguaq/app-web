@@ -422,6 +422,77 @@
             background: rgba(255,255,255,0.2);
             border: 1px solid rgba(255,255,255,0.1);
         }
+
+        /* Categories Dropdown */
+        .categories-dropdown {
+            width: 100%;
+        }
+
+        .categories-toggle {
+            width: 100%;
+            justify-content: flex-start;
+            cursor: pointer;
+            background: none;
+            border: none;
+            padding: 0.75rem;
+        }
+
+        .categories-toggle:focus-visible {
+            outline: 2px solid #10b981;
+            outline-offset: 2px;
+        }
+
+        .categories-submenu {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            padding-left: 0.5rem;
+        }
+
+        .categories-submenu.open {
+            max-height: 1000px;
+            transition: max-height 0.5s ease-in;
+        }
+
+        .category-group {
+            margin-top: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .category-group-title {
+            font-size: 0.65rem;
+            font-weight: 600;
+            color: #94a3b8;
+            padding: 0.25rem 0.75rem 0.25rem 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .nav-item-sub {
+            padding: 0.5rem 0.75rem;
+            font-size: 0.8rem;
+            gap: 0.5rem;
+            min-height: 36px;
+        }
+
+        .nav-item-sub i {
+            min-width: 16px;
+        }
+
+        .nav-item-sub span {
+            font-size: 0.8rem;
+        }
+
+        @media (max-width: 768px) {
+            .nav-item-sub {
+                padding: 0.75rem;
+                font-size: 0.875rem;
+            }
+
+            .nav-item-sub span {
+                font-size: 0.875rem;
+            }
+        }
         
         /* Main Content */
         .main {
@@ -695,12 +766,120 @@
                 </div>
                 <span>Destinos</span>
             </a>
-            <a href="/categorias" class="nav-item {{ request()->is('categorias*') ? 'active' : '' }}">
-                <div class="nav-icon-wrapper">
-                    <i class="fas fa-th-large"></i>
+
+            <!-- Categorías Dropdown -->
+            <div class="categories-dropdown">
+                <button
+                    type="button"
+                    class="nav-item categories-toggle {{ request()->is('departamentos*') || request()->is('municipios*') || request()->is('capitales*') || request()->is('regiones*') || request()->is('puntos-interes*') || request()->is('gastronomia*') || request()->is('agencias') || request()->is('fiestas-y-ferias*') ? 'active' : '' }}"
+                    aria-expanded="{{ request()->is('departamentos*') || request()->is('municipios*') || request()->is('capitales*') || request()->is('regiones*') || request()->is('puntos-interes*') || request()->is('gastronomia*') || request()->is('agencias') || request()->is('fiestas-y-ferias*') ? 'true' : 'false' }}"
+                    aria-controls="categories-submenu"
+                >
+                    <div class="nav-icon-wrapper">
+                        <i class="fas fa-th-large"></i>
+                    </div>
+                    <span>Categorías</span>
+                    <i class="fas fa-chevron-down text-xs ml-auto transition-transform duration-200 {{ request()->is('departamentos*') || request()->is('municipios*') || request()->is('capitales*') || request()->is('regiones*') || request()->is('puntos-interes*') || request()->is('gastronomia*') || request()->is('agencias') || request()->is('fiestas-y-ferias*') ? 'rotate-180' : '' }}"></i>
+                </button>
+
+                <div
+                    id="categories-submenu"
+                    class="categories-submenu {{ request()->is('departamentos*') || request()->is('municipios*') || request()->is('capitales*') || request()->is('regiones*') || request()->is('puntos-interes*') || request()->is('gastronomia*') || request()->is('agencias') || request()->is('fiestas-y-ferias*') ? 'open' : '' }}"
+                >
+                    <!-- Geográficas -->
+                    <div class="category-group">
+                        <div class="category-group-title">Geográficas</div>
+                        <a href="{{ route('departamentos.index') }}" class="nav-item nav-item-sub {{ request()->is('departamentos*') ? 'active' : '' }}">
+                            <i class="fas fa-map text-xs text-gray-400"></i>
+                            <span>Departamentos</span>
+                        </a>
+                        <a href="{{ route('municipios.index') }}" class="nav-item nav-item-sub {{ request()->is('municipios*') ? 'active' : '' }}">
+                            <i class="fas fa-city text-xs text-gray-400"></i>
+                            <span>Municipios</span>
+                        </a>
+                        <a href="{{ route('capitales.index') }}" class="nav-item nav-item-sub {{ request()->is('capitales*') ? 'active' : '' }}">
+                            <i class="fas fa-building text-xs text-gray-400"></i>
+                            <span>Capitales</span>
+                        </a>
+                        <a href="{{ route('regiones') }}" class="nav-item nav-item-sub {{ request()->is('regiones*') ? 'active' : '' }}">
+                            <i class="fas fa-globe-americas text-xs text-gray-400"></i>
+                            <span>Regiones</span>
+                        </a>
+                    </div>
+
+                    <!-- Naturaleza y aventura -->
+                    <div class="category-group">
+                        <div class="category-group-title">Naturaleza y aventura</div>
+                        <a href="{{ route('puntos-interes.islas') }}" class="nav-item nav-item-sub {{ request()->is('puntos-interes/islas*') ? 'active' : '' }}">
+                            <i class="fas fa-umbrella-beach text-xs text-gray-400"></i>
+                            <span>Islas</span>
+                        </a>
+                        <a href="{{ route('puntos-interes.deportes-aventura') }}" class="nav-item nav-item-sub {{ request()->is('puntos-interes/deportes-aventura*') ? 'active' : '' }}">
+                            <i class="fas fa-hiking text-xs text-gray-400"></i>
+                            <span>Deportes de aventura</span>
+                        </a>
+                        <a href="{{ route('puntos-interes.ciclismo') }}" class="nav-item nav-item-sub {{ request()->is('puntos-interes/ciclismo*') ? 'active' : '' }}">
+                            <i class="fas fa-biking text-xs text-gray-400"></i>
+                            <span>Ciclismo</span>
+                        </a>
+                        <a href="{{ route('puntos-interes.termales') }}" class="nav-item nav-item-sub {{ request()->is('puntos-interes/termales*') ? 'active' : '' }}">
+                            <i class="fas fa-hot-tub text-xs text-gray-400"></i>
+                            <span>Termales</span>
+                        </a>
+                        <a href="{{ route('puntos-interes.playas') }}" class="nav-item nav-item-sub {{ request()->is('puntos-interes/playas*') ? 'active' : '' }}">
+                            <i class="fas fa-water text-xs text-gray-400"></i>
+                            <span>Playas</span>
+                        </a>
+                        <a href="{{ route('puntos-interes.reservas-naturales') }}" class="nav-item nav-item-sub {{ request()->is('puntos-interes/reservas-naturales*') ? 'active' : '' }}">
+                            <i class="fas fa-tree text-xs text-gray-400"></i>
+                            <span>Reservas naturales</span>
+                        </a>
+                        <a href="{{ route('puntos-interes.actividades-parques') }}" class="nav-item nav-item-sub {{ request()->is('puntos-interes/actividades-parques*') ? 'active' : '' }}">
+                            <i class="fas fa-campground text-xs text-gray-400"></i>
+                            <span>Actividades en parques</span>
+                        </a>
+                        <a href="{{ route('puntos-interes.desiertos-lagunas') }}" class="nav-item nav-item-sub {{ request()->is('puntos-interes/desiertos-lagunas*') ? 'active' : '' }}">
+                            <i class="fas fa-sun text-xs text-gray-400"></i>
+                            <span>Desiertos y lagunas</span>
+                        </a>
+                    </div>
+
+                    <!-- Cultura -->
+                    <div class="category-group">
+                        <div class="category-group-title">Cultura</div>
+                        <a href="{{ route('puntos-interes.museos') }}" class="nav-item nav-item-sub {{ request()->is('puntos-interes/museos*') ? 'active' : '' }}">
+                            <i class="fas fa-landmark text-xs text-gray-400"></i>
+                            <span>Museos</span>
+                        </a>
+                        <a href="{{ route('puntos-interes.iglesias') }}" class="nav-item nav-item-sub {{ request()->is('puntos-interes/iglesias*') ? 'active' : '' }}">
+                            <i class="fas fa-church text-xs text-gray-400"></i>
+                            <span>Iglesias</span>
+                        </a>
+                        <a href="{{ route('puntos-interes.parques-tematicos') }}" class="nav-item nav-item-sub {{ request()->is('puntos-interes/parques-tematicos*') ? 'active' : '' }}">
+                            <i class="fas fa-ticket-alt text-xs text-gray-400"></i>
+                            <span>Parques temáticos</span>
+                        </a>
+                        <a href="{{ route('fiestas-ferias.index') }}" class="nav-item nav-item-sub {{ request()->is('fiestas-y-ferias*') ? 'active' : '' }}">
+                            <i class="fas fa-music text-xs text-gray-400"></i>
+                            <span>Fiestas y ferias</span>
+                        </a>
+                    </div>
+
+                    <!-- Sabores y servicios -->
+                    <div class="category-group">
+                        <div class="category-group-title">Sabores y servicios</div>
+                        <a href="{{ route('gastronomia') }}" class="nav-item nav-item-sub {{ request()->is('gastronomia*') ? 'active' : '' }}">
+                            <i class="fas fa-utensils text-xs text-gray-400"></i>
+                            <span>Gastronomía</span>
+                        </a>
+                        <a href="{{ route('agencias') }}" class="nav-item nav-item-sub {{ request()->is('agencias') ? 'active' : '' }}">
+                            <i class="fas fa-briefcase text-xs text-gray-400"></i>
+                            <span>Agencias</span>
+                        </a>
+                    </div>
                 </div>
-                <span>Categorías</span>
-            </a>
+            </div>
+
             <a href="{{ route('configuracion') }}" class="nav-item {{ request()->is('configuracion*') ? 'active' : '' }}">
                 <div class="nav-icon-wrapper">
                     <i class="fas fa-cog"></i>
@@ -765,6 +944,18 @@
                     sidebar.classList.remove('show');
                     mobileOverlay.classList.remove('show');
                 });
+            });
+        }
+
+        // Categories dropdown toggle
+        const categoriesToggle = document.querySelector('.categories-toggle');
+        const categoriesSubmenu = document.getElementById('categories-submenu');
+
+        if (categoriesToggle && categoriesSubmenu) {
+            categoriesToggle.addEventListener('click', () => {
+                const isOpen = categoriesSubmenu.classList.contains('open');
+                categoriesSubmenu.classList.toggle('open');
+                categoriesToggle.setAttribute('aria-expanded', !isOpen);
             });
         }
 

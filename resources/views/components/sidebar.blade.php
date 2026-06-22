@@ -88,17 +88,17 @@
 
       <!-- Categorías -->
       <li class="nav-item">
-        <a href="{{ route('categorias.index') }}" class="nav-link d-flex align-items-center">
+        <a href="{{ route('departamentos.index') }}" class="nav-link d-flex align-items-center">
           <i class="bi bi-grid me-3"></i>
           <span>Categorías</span>
         </a>
       </li>
 
-      <!-- Agencias -->
+      <!-- Configuración -->
       <li class="nav-item">
-        <a href="{{ route('agencias') }}" class="nav-link d-flex align-items-center">
-          <i class="bi bi-building me-3"></i>
-          <span>Agencias</span>
+        <a href="{{ route('configuracion') }}" class="nav-link d-flex align-items-center">
+          <i class="bi bi-gear me-3"></i>
+          <span>Configuración</span>
         </a>
       </li>
     </ul>

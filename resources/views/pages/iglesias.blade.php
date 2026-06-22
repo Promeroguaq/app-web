@@ -134,7 +134,7 @@
                 <span>🎭</span>
                 <span>Fiestas</span>
             </a>
-            <a href="/categorias" class="inline-flex items-center gap-2 px-6 py-3 bg-white/20 backdrop-blur-md text-white rounded-2xl font-semibold hover:bg-white/30 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 border border-white/30">
+            <a href="{{ route('puntos-interes.museos') }}" class="inline-flex items-center gap-2 px-6 py-3 bg-white/20 backdrop-blur-md text-white rounded-2xl font-semibold hover:bg-white/30 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 border border-white/30">
                 <span>🎭</span>
                 <span>Tradiciones</span>
             </a>

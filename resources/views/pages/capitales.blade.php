@@ -89,8 +89,8 @@
     <h2 class="font-display text-lg md:text-2xl lg:text-3xl xl:text-4xl font-bold mb-2 md:mb-4">Explora Más Categorías</h2>
     <p class="text-xs md:text-sm lg:text-base lg:text-lg opacity-90 mb-4 md:mb-8 max-w-full md:max-w-2xl mx-auto">Descubre otras categorías geográficas de Colombia</p>
     <div class="flex flex-wrap gap-3 md:gap-4 justify-center">
-        <a href="/categorias" class="inline-block px-4 py-2 md:px-6 md:py-3 bg-white text-amber-600 rounded-full font-semibold text-xs md:text-sm hover:shadow-2xl transition-all hover:scale-105">
-            🗺️ Ver Categorías
+        <a href="{{ route('departamentos.index') }}" class="inline-block px-4 py-2 md:px-6 md:py-3 bg-white text-amber-600 rounded-full font-semibold text-xs md:text-sm hover:shadow-2xl transition-all hover:scale-105">
+            🗺️ Departamentos
         </a>
         <a href="/departamentos" class="inline-block px-4 py-2 md:px-6 md:py-3 bg-white/20 text-white border-2 border-white/30 rounded-full font-semibold text-xs md:text-sm hover:bg-white/30 transition-all">
             🏛️ Departamentos

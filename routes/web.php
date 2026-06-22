@@ -52,7 +52,7 @@ Route::get('/', function () {
 |--------------------------------------------------------------------------
 */
 
-Route::get('/categorias', [CategoriasController::class, 'index'])
+Route::redirect('/categorias', '/dashboard')
     ->name('categorias.index');
 
 /*
