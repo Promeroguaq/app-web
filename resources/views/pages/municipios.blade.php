@@ -6,19 +6,61 @@
 <!-- Main Container -->
 <div class="w-full max-w-7xl mx-auto overflow-x-hidden">
 
-<!-- Hero Section -->
-<div class="relative h-[40vh] sm:h-[50vh] md:h-[60vh] lg:h-[75vh] min-h-[300px] md:min-h-[400px] lg:min-h-[600px] overflow-hidden rounded-[32px] mb-6 md:mb-8 w-full" style="background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 50%, #1d4ed8 100%);">
-    <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-black/30"></div>
-    <div class="absolute bottom-0 left-0 right-0 p-4 md:p-8 lg:p-16 text-white">
-        <div class="bg-white/90 backdrop-blur-sm inline-block mb-2 md:mb-6 px-2 py-1 md:px-4 md:py-2 rounded-full text-[10px] md:text-sm font-semibold text-gray-800 shadow-md z-10">
-            🏛️ 1,100+ Municipios
+<!-- Hero Section Premium Redesign - Full Background Image -->
+<div class="relative h-[230px] sm:h-[250px] md:h-[280px] lg:h-[300px] xl:h-[340px] overflow-hidden rounded-[32px] mb-6 md:mb-8 w-full">
+    <!-- Full background image - Medellín cityscape -->
+    <img
+        src="https://m.rutascolombia.com/Imagenes_app/capital_cities/medellin/medellin.jpg"
+        alt="Paisaje urbano de Medellín, Colombia"
+        class="absolute inset-0 w-full h-full object-cover"
+        loading="eager"
+        fetchpriority="high"
+    >
+
+    <!-- Progressive overlay - left to right gradient for text legibility -->
+    <div class="absolute inset-0" style="background: linear-gradient(to right, #0c4a6e 0%, #0c4a6e 40%, rgba(12, 74, 110, 0.7) 60%, rgba(12, 74, 110, 0.3) 80%, rgba(12, 74, 110, 0.1) 100%);"></div>
+
+    <!-- Bottom overlay for content integration -->
+    <div class="absolute inset-0 bg-gradient-to-t from-[#0c4a6e]/30 via-transparent to-transparent"></div>
+
+    <!-- Decorative texture overlay - subtle geographic pattern -->
+    <div class="absolute inset-0 opacity-5" style="background-image: radial-gradient(circle at 20% 50%, rgba(255,255,255,0.1) 0%, transparent 50%), radial-gradient(circle at 80% 50%, rgba(255,255,255,0.05) 0%, transparent 50%);"></div>
+
+    <!-- Main content - centered vertically -->
+    <div class="absolute inset-0 flex items-center p-6 md:p-10 lg:p-16">
+        <div class="relative z-10 max-w-2xl">
+            <!-- Badge -->
+            <div class="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/20 px-4 py-2 rounded-full mb-4 md:mb-6">
+                <span class="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></span>
+                <span class="text-white/90 text-xs md:text-sm font-medium tracking-wide uppercase">🏛️ 1,100+ Municipios</span>
+            </div>
+
+            <!-- Title -->
+            <h1 class="font-display text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold text-white mb-3 md:mb-4 leading-tight" style="text-shadow: 0 2px 20px rgba(0,0,0,0.3);">
+                Municipios de Colombia
+            </h1>
+
+            <!-- Description -->
+            <p class="text-white/80 text-sm md:text-base lg:text-lg mb-6 md:mb-8 max-w-xl leading-relaxed">
+                Explora los municipios de todo el país
+            </p>
+
+            <!-- Decorative chips -->
+            <div class="flex flex-wrap gap-2 md:gap-3">
+                <span class="inline-flex items-center gap-1.5 px-3 py-1.5 md:px-4 md:py-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full text-white/90 text-xs md:text-sm font-medium hover:bg-white/15 transition-all cursor-default">
+                    <i class="fas fa-city text-xs md:text-sm"></i>
+                    Ciudades
+                </span>
+                <span class="inline-flex items-center gap-1.5 px-3 py-1.5 md:px-4 md:py-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full text-white/90 text-xs md:text-sm font-medium hover:bg-white/15 transition-all cursor-default">
+                    <i class="fas fa-map-marked-alt text-xs md:text-sm"></i>
+                    Pueblos
+                </span>
+                <span class="inline-flex items-center gap-1.5 px-3 py-1.5 md:px-4 md:py-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full text-white/90 text-xs md:text-sm font-medium hover:bg-white/15 transition-all cursor-default">
+                    <i class="fas fa-landmark text-xs md:text-sm"></i>
+                    Patrimonio
+                </span>
+            </div>
         </div>
-        <h1 class="font-display text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-7xl font-bold mb-2 md:mb-4 leading-tight" style="text-shadow: 2px 2px 12px rgba(0,0,0,0.8);">
-            Municipios de Colombia
-        </h1>
-        <p class="text-xs md:text-sm lg:text-lg xl:text-xl opacity-90 max-w-full md:max-w-3xl mb-3 md:mb-6" style="text-shadow: 1px 1px 6px rgba(0,0,0,0.6);">
-            Explora los municipios de todo el país
-        </p>
     </div>
 </div>
 
