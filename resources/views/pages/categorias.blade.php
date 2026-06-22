@@ -122,7 +122,7 @@
             'Departamentos' => 'linear-gradient(135deg, #3b82f6 0%, #2563eb 50%, #1d4ed8 100%)',
             'Municipios' => 'linear-gradient(135deg, #8b5cf6 0%, #7c3aed 50%, #6d28d9 100%)',
             'Eventos' => 'linear-gradient(135deg, #ec4899 0%, #db2777 50%, #be185d 100%)',
-            'Alojamiento' => 'linear-gradient(135deg, #6366f1 0%, #4f46e5 50%, #4338ca 100%)'
+            'Agencias' => 'linear-gradient(135deg, #6366f1 0%, #4f46e5 50%, #4338ca 100%)'
         ];
         $categoriaGradient = $categoriaGradients[$categoria['nombre']] ?? 'linear-gradient(135deg, #3b82f6 0%, #2563eb 50%, #1d4ed8 100%)';
 
@@ -141,7 +141,7 @@
             'Departamentos' => 'https://m.rutascolombia.com/Imagenes_app/capital_cities/bogota/bogoteatro.jpg',
             'Municipios' => 'https://m.rutascolombia.com/Imagenes_app/capital_cities/medellin/medellin.jpg',
             'Eventos' => 'https://m.rutascolombia.com/Imagenes_app/categorias/ferias.png',
-            'Alojamiento' => 'https://m.rutascolombia.com/Imagenes_app/capital_cities/armenia/armenia.jpg'
+            'Agencias' => 'https://m.rutascolombia.com/Imagenes_app/capital_cities/armenia/armenia.jpg'
         ];
         $categoriaImage = $categoriaImages[$categoria['nombre']] ?? 'https://m.rutascolombia.com/Imagenes_app/fotos_regions/regioncafetera.jpg';
     @endphp

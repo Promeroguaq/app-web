@@ -1,6 +1,6 @@
 @extends('layouts.premium')
 
-@section('title', 'Alojamiento')
+@section('title', 'Agencias')
 
 @section('content')
 <!-- Main Container -->
@@ -14,7 +14,7 @@
             🏨 Tu Hogar en Colombia
         </div>
         <h1 class="font-display text-4xl md:text-6xl lg:text-7xl font-bold mb-4 leading-tight" style="text-shadow: 2px 2px 8px rgba(0,0,0,0.5);">
-            Alojamiento Premium
+            Agencias de Viajes
         </h1>
         <p class="text-lg md:text-xl opacity-90 max-w-2xl" style="text-shadow: 1px 1px 4px rgba(0,0,0,0.5);">
             Encuentra el lugar perfecto para tu estancia, desde hoteles de lujo hasta ecolodges naturales

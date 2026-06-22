@@ -546,9 +546,9 @@
             </a>
             <a href="/alojamiento" class="nav-item {{ request()->is('alojamiento*') || request()->is('hoteles*') ? 'active' : '' }}">
                 <div class="nav-icon-wrapper">
-                    <i class="fas fa-bed"></i>
+                    <i class="fas fa-building"></i>
                 </div>
-                <span>Alojamiento</span>
+                <span>Agencias</span>
             </a>
         </nav>
     </aside>

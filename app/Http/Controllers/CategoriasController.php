@@ -187,12 +187,12 @@ class CategoriasController extends Controller
             ],
             [
                 'nombre' => 'Agencias',
-                'descripcion' => 'Agencias de viajes y turismo',
+                'descripcion' => 'Hoteles, eco-lodges, resorts y opciones de hospedaje en Colombia',
                 'icono' => 'fas fa-building',
                 'color' => 'secondary',
-                'count' => 0, // No hay tabla aún
+                'count' => 12, // Datos simulados de AlojamientoController
                 'tipo' => 'servicios',
-                'ruta' => '#'
+                'ruta' => route('alojamiento')
             ]
         ];
 
