@@ -23,6 +23,8 @@ class DashboardController extends Controller
      */
     public function index()
     {
+        set_time_limit(120);
+
         // Estadísticas generales con datos reales
         $totalDestinos = $this->getTotalDestinos();
         $stats = [
@@ -228,19 +230,19 @@ class DashboardController extends Controller
         
         // 4. Desiertos/Lagunas (Desierto de la Tatacoa)
         $desierto = \DB::table('tabla_desierto_laguna')
-            ->where('NOMBRE_DESIERTO_LAGUNAS', 'like', '%Tatacoa%')
+            ->where('COL 2', 'like', '%Tatacoa%')
             ->first();
-            
+
         if ($desierto) {
             $destinos[] = [
-                'id' => $desierto->ID_DESIERTO,
-                'nombre' => $desierto->NOMBRE_DESIERTO_LAGUNAS,
+                'id' => $desierto->{'COL 1'},
+                'nombre' => $desierto->{'COL 2'},
                 'categoria' => 'Desierto',
                 'ubicacion' => 'Huila',
-                'imagen' => $this->buscarImagenEnTabla($desierto->NOMBRE_DESIERTO_LAGUNAS),
+                'imagen' => $this->buscarImagenEnTabla($desierto->{'COL 2'}),
                 'calificacion' => 4.7,
                 'tipo' => 'desierto-laguna',
-                'url' => route('puntos-interes.desiertos-lagunas.show', ['id' => $desierto->ID_DESIERTO])
+                'url' => route('puntos-interes.desiertos-lagunas.show', ['id' => $desierto->{'COL 1'}])
             ];
         }
         
