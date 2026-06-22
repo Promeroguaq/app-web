@@ -6,24 +6,72 @@
 <!-- Main Container -->
 <div class="w-full max-w-7xl mx-auto overflow-x-hidden">
 
-<!-- Hero Section Immersive -->
-<div class="relative h-[40vh] sm:h-[50vh] md:h-[60vh] lg:h-[75vh] min-h-[300px] md:min-h-[400px] lg:min-h-[600px] overflow-hidden rounded-[32px] mb-8 md:mb-12 w-full" style="background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 50%, #1e40af 100%);">
-    <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-black/30"></div>
-    <div class="absolute bottom-0 left-0 right-0 p-4 md:p-8 lg:p-16 text-white">
-        <div class="bg-white/90 backdrop-blur-sm inline-block mb-3 md:mb-6 px-2 py-1 md:px-4 md:py-2 rounded-full text-[10px] md:text-sm font-semibold text-gray-800 shadow-md z-10">
-            🌍 Explora Colombia
+<!-- Hero Section Premium Redesign - Full Background Image -->
+<div class="relative h-[250px] sm:h-[280px] md:h-[300px] lg:h-[340px] overflow-hidden rounded-[32px] mb-8 md:mb-12 w-full">
+    <!-- Full background image -->
+    <img
+        src="https://m.rutascolombia.com/Imagenes_app/fotos_regions/regioncafetera.jpg"
+        alt="Paisaje cafetero colombiano"
+        class="absolute inset-0 w-full h-full object-cover"
+        loading="eager"
+        fetchpriority="high"
+    >
+
+    <!-- Progressive overlay - left to right gradient for text legibility -->
+    <div class="absolute inset-0" style="background: linear-gradient(to right, #0c4a6e 0%, #0c4a6e 40%, rgba(12, 74, 110, 0.7) 60%, rgba(12, 74, 110, 0.3) 80%, rgba(12, 74, 110, 0.1) 100%);"></div>
+
+    <!-- Bottom overlay for content integration -->
+    <div class="absolute inset-0 bg-gradient-to-t from-[#0c4a6e]/30 via-transparent to-transparent"></div>
+
+    <!-- Decorative texture overlay -->
+    <div class="absolute inset-0 opacity-5" style="background-image: radial-gradient(circle at 20% 50%, rgba(255,255,255,0.1) 0%, transparent 50%), radial-gradient(circle at 80% 50%, rgba(255,255,255,0.05) 0%, transparent 50%);"></div>
+
+    <!-- Main content - centered vertically -->
+    <div class="absolute inset-0 flex items-center p-6 md:p-10 lg:p-16">
+        <div class="relative z-10 max-w-2xl">
+            <!-- Badge -->
+            <div class="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/20 px-4 py-2 rounded-full mb-4 md:mb-6">
+                <span class="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></span>
+                <span class="text-white/90 text-xs md:text-sm font-medium tracking-wide uppercase">Explora Colombia</span>
+            </div>
+
+            <!-- Title -->
+            <h1 class="font-display text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-3 md:mb-4 leading-tight" style="text-shadow: 0 2px 20px rgba(0,0,0,0.3);">
+                Categorías Turísticas
+            </h1>
+
+            <!-- Description -->
+            <p class="text-white/80 text-sm md:text-base lg:text-lg mb-6 md:mb-8 max-w-xl leading-relaxed">
+                Descubre todos los destinos, experiencias y maravillas de Colombia
+            </p>
+
+            <!-- Chips -->
+            <div class="flex flex-wrap gap-2 md:gap-3 mb-6 md:mb-8">
+                <span class="inline-flex items-center gap-1.5 px-3 py-1.5 md:px-4 md:py-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full text-white/90 text-xs md:text-sm font-medium hover:bg-white/15 transition-all cursor-default">
+                    <svg class="w-3.5 h-3.5 md:w-4 md:h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"/></svg>
+                    Destinos
+                </span>
+                <span class="inline-flex items-center gap-1.5 px-3 py-1.5 md:px-4 md:py-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full text-white/90 text-xs md:text-sm font-medium hover:bg-white/15 transition-all cursor-default">
+                    <svg class="w-3.5 h-3.5 md:w-4 md:h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4 2a2 2 0 00-2 2v11a3 3 0 106 0V4a2 2 0 00-2-2H4zm1 14a1 1 0 100-2 1 1 0 000 2zm5-1.757l4.9-4.9a2 2 0 000-2.828L13.485 5.1a2 2 0 00-2.828 0L10 5.757v8.486zM16 18H9.071l6-6H16a2 2 0 012 2v2a2 2 0 01-2 2z" clip-rule="evenodd"/></svg>
+                    Naturaleza
+                </span>
+                <span class="inline-flex items-center gap-1.5 px-3 py-1.5 md:px-4 md:py-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full text-white/90 text-xs md:text-sm font-medium hover:bg-white/15 transition-all cursor-default">
+                    <svg class="w-3.5 h-3.5 md:w-4 md:h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M10.394 2.08a1 1 0 00-.788 0l-7 3a1 1 0 000 1.84L5.25 8.051a.999.999 0 01.276.649l-1.652 4.324a1 1 0 00.594 1.28l5.758 2.376a1 1 0 001.148-.594l2.376-5.758a1 1 0 00-.594-1.28l-4.324-1.652a1 1 0 01-.649-.276L11.25 6.92a1 1 0 001.84 0l7-3z"/></svg>
+                    Cultura
+                </span>
+            </div>
+
+            <!-- Scroll button -->
+            <a href="#filtros" class="inline-flex items-center gap-2 text-white/70 hover:text-white/90 text-sm font-medium transition-all group">
+                <span>Explorar categorías</span>
+                <svg class="w-4 h-4 transform group-hover:translate-y-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/></svg>
+            </a>
         </div>
-        <h1 class="font-display text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-7xl font-bold mb-2 md:mb-4 leading-tight" style="text-shadow: 2px 2px 12px rgba(0,0,0,0.8);">
-            Categorías Turísticas
-        </h1>
-        <p class="text-xs md:text-sm lg:text-lg xl:text-xl opacity-90 max-w-full md:max-w-3xl mb-4 md:mb-6" style="text-shadow: 1px 1px 6px rgba(0,0,0,0.6);">
-            Descubre todos los destinos, experiencias y maravillas de Colombia
-        </p>
     </div>
 </div>
 
 <!-- Premium Filters -->
-<div class="bg-white/80 backdrop-blur-sm p-3 md:p-4 lg:p-6 mb-8 md:mb-12 rounded-[20px] md:rounded-[32px] shadow-lg">
+<div id="filtros" class="bg-white/80 backdrop-blur-sm p-3 md:p-4 lg:p-6 mb-8 md:mb-12 rounded-[20px] md:rounded-[32px] shadow-lg">
     <div class="flex flex-wrap gap-2 md:gap-3 justify-center">
         <button onclick="filterCategories('Todas')" class="filter-btn active px-3 py-2 md:px-6 md:py-3 rounded-full font-semibold text-xs md:text-sm transition-all bg-gradient-to-r from-forest-500 to-forest-600 text-white shadow-lg" data-filter="Todas">
             Todas
@@ -85,26 +133,26 @@
         $categoriaGradient = $categoriaGradients[$categoria['nombre']] ?? 'linear-gradient(135deg, #3b82f6 0%, #2563eb 50%, #1d4ed8 100%)';
     @endphp
     
-    <div class="categoria-card rounded-[20px] md:rounded-[32px] overflow-hidden bg-white shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300 w-full" data-tipo="{{ $categoria['tipo'] }}" onclick="window.location.href='{{ $categoria['ruta'] }}'">
-        <div class="relative h-40 sm:h-44 md:h-48 overflow-hidden w-full" style="background: {{ $categoriaGradient }};">
+    <div class="categoria-card rounded-[20px] md:rounded-[32px] overflow-hidden bg-white shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300 w-full flex flex-col min-h-[240px] md:min-h-[260px]" data-tipo="{{ $categoria['tipo'] }}" onclick="window.location.href='{{ $categoria['ruta'] }}'">
+        <div class="relative h-[88px] sm:h-[92px] md:h-[96px] lg:h-[100px] overflow-hidden w-full flex-shrink-0" style="background: {{ $categoriaGradient }};">
             <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
-            <div class="absolute top-3 left-3 md:top-4 md:left-4 bg-white/90 backdrop-blur-sm px-3 py-1 md:px-4 md:py-2 rounded-full text-xs md:text-sm font-semibold text-gray-800 shadow-md z-10">
+            <div class="absolute top-2.5 left-2.5 md:top-3 md:left-3 bg-white/90 backdrop-blur-sm px-2.5 py-1 md:px-3 md:py-1.5 rounded-full text-[11px] md:text-xs font-semibold text-gray-800 shadow-md z-10">
                 {{ $categoria['nombre'] }}
             </div>
-            <div class="absolute bottom-0 left-0 right-0 p-3 md:p-4 text-white z-10">
-                <div class="text-xl md:text-2xl font-bold font-display">{{ $categoria['count'] }}</div>
-                <div class="text-[10px] md:text-xs opacity-90">Registros</div>
+            <div class="absolute bottom-0 left-0 right-0 p-2.5 md:p-3 text-white z-10">
+                <div class="text-2xl md:text-3xl font-bold font-display leading-none">{{ $categoria['count'] }}</div>
+                <div class="text-[11px] md:text-xs opacity-90 mt-0.5">Registros</div>
             </div>
         </div>
-        <div class="p-4 md:p-6 bg-white">
-            <h3 class="font-display text-sm md:text-base lg:text-lg xl:text-xl font-bold text-gray-900 mb-2">{{ $categoria['nombre'] }}</h3>
-            <p class="text-xs md:text-sm text-gray-600 mb-3 md:mb-4 line-clamp-2">{{ $categoria['descripcion'] }}</p>
-            <div class="flex items-center justify-between pt-2 md:pt-3 border-t border-gray-200">
-                <span class="inline-block px-2 py-1 md:px-3 md:py-1 rounded-full text-[10px] md:text-xs font-semibold" style="background: {{ $bgColor }}20; color: {{ $bgColor }};">
+        <div class="p-4 md:p-5 bg-white flex-1 flex flex-col">
+            <h3 class="font-display text-base md:text-lg font-bold text-gray-900 mb-2 leading-tight">{{ $categoria['nombre'] }}</h3>
+            <p class="text-sm md:text-base text-gray-600 mb-4 line-clamp-2 leading-relaxed flex-1">{{ $categoria['descripcion'] }}</p>
+            <div class="flex items-center justify-between pt-3 border-t border-gray-200 mt-auto">
+                <span class="inline-block px-2.5 py-1 md:px-3 md:py-1.5 rounded-full text-[11px] md:text-xs font-semibold uppercase tracking-wide" style="background: {{ $bgColor }}20; color: {{ $bgColor }};">
                     {{ ucfirst($categoria['tipo']) }}
                 </span>
-                <span class="text-gray-600 font-semibold text-xs md:text-sm flex items-center gap-2 hover:gap-3 transition-all">
-                    Ver más <i class="fas fa-arrow-right text-xs md:text-sm"></i>
+                <span class="text-gray-600 font-semibold text-sm md:text-base flex items-center gap-2 hover:gap-3 transition-all">
+                    Explorar <i class="fas fa-arrow-right text-sm md:text-base"></i>
                 </span>
             </div>
         </div>
