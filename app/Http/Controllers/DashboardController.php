@@ -58,6 +58,9 @@ class DashboardController extends Controller
         // Eventos destacados
         $eventosDestacados = $this->getEventosDestacados();
 
+        // Imágenes para cards de inspiración
+        $inspiracionImages = $this->getInspiracionImages();
+
         return view('pages.dashboard', compact(
             'stats',
             'destinosPorCategoria',
@@ -66,7 +69,8 @@ class DashboardController extends Controller
             'explorarTipos',
             'hotelesDestacados',
             'gastronomiaDestacada',
-            'eventosDestacados'
+            'eventosDestacados',
+            'inspiracionImages'
         ));
     }
 
@@ -434,6 +438,19 @@ class DashboardController extends Controller
                 'fecha' => 'Septiembre 2026',
                 'imagen' => 'https://images.unsplash.com/photo-1459749411175-04bf5292ceea?w=400&h=300&fit=crop',
             ],
+        ];
+    }
+
+    /**
+     * Obtener imágenes reales para cards de inspiración
+     */
+    private function getInspiracionImages()
+    {
+        return [
+            'playas' => $this->buscarImagenEnTabla('Playa') ?? 'https://m.rutascolombia.com/Imagenes_app/sol_y_playa/la_barra.jpg',
+            'museos' => $this->buscarImagenEnTabla('Museo') ?? 'https://m.rutascolombia.com/Imagenes_app/turismo_cultural/bogota/mambo_museo_de_arte_moderno.jpg',
+            'aventura' => $this->buscarImagenEnTabla('Deporte') ?? 'https://m.rutascolombia.com/Imagenes_app/categorias/aventura.png',
+            'gastronomia' => $this->buscarImagenEnTabla('Plato') ?? 'https://m.rutascolombia.com/Imagenes_app/ferias_fiestas_y_festivales/junio/fiesta_nacional_del_cafe_Calarca/fiesta_del_cafe.jpg',
         ];
     }
 }

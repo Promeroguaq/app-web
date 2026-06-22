@@ -6,6 +6,25 @@
 <!-- Main Container -->
 <div class="w-full max-w-7xl mx-auto px-4 md:px-6 lg:px-8">
 
+<!-- Barra de búsqueda global -->
+<div class="mb-6 md:mb-8">
+    <form action="{{ route('buscar') }}" method="GET" class="relative">
+        <input 
+            type="text" 
+            name="q" 
+            placeholder="Busca destinos, experiencias, lugares o sabores de Colombia"
+            class="w-full px-5 py-4 pl-12 rounded-2xl border border-gray-200 bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm md:text-base"
+        >
+        <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+        <button 
+            type="submit" 
+            class="absolute right-3 top-1/2 -translate-y-1/2 px-4 py-2 bg-emerald-500 text-white rounded-xl text-sm font-medium hover:bg-emerald-600 transition-colors hidden sm:block"
+        >
+            Buscar
+        </button>
+    </form>
+</div>
+
 <!-- Hero Section - Premium Single Column Layout -->
 <div class="relative min-h-[360px] md:min-h-[400px] lg:min-h-[420px] rounded-[36px] mb-8 md:mb-12 overflow-hidden bg-gradient-to-br from-[#07111F] via-[#0B1F2A] to-[#063B32]" style="box-shadow: 0 25px 50px rgba(0,0,0,0.6), 0 50px 100px rgba(0,0,0,0.3), 0 0 0 1px rgba(255,255,255,0.05);">
     <!-- Background Pattern - Subtle Topographic Lines -->
@@ -534,50 +553,66 @@
         </div>
     </div>
 
-    <!-- Recomendado para ti -->
+    <!-- Inspírate para tu próximo viaje -->
     <div class="mb-6 md:mb-8 lg:mb-12">
         <div class="flex items-center justify-between mb-4 md:mb-6">
-            <h2 class="font-display text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold text-midnight-900">Recomendado para ti</h2>
+            <h2 class="font-display text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold text-midnight-900">Inspírate para tu próximo viaje</h2>
         </div>
 
         <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 md:gap-3 lg:gap-6">
-            <a href="/puntos-interes/playas" class="cinematic-card block group w-full card-anim">
-                <div class="relative h-32 sm:h-36 md:h-40 lg:h-48 overflow-hidden rounded-2xl md:rounded-3xl w-full premium-card-3d premium-image-hover" style="background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 50%, #0369a1 100%);">
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
-                    <div class="absolute bottom-2 left-2 md:bottom-3 md:left-4 text-white">
+            <a href="{{ route('puntos-interes.playas') }}" class="cinematic-card block group w-full card-anim">
+                <div class="relative h-32 sm:h-36 md:h-40 lg:h-48 overflow-hidden rounded-2xl md:rounded-3xl w-full premium-card-3d premium-image-hover">
+                    <img src="{{ $inspiracionImages['playas'] }}" alt="Playas del Caribe" class="absolute inset-0 w-full h-full object-cover">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent"></div>
+                    <div class="absolute top-3 right-3">
+                        <div class="bg-white/20 backdrop-blur-sm px-2 py-1 rounded-full text-white text-xs font-medium">Descubrir</div>
+                    </div>
+                    <div class="absolute bottom-3 left-3 right-3 text-white">
                         <i class="fas fa-umbrella-beach text-lg md:text-xl lg:text-2xl mb-1 md:mb-2"></i>
                         <h3 class="font-bold text-xs md:text-sm lg:text-base">Playas del Caribe</h3>
-                        <p class="text-[10px] md:text-xs lg:text-sm opacity-90">7 destinos</p>
+                        <p class="text-[10px] md:text-xs lg:text-sm opacity-90">Mar, arena y paisajes costeros</p>
                     </div>
                 </div>
             </a>
-            <a href="/puntos-interes/museos" class="cinematic-card block group w-full card-anim">
-                <div class="relative h-32 sm:h-36 md:h-40 lg:h-48 overflow-hidden rounded-2xl md:rounded-3xl w-full premium-card-3d premium-image-hover" style="background: linear-gradient(135deg, #dc2626 0%, #b91c1c 50%, #991b1b 100%);">
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
-                    <div class="absolute bottom-2 left-2 md:bottom-3 md:left-4 text-white">
+            <a href="{{ route('puntos-interes.museos') }}" class="cinematic-card block group w-full card-anim">
+                <div class="relative h-32 sm:h-36 md:h-40 lg:h-48 overflow-hidden rounded-2xl md:rounded-3xl w-full premium-card-3d premium-image-hover">
+                    <img src="{{ $inspiracionImages['museos'] }}" alt="Museos & Cultura" class="absolute inset-0 w-full h-full object-cover">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent"></div>
+                    <div class="absolute top-3 right-3">
+                        <div class="bg-white/20 backdrop-blur-sm px-2 py-1 rounded-full text-white text-xs font-medium">Descubrir</div>
+                    </div>
+                    <div class="absolute bottom-3 left-3 right-3 text-white">
                         <i class="fas fa-landmark text-lg md:text-xl lg:text-2xl mb-1 md:mb-2"></i>
                         <h3 class="font-bold text-xs md:text-sm lg:text-base">Museos & Cultura</h3>
-                        <p class="text-[10px] md:text-xs lg:text-sm opacity-90">12 experiencias</p>
+                        <p class="text-[10px] md:text-xs lg:text-sm opacity-90">Historia, arte y patrimonio colombiano</p>
                     </div>
                 </div>
             </a>
-            <a href="/puntos-interes/actividades-parques" class="cinematic-card block group w-full card-anim">
-                <div class="relative h-32 sm:h-36 md:h-40 lg:h-48 overflow-hidden rounded-2xl md:rounded-3xl w-full premium-card-3d premium-image-hover" style="background: linear-gradient(135deg, #22c55e 0%, #16a34a 50%, #15803d 100%);">
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
-                    <div class="absolute bottom-2 left-2 md:bottom-3 md:left-4 text-white">
+            <a href="{{ route('puntos-interes.deportes-aventura') }}" class="cinematic-card block group w-full card-anim">
+                <div class="relative h-32 sm:h-36 md:h-40 lg:h-48 overflow-hidden rounded-2xl md:rounded-3xl w-full premium-card-3d premium-image-hover">
+                    <img src="{{ $inspiracionImages['aventura'] }}" alt="Aventura & Naturaleza" class="absolute inset-0 w-full h-full object-cover">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent"></div>
+                    <div class="absolute top-3 right-3">
+                        <div class="bg-white/20 backdrop-blur-sm px-2 py-1 rounded-full text-white text-xs font-medium">Descubrir</div>
+                    </div>
+                    <div class="absolute bottom-3 left-3 right-3 text-white">
                         <i class="fas fa-hiking text-lg md:text-xl lg:text-2xl mb-1 md:mb-2"></i>
                         <h3 class="font-bold text-xs md:text-sm lg:text-base">Aventura & Naturaleza</h3>
-                        <p class="text-[10px] md:text-xs lg:text-sm opacity-90">15 rutas</p>
+                        <p class="text-[10px] md:text-xs lg:text-sm opacity-90">Rutas, montañas y experiencias al aire libre</p>
                     </div>
                 </div>
             </a>
-            <a href="/gastronomia" class="cinematic-card block group w-full card-anim">
-                <div class="relative h-32 sm:h-36 md:h-40 lg:h-48 overflow-hidden rounded-2xl md:rounded-3xl w-full premium-card-3d premium-image-hover" style="background: linear-gradient(135deg, #eab308 0%, #ca8a04 50%, #a16207 100%);">
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
-                    <div class="absolute bottom-2 left-2 md:bottom-3 md:left-4 text-white">
+            <a href="{{ route('gastronomia') }}" class="cinematic-card block group w-full card-anim">
+                <div class="relative h-32 sm:h-36 md:h-40 lg:h-48 overflow-hidden rounded-2xl md:rounded-3xl w-full premium-card-3d premium-image-hover">
+                    <img src="{{ $inspiracionImages['gastronomia'] }}" alt="Gastronomía Local" class="absolute inset-0 w-full h-full object-cover">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent"></div>
+                    <div class="absolute top-3 right-3">
+                        <div class="bg-white/20 backdrop-blur-sm px-2 py-1 rounded-full text-white text-xs font-medium">Descubrir</div>
+                    </div>
+                    <div class="absolute bottom-3 left-3 right-3 text-white">
                         <i class="fas fa-utensils text-lg md:text-xl lg:text-2xl mb-1 md:mb-2"></i>
                         <h3 class="font-bold text-xs md:text-sm lg:text-base">Gastronomía Local</h3>
-                        <p class="text-[10px] md:text-xs lg:text-sm opacity-90">20 platos</p>
+                        <p class="text-[10px] md:text-xs lg:text-sm opacity-90">Sabores tradicionales de cada región</p>
                     </div>
                 </div>
             </a>

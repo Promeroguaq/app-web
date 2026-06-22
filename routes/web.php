@@ -6,6 +6,7 @@ use App\Http\Controllers\DepartamentoController;
 use App\Http\Controllers\MunicipioController;
 use App\Http\Controllers\PuntoInteresController;
 use App\Http\Controllers\GastronomiaController;
+use App\Http\Controllers\SearchController;
 use App\Http\Controllers\AlojamientoController;
 use App\Http\Controllers\RutasTuristicasController;
 use App\Http\Controllers\ConfiguracionController;
@@ -216,6 +217,15 @@ Route::post(
 
 /*
 |--------------------------------------------------------------------------
+| Búsqueda Global
+|--------------------------------------------------------------------------
+*/
+
+Route::get('/buscar', [SearchController::class, 'index'])
+    ->name('buscar');
+
+/*
+|--------------------------------------------------------------------------
 | Puntos de Interés
 |--------------------------------------------------------------------------
 */
@@ -413,9 +423,6 @@ Route::prefix('departamentos')
         // Rutas específicas: deben ir antes de las rutas dinámicas.
         Route::get('/activos', [DepartamentoController::class, 'activos'])
             ->name('activos');
-
-        Route::get('/buscar', [DepartamentoController::class, 'buscar'])
-            ->name('buscar');
 
         Route::get('/crear', [DepartamentoController::class, 'create'])
             ->name('create');

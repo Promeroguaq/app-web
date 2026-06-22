@@ -172,10 +172,16 @@
                     </div>
                 </div>
 
-                <!-- Bottom row: number + Registros -->
-                <div class="text-white">
-                    <div class="text-3xl md:text-4xl font-bold font-display leading-none transition-all duration-300 group-hover:scale-105">{{ $categoria['count'] }}</div>
-                    <div class="text-[11px] md:text-xs opacity-90 mt-1 tracking-wide">Registros</div>
+                <!-- Decorative pattern overlay -->
+                <div class="absolute inset-0 opacity-10 pointer-events-none">
+                    <svg class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <pattern id="pattern-{{ $categoria['nombre'] }}" width="20" height="20" patternUnits="userSpaceOnUse">
+                                <circle cx="2" cy="2" r="1" fill="white"/>
+                            </pattern>
+                        </defs>
+                        <rect width="100%" height="100%" fill="url(#pattern-{{ $categoria['nombre'] }})"/>
+                    </svg>
                 </div>
             </div>
         </div>
