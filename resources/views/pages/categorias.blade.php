@@ -131,17 +131,59 @@
             'Agencias' => 'linear-gradient(135deg, #14b8a6 0%, #0d9488 50%, #0f766e 100%)'
         ];
         $categoriaGradient = $categoriaGradients[$categoria['nombre']] ?? 'linear-gradient(135deg, #3b82f6 0%, #2563eb 50%, #1d4ed8 100%)';
+
+        $categoriaImages = [
+            'Deportes de aventura' => 'https://m.rutascolombia.com/Imagenes_app/categorias/aventura.png',
+            'Ciclismo' => 'https://m.rutascolombia.com/Imagenes_app/fotos_regions/regioncafetera.jpg',
+            'Termales' => 'https://m.rutascolombia.com/Imagenes_app/turismo_de_salud/termales_de_san_juan_purace.jpg',
+            'Playas' => 'https://m.rutascolombia.com/Imagenes_app/sol_y_playa/la_barra.jpg',
+            'Reservas de parques' => 'https://m.rutascolombia.com/Imagenes_app/reservas_y_parques_naturales/Reserva_Natural_Tanimboca/RESERVA_NATURAL_TANIMBOCA.JPG',
+            'Actividades de parques' => 'https://m.rutascolombia.com/Imagenes_app/actividades_en_parques/avistamiento_de_ballenas_acandi.jpg',
+            'Museos' => 'https://m.rutascolombia.com/Imagenes_app/turismo_cultural/bogota/mambo_museo_de_arte_moderno.jpg',
+            'Iglesias' => 'https://m.rutascolombia.com/Imagenes_app/turismo_religioso/iglesia_maria_auxiliadora_marinilla.jpg',
+            'Parques temáticos' => 'https://m.rutascolombia.com/Imagenes_app/parques_tematicos/Parque_Nal_del_Cafe_Quindio.jpg',
+            'Gastronomía' => 'https://m.rutascolombia.com/Imagenes_app/ferias_fiestas_y_festivales/junio/fiesta_nacional_del_cafe_Calarca/fiesta_del_cafe.jpg',
+            'Destinos' => 'https://m.rutascolombia.com/Imagenes_app/capital_cities/cartagena/cartagena.jpg',
+            'Departamentos' => 'https://m.rutascolombia.com/Imagenes_app/capital_cities/bogota/bogoteatro.jpg',
+            'Municipios' => 'https://m.rutascolombia.com/Imagenes_app/capital_cities/medellin/medellin.jpg',
+            'Eventos' => 'https://m.rutascolombia.com/Imagenes_app/categorias/ferias.png',
+            'Alojamiento' => 'https://m.rutascolombia.com/Imagenes_app/capital_cities/armenia/armenia.jpg',
+            'Agencias' => 'https://m.rutascolombia.com/Imagenes_app/categorias/Rutas.jpeg'
+        ];
+        $categoriaImage = $categoriaImages[$categoria['nombre']] ?? 'https://m.rutascolombia.com/Imagenes_app/fotos_regions/regioncafetera.jpg';
     @endphp
     
-    <div class="categoria-card rounded-[20px] md:rounded-[32px] overflow-hidden bg-white shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300 w-full flex flex-col min-h-[240px] md:min-h-[260px]" data-tipo="{{ $categoria['tipo'] }}" onclick="window.location.href='{{ $categoria['ruta'] }}'">
-        <div class="relative h-[88px] sm:h-[92px] md:h-[96px] lg:h-[100px] overflow-hidden w-full flex-shrink-0" style="background: {{ $categoriaGradient }};">
-            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
-            <div class="absolute top-2.5 left-2.5 md:top-3 md:left-3 bg-white/90 backdrop-blur-sm px-2.5 py-1 md:px-3 md:py-1.5 rounded-full text-[11px] md:text-xs font-semibold text-gray-800 shadow-md z-10">
-                {{ $categoria['nombre'] }}
-            </div>
-            <div class="absolute bottom-0 left-0 right-0 p-2.5 md:p-3 text-white z-10">
-                <div class="text-2xl md:text-3xl font-bold font-display leading-none">{{ $categoria['count'] }}</div>
-                <div class="text-[11px] md:text-xs opacity-90 mt-0.5">Registros</div>
+    <div class="categoria-card rounded-[20px] md:rounded-[32px] overflow-hidden bg-white shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300 w-full flex flex-col min-h-[250px] md:min-h-[270px]" data-tipo="{{ $categoria['tipo'] }}" onclick="window.location.href='{{ $categoria['ruta'] }}'">
+        <div class="relative h-[110px] sm:h-[115px] md:h-[120px] lg:h-[125px] overflow-hidden w-full flex-shrink-0 group" style="background: {{ $categoriaGradient }};">
+            <!-- Premium background image - category specific -->
+            <img
+                src="{{ $categoriaImage }}"
+                alt="{{ $categoria['nombre'] }}"
+                class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                loading="lazy"
+            >
+            <!-- Gradient overlay with reduced opacity for image visibility -->
+            <div class="absolute inset-0 transition-opacity duration-300 group-hover:opacity-40" style="background: linear-gradient(to bottom, {{ $categoriaGradient }} 0%, rgba(0,0,0,0.3) 50%, rgba(0,0,0,0.5) 100%); opacity: 0.45;"></div>
+            <!-- Bottom vignette for text legibility -->
+            <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
+
+            <!-- Header content with flex structure -->
+            <div class="relative z-10 h-full flex flex-col justify-between p-3 md:p-4">
+                <!-- Top row: badge left + icon right -->
+                <div class="flex items-start justify-between">
+                    <div class="bg-white/95 backdrop-blur-sm px-2.5 py-1 md:px-3 md:py-1.5 rounded-full text-[10px] md:text-xs font-semibold text-gray-800 shadow-md">
+                        {{ $categoria['nombre'] }}
+                    </div>
+                    <div class="text-white/90 transition-all duration-300 group-hover:text-white group-hover:scale-110">
+                        <svg class="w-5 h-5 md:w-6 md:h-6" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"/></svg>
+                    </div>
+                </div>
+
+                <!-- Bottom row: number + Registros -->
+                <div class="text-white">
+                    <div class="text-3xl md:text-4xl font-bold font-display leading-none transition-all duration-300 group-hover:scale-105">{{ $categoria['count'] }}</div>
+                    <div class="text-[11px] md:text-xs opacity-90 mt-1 tracking-wide">Registros</div>
+                </div>
             </div>
         </div>
         <div class="p-4 md:p-5 bg-white flex-1 flex flex-col">
