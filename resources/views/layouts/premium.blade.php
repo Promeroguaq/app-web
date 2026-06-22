@@ -109,7 +109,7 @@
         
         .sidebar-logo {
             width: 100%;
-            max-width: 70px;
+            max-width: 85px;
             height: auto;
             display: flex;
             align-items: center;
@@ -127,7 +127,7 @@
 
         @media (min-width: 768px) {
             .sidebar-logo {
-                max-width: 90px;
+                max-width: 110px;
                 margin-bottom: 2.5rem;
             }
         }
