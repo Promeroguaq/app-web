@@ -569,8 +569,8 @@
             background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.4) 40%, transparent 100%);
         }
         
-        /* Mobile Responsive */
-        @media (max-width: 1024px) {
+        /* Desktop collapsed rail mode - only for tablets/laptops (1024px - 1279px) */
+        @media (min-width: 1024px) and (max-width: 1279px) {
             .sidebar {
                 width: 72px;
             }
@@ -632,25 +632,81 @@
         @media (max-width: 768px) {
             .sidebar {
                 transform: translateX(-100%);
-                width: 280px;
+                width: min(88vw, 340px);
                 background: #FCFBF8;
+                border-radius: 0;
+                box-shadow: 4px 0 24px rgba(0,0,0,0.15);
             }
 
             .sidebar.show {
                 transform: translateX(0);
             }
 
+            /* Ensure text is always visible in mobile drawer */
             .nav-item {
                 color: #334155 !important;
+                min-height: 52px;
             }
 
             .nav-item span {
                 opacity: 1 !important;
                 transform: translateX(0) !important;
+                display: block !important;
             }
 
             .nav-item i {
                 color: #64748b !important;
+            }
+
+            .nav-icon-wrapper {
+                background: #e2e8f0;
+            }
+
+            .nav-item:hover .nav-icon-wrapper {
+                background: #cbd5e1;
+            }
+
+            .nav-item.active {
+                background: #1e3a5f;
+                color: white !important;
+            }
+
+            .nav-item.active .nav-icon-wrapper {
+                background: rgba(255,255,255,0.2);
+            }
+
+            .nav-item.active i {
+                color: white !important;
+            }
+
+            .nav-item.active span {
+                color: white !important;
+            }
+
+            .nav-label {
+                opacity: 1;
+                font-size: 0.75rem;
+                padding: 0.5rem 1rem;
+            }
+
+            .category-group-title {
+                font-size: 0.7rem;
+                padding: 0.5rem 1rem 0.25rem 1.5rem;
+            }
+
+            .nav-item-sub {
+                padding: 0.75rem 1rem 0.75rem 1.5rem;
+                font-size: 0.9rem;
+                min-height: 48px;
+            }
+
+            .nav-item-sub span {
+                font-size: 0.9rem;
+            }
+
+            /* Hide decorative footer in mobile */
+            .sidebar > div:last-child {
+                display: none;
             }
 
             .main {
@@ -675,8 +731,9 @@
                 font-size: 0.7rem;
             }
 
-            .nav-label {
-                opacity: 1;
+            /* Hide hamburger button when drawer is open */
+            .mobile-menu-btn.hidden-when-open {
+                display: none !important;
             }
         }
         
@@ -780,14 +837,92 @@
         .scrollbar-hide::-webkit-scrollbar {
             display: none;
         }
+
+        /* Mobile Sidebar Header */
+        .sidebar-mobile-header {
+            display: none;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem;
+            border-bottom: 1px solid #e2e8f0;
+            background: #FCFBF8;
+        }
+
+        .sidebar-logo-mobile {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .sidebar-logo-mobile img {
+            width: 40px;
+            height: 40px;
+            object-fit: contain;
+        }
+
+        .sidebar-logo-text {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #1e3a5f;
+        }
+
+        .sidebar-close-btn {
+            width: 44px;
+            height: 44px;
+            min-width: 44px;
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #e2e8f0;
+            border: none;
+            border-radius: 12px;
+            color: #64748b;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .sidebar-close-btn:hover {
+            background: #cbd5e1;
+            color: #334155;
+        }
+
+        .sidebar-close-btn:focus-visible {
+            outline: 2px solid #10b981;
+            outline-offset: 2px;
+        }
+
+        @media (max-width: 1023px) {
+            .sidebar-mobile-header {
+                display: flex;
+            }
+        }
     </style>
 </head>
 <body>
     <!-- Sidebar -->
     <aside class="sidebar" id="sidebar">
-        <div class="sidebar-logo">
+        <!-- Mobile Header (only visible on mobile) -->
+        <div class="sidebar-mobile-header lg:hidden">
+            <div class="sidebar-logo-mobile">
+                <img src="{{ asset('assets/logo.JPG') }}" alt="Rutas Colombia">
+                <span class="sidebar-logo-text">Rutas Colombia</span>
+            </div>
+            <button
+                type="button"
+                class="sidebar-close-btn"
+                id="sidebarCloseBtn"
+                aria-label="Cerrar menú"
+            >
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+
+        <!-- Desktop Logo (only visible on desktop) -->
+        <div class="sidebar-logo hidden lg:block">
             <img src="{{ asset('assets/logo.JPG') }}" alt="Rutas por Colombia">
         </div>
+
         <nav class="sidebar-nav">
             <div class="nav-label">NAVEGACIÓN</div>
             <a href="{{ route('dashboard') }}" class="nav-item {{ request()->is('dashboard') ? 'active' : '' }}">
@@ -924,8 +1059,8 @@
             </a>
         </nav>
 
-        <!-- Lema editorial inferior -->
-        <div class="mt-auto px-3 pb-6">
+        <!-- Lema editorial inferior (hidden on mobile) -->
+        <div class="mt-auto px-3 pb-6 hidden lg:block">
             <div class="relative">
                 <!-- Línea decorativa -->
                 <div class="h-px bg-slate-200 mb-3"></div>
@@ -963,14 +1098,16 @@
         const mobileMenuBtn = document.getElementById('mobileMenuBtn');
         const sidebar = document.getElementById('sidebar');
         const mobileOverlay = document.getElementById('mobileOverlay');
+        const sidebarCloseBtn = document.getElementById('sidebarCloseBtn');
         const STORAGE_KEY = 'rutas-colombia.mobile-sidebar-open';
 
         // Restore sidebar state from sessionStorage on page load
         function restoreSidebarState() {
             const wasOpen = sessionStorage.getItem(STORAGE_KEY) === 'true';
-            if (wasOpen && window.innerWidth <= 768) {
+            if (wasOpen && window.innerWidth <= 1023) {
                 sidebar.classList.add('show');
                 mobileOverlay.classList.add('show');
+                mobileMenuBtn.classList.add('hidden-when-open');
             }
         }
 
@@ -983,6 +1120,7 @@
         function closeSidebar() {
             sidebar.classList.remove('show');
             mobileOverlay.classList.remove('show');
+            mobileMenuBtn.classList.remove('hidden-when-open');
             saveSidebarState(false);
         }
 
@@ -990,6 +1128,7 @@
         function openSidebar() {
             sidebar.classList.add('show');
             mobileOverlay.classList.add('show');
+            mobileMenuBtn.classList.add('hidden-when-open');
             saveSidebarState(true);
         }
 
@@ -1006,6 +1145,11 @@
                     openSidebar();
                 }
             });
+
+            // Close sidebar with X button
+            if (sidebarCloseBtn) {
+                sidebarCloseBtn.addEventListener('click', closeSidebar);
+            }
 
             // Close sidebar when clicking overlay
             mobileOverlay.addEventListener('click', closeSidebar);
@@ -1032,6 +1176,12 @@
                 const isOpen = categoriesSubmenu.classList.contains('open');
                 categoriesSubmenu.classList.toggle('open');
                 categoriesToggle.setAttribute('aria-expanded', !isOpen);
+
+                // Rotate chevron
+                const chevron = categoriesToggle.querySelector('.fa-chevron-down');
+                if (chevron) {
+                    chevron.classList.toggle('rotate-180');
+                }
             });
         }
 

@@ -5,17 +5,41 @@
 @section('content')
 <div class="w-full max-w-7xl mx-auto px-4 md:px-6 lg:px-8 py-8 md:py-12">
 
-<!-- Hero Section -->
-<div class="relative h-[300px] md:h-[400px] lg:h-[420px] rounded-[20px] md:rounded-[32px] overflow-hidden mb-6 md:mb-8 shadow-xl bg-gradient-to-br from-amber-500 via-orange-500 to-red-500">
-    <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/40 to-transparent"></div>
-    <div class="absolute bottom-0 left-0 right-0 p-6 md:p-8 lg:p-12 text-white">
-        <div class="flex flex-wrap gap-2 mb-4">
-            <span class="px-3 py-1 bg-white/20 backdrop-blur-sm rounded-full text-xs md:text-sm font-medium">🏛️ Geográficas</span>
-            <span class="px-3 py-1 bg-white/20 backdrop-blur-sm rounded-full text-xs md:text-sm font-medium">🗺️ Departamentos</span>
-            <span class="px-3 py-1 bg-white/20 backdrop-blur-sm rounded-full text-xs md:text-sm font-medium">🌆 Urbanas</span>
+<!-- Hero Premium Redesign - Full Background Image -->
+<div class="relative h-[240px] sm:h-[260px] md:h-[280px] lg:h-[300px] xl:h-[340px] overflow-hidden rounded-[32px] mb-6 md:mb-8 shadow-xl">
+    <!-- Full background image - Bogotá urban landscape -->
+    <img
+        src="https://m.rutascolombia.com/Imagenes_app/capital_cities/bogota/bogoteatro.jpg"
+        alt="Paisaje urbano de Bogotá, Colombia"
+        class="absolute inset-0 w-full h-full object-cover"
+        loading="eager"
+        fetchpriority="high"
+    >
+
+    <!-- Progressive overlay - left to right gradient for text legibility -->
+    <div class="absolute inset-0" style="background: linear-gradient(to right, #c2410c 0%, #c2410c 40%, rgba(194, 65, 12, 0.7) 60%, rgba(194, 65, 12, 0.3) 80%, rgba(194, 65, 12, 0.1) 100%);"></div>
+
+    <!-- Bottom overlay for content integration -->
+    <div class="absolute inset-0 bg-gradient-to-t from-[#c2410c]/30 via-transparent to-transparent"></div>
+
+    <!-- Decorative texture overlay - subtle urban/cartographic pattern -->
+    <div class="absolute inset-0 opacity-5" style="background-image: radial-gradient(circle at 20% 50%, rgba(255,255,255,0.1) 0%, transparent 50%), radial-gradient(circle at 80% 50%, rgba(255,255,255,0.05) 0%, transparent 50%);"></div>
+
+    <!-- Main content -->
+    <div class="absolute inset-0 flex items-center p-6 md:p-8 lg:p-12">
+        <div class="relative z-10 max-w-2xl">
+            <div class="flex flex-wrap gap-2 mb-4">
+                <span class="px-3 py-1 bg-white/10 backdrop-blur-md border border-white/20 rounded-full text-xs md:text-sm font-medium">🏛️ Geográficas</span>
+                <span class="px-3 py-1 bg-white/10 backdrop-blur-md border border-white/20 rounded-full text-xs md:text-sm font-medium">🗺️ Departamentos</span>
+                <span class="px-3 py-1 bg-white/10 backdrop-blur-md border border-white/20 rounded-full text-xs md:text-sm font-medium">🌆 Urbanas</span>
+            </div>
+            <h1 class="font-display text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold text-white mb-2 md:mb-4 leading-tight" style="text-shadow: 0 2px 20px rgba(0,0,0,0.3);">
+                Capitales de Colombia
+            </h1>
+            <p class="text-white/80 text-sm md:text-base lg:text-lg max-w-xl leading-relaxed">
+                Explora las ciudades capitales de los departamentos de Colombia.
+            </p>
         </div>
-        <h1 class="font-display text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold mb-2 md:mb-4">Capitales de Colombia</h1>
-        <p class="text-sm md:text-base lg:text-lg opacity-90 max-w-2xl">Explora las ciudades capitales de los departamentos de Colombia.</p>
     </div>
 </div>
 
