@@ -78,7 +78,7 @@ function getDestinationUrl($item, $regionSlug = null) {
 <div class="max-w-7xl mx-auto px-4 md:px-6 lg:px-8">
 
 <!-- Hero Section -->
-<div class="hero-section rounded-[32px] mb-12 relative overflow-hidden @if(isset($region->heroImage) && $region->heroImage) @else bg-gradient-to-br from-blue-900 to-blue-700 @endif">
+<div class="hero-section rounded-[32px] mb-12 relative overflow-hidden @if(isset($region->heroImage) && $region->heroImage) @elseif(isset($region->heroGradient) && $region->heroGradient) @else bg-gradient-to-br from-blue-900 to-blue-700 @endif" @if(isset($region->heroGradient) && $region->heroGradient) style="background: {{ $region->heroGradient }};" @endif>
     @if(isset($region->heroImage) && $region->heroImage)
     <img src="{{ $region->heroImage }}" alt="{{ $region->name }}" class="hero-image rounded-[32px]">
     @endif
