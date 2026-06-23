@@ -7,38 +7,49 @@
 <div class="w-full max-w-7xl mx-auto overflow-x-hidden">
 
 <!-- Hero Section -->
-<div class="hero-section rounded-[32px] mb-12" style="background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 50%, #1d4ed8 100%);">
-    <div class="hero-overlay rounded-[32px]"></div>
-    <div class="absolute bottom-0 left-0 right-0 p-8 md:p-16 text-white">
-        <div class="glass-badge inline-block mb-6">
+<div class="hero-section rounded-[32px] mb-12 relative overflow-hidden h-[250px] md:h-[300px] lg:h-[340px]">
+    <!-- Background Image -->
+    <img src="https://m.rutascolombia.com/Imagenes_app/fotos_regions/regioncafetera.jpg" alt="Paisaje geográfico de Colombia" class="absolute inset-0 h-full w-full object-cover">
+    
+    <!-- Overlay Layers -->
+    <div class="absolute inset-0 rounded-[32px]" style="background: linear-gradient(to right, rgba(15, 23, 42, 0.85) 0%, rgba(30, 58, 138, 0.6) 40%, rgba(30, 58, 138, 0.3) 70%, rgba(30, 58, 138, 0.1) 100%);"></div>
+    <div class="absolute inset-0 rounded-[32px] bg-gradient-to-t from-blue-900/40 via-transparent to-transparent"></div>
+    
+    <!-- Content -->
+    <div class="absolute bottom-0 left-0 right-0 p-6 md:p-12 lg:p-16 text-white">
+        <div class="glass-badge inline-block mb-4 md:mb-6">
             Geografía
         </div>
-        <h1 class="font-display text-4xl md:text-6xl lg:text-7xl font-bold mb-4 leading-tight" style="text-shadow: 2px 2px 8px rgba(0,0,0,0.5);">
+        <h1 class="font-display text-3xl md:text-5xl lg:text-6xl xl:text-7xl font-bold mb-3 md:mb-4 leading-tight" style="text-shadow: 2px 2px 8px rgba(0,0,0,0.5);">
             Regiones de Colombia
         </h1>
-        <p class="text-lg md:text-xl opacity-90 max-w-2xl" style="text-shadow: 1px 1px 4px rgba(0,0,0,0.5);">
+        <p class="text-base md:text-lg lg:text-xl opacity-90 max-w-2xl" style="text-shadow: 1px 1px 4px rgba(0,0,0,0.5);">
             Explora las 6 regiones naturales del país
         </p>
     </div>
 </div>
 
 <!-- Stats Section -->
-<div class="grid grid-cols-2 md:grid-cols-4 gap-6 mb-12">
-    <div class="glass-card p-6 text-center rounded-[32px]">
-        <div class="text-4xl font-bold text-[#1D4ED8] mb-2">6</div>
-        <div class="text-sm text-gray-600">Regiones</div>
+<div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 mb-12">
+    <div class="bg-white rounded-[20px] md:rounded-[28px] p-4 md:p-6 text-center border border-gray-100 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden">
+        <div class="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-[#1D4ED8] to-[#1E40AF]"></div>
+        <div class="text-3xl md:text-4xl font-bold text-[#1D4ED8] mb-1 md:mb-2">6</div>
+        <div class="text-xs md:text-sm text-gray-600">Regiones</div>
     </div>
-    <div class="glass-card p-6 text-center rounded-[32px]">
-        <div class="text-4xl font-bold text-[#1D4ED8] mb-2">32</div>
-        <div class="text-sm text-gray-600">Departamentos</div>
+    <div class="bg-white rounded-[20px] md:rounded-[28px] p-4 md:p-6 text-center border border-gray-100 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden">
+        <div class="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-[#1D4ED8] to-[#1E40AF]"></div>
+        <div class="text-3xl md:text-4xl font-bold text-[#1D4ED8] mb-1 md:mb-2">32</div>
+        <div class="text-xs md:text-sm text-gray-600">Departamentos</div>
     </div>
-    <div class="glass-card p-6 text-center rounded-[32px]">
-        <div class="text-4xl font-bold text-[#1D4ED8] mb-2">1.1M</div>
-        <div class="text-sm text-gray-600">km²</div>
+    <div class="bg-white rounded-[20px] md:rounded-[28px] p-4 md:p-6 text-center border border-gray-100 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden">
+        <div class="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-[#1D4ED8] to-[#1E40AF]"></div>
+        <div class="text-3xl md:text-4xl font-bold text-[#1D4ED8] mb-1 md:mb-2">1.1M</div>
+        <div class="text-xs md:text-sm text-gray-600">km²</div>
     </div>
-    <div class="glass-card p-6 text-center rounded-[32px]">
-        <div class="text-4xl font-bold text-[#1D4ED8] mb-2">100%</div>
-        <div class="text-sm text-gray-600">Diversidad</div>
+    <div class="bg-white rounded-[20px] md:rounded-[28px] p-4 md:p-6 text-center border border-gray-100 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden">
+        <div class="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-[#1D4ED8] to-[#1E40AF]"></div>
+        <div class="text-3xl md:text-4xl font-bold text-[#1D4ED8] mb-1 md:mb-2">100%</div>
+        <div class="text-xs md:text-sm text-gray-600">Diversidad</div>
     </div>
 </div>
 
@@ -55,7 +66,21 @@
             <!-- Image Area -->
             <div class="relative h-48 sm:h-56 md:h-64 overflow-hidden w-full" @if($region->image_url) style="background-image: url('{{ $region->image_url }}'); background-size: cover; background-position: center;" @else style="background: linear-gradient(135deg, {{ $region->color }} 0%, {{ $region->color }}dd 50%, {{ $region->color }}bb 100%);" @endif>
                 @if($region->image_url)
+                @if($region->slug == 'caribe')
+                <div class="absolute inset-0" style="background: linear-gradient(to top, rgba(30, 58, 138, 0.75) 0%, rgba(251, 191, 36, 0.3) 50%, rgba(251, 191, 36, 0.1) 100%);"></div>
+                @elseif($region->slug == 'andina')
+                <div class="absolute inset-0" style="background: linear-gradient(to top, rgba(5, 150, 105, 0.75) 0%, rgba(30, 58, 138, 0.4) 50%, rgba(30, 58, 138, 0.1) 100%);"></div>
+                @elseif($region->slug == 'pacifica')
+                <div class="absolute inset-0" style="background: linear-gradient(to top, rgba(30, 58, 138, 0.75) 0%, rgba(5, 150, 105, 0.4) 50%, rgba(5, 150, 105, 0.1) 100%);"></div>
+                @elseif($region->slug == 'amazonia')
+                <div class="absolute inset-0" style="background: linear-gradient(to top, rgba(5, 150, 105, 0.75) 0%, rgba(30, 58, 138, 0.5) 50%, rgba(30, 58, 138, 0.1) 100%);"></div>
+                @elseif($region->slug == 'llanos')
+                <div class="absolute inset-0" style="background: linear-gradient(to top, rgba(30, 58, 138, 0.75) 0%, rgba(249, 115, 22, 0.4) 50%, rgba(249, 115, 22, 0.1) 100%);"></div>
+                @elseif($region->slug == 'insular')
+                <div class="absolute inset-0" style="background: linear-gradient(to top, rgba(14, 165, 233, 0.75) 0%, rgba(6, 182, 212, 0.4) 50%, rgba(6, 182, 212, 0.1) 100%);"></div>
+                @else
                 <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent"></div>
+                @endif
                 @endif
                 
                 <!-- Top Left Badge -->
