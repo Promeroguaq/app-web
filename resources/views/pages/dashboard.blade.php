@@ -97,6 +97,37 @@
     </div>
 </div>
 
+<!-- PWA Install Button -->
+<div id="pwa-install-container" class="hidden mb-6 md:mb-8">
+    <button 
+        id="pwa-install-btn"
+        onclick="window.TurismoApp.installPWA()"
+        class="w-full px-6 py-4 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white rounded-2xl font-semibold shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex items-center justify-center gap-3"
+    >
+        <i class="fas fa-download"></i>
+        <span>Instalar app</span>
+    </button>
+</div>
+
+<!-- iOS Install Instructions (shown only on iOS when not installed) -->
+<div id="ios-install-container" class="hidden mb-6 md:mb-8">
+    <div class="bg-amber-50 border border-amber-200 rounded-2xl p-4 md:p-5">
+        <div class="flex items-start gap-3">
+            <i class="fas fa-info-circle text-amber-500 mt-1"></i>
+            <div class="flex-1">
+                <h3 class="font-semibold text-amber-900 mb-2">Instalar en iPhone/iPad</h3>
+                <p class="text-sm text-amber-800 mb-3">
+                    Para instalar Rutas Colombia:
+                </p>
+                <ol class="text-sm text-amber-800 space-y-1 list-decimal list-inside">
+                    <li>Abre Compartir en Safari</li>
+                    <li>Selecciona "Añadir a pantalla de inicio"</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- Explorar por Categoría - Premium Circular Buttons -->
 <div class="mb-8 md:mb-12">
     <h2 class="font-display text-xl sm:text-2xl md:text-3xl font-bold text-midnight-900 mb-4 md:mb-6">Explorar por Categoría</h2>
@@ -823,5 +854,35 @@ document.addEventListener('DOMContentLoaded', function() {
         
         setTimeout(updateButtons, 100);
     });
+
+    // PWA Install Button Logic
+    const pwaInstallContainer = document.getElementById('pwa-install-container');
+    const iosInstallContainer = document.getElementById('ios-install-container');
+
+    // Show install button when available (Android/Chrome)
+    window.addEventListener('pwa-install-available', () => {
+        if (pwaInstallContainer && !window.TurismoApp.isStandalone) {
+            pwaInstallContainer.classList.remove('hidden');
+        }
+    });
+
+    // Hide install button when installed
+    window.addEventListener('pwa-installed', () => {
+        if (pwaInstallContainer) {
+            pwaInstallContainer.classList.add('hidden');
+        }
+    });
+
+    // Show iOS instructions on iOS when not in standalone mode
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+    if (isIOS && !window.TurismoApp.isStandalone && iosInstallContainer) {
+        iosInstallContainer.classList.remove('hidden');
+    }
+
+    // Hide install containers if already in standalone mode
+    if (window.TurismoApp.isStandalone) {
+        if (pwaInstallContainer) pwaInstallContainer.classList.add('hidden');
+        if (iosInstallContainer) iosInstallContainer.classList.add('hidden');
+    }
 });
 </script>

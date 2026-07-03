@@ -1,5 +1,6 @@
 import './bootstrap';
 import './preferences';
+import './pwa';
 
 // Funcionalidades JavaScript para la aplicación
 document.addEventListener('DOMContentLoaded', function() {

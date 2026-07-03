@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 180">
+  <rect width="180" height="180" fill="#0f2d52" rx="36"/>
+  <circle cx="90" cy="75" r="32" fill="#10b981"/>
+  <path d="M90 112c-18 0-32 9-32 22v10h64v-10c0-13-14-22-32-22z" fill="#10b981"/>
+  <text x="90" y="165" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" font-weight="bold" fill="#f8f5ef">RUTAS</text>
+</svg>
