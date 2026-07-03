@@ -1,28 +1,18 @@
-import { registerSW } from 'virtual:pwa-register';
-
-const updateSW = registerSW({
-    onNeedRefresh() {
-        if (confirm('Nueva versión disponible. ¿Deseas actualizar?')) {
-            updateSW(true);
-        }
-    },
-    onOfflineReady() {
-        console.log('✅ PWA: App lista para usar offline');
-    },
-    onRegistered(registration) {
-        console.log('✅ PWA: Service Worker registrado', registration);
-        
-        // Verificar actualizaciones periódicamente
-        if (registration) {
+// Registrar Service Worker con scope raíz
+if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/sw.js', { scope: '/' })
+        .then(registration => {
+            console.log('✅ PWA: Service Worker registrado con scope /', registration);
+            
+            // Verificar actualizaciones periódicamente
             setInterval(() => {
                 registration.update();
             }, 60 * 60 * 1000); // Cada hora
-        }
-    },
-    onRegisterError(error) {
-        console.error('❌ PWA: Error al registrar Service Worker', error);
-    }
-});
+        })
+        .catch(error => {
+            console.error('❌ PWA: Error al registrar Service Worker', error);
+        });
+}
 
 // Detectar si la app está en modo standalone (instalada)
 window.TurismoApp = window.TurismoApp || {};

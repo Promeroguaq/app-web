@@ -78,6 +78,9 @@ RUN composer install \
 # Copiar los assets compilados desde la etapa Node
 COPY --from=frontend /app/public/build ./public/build
 
+# Copiar el Service Worker raíz generado localmente
+COPY public/sw.js ./public/sw.js
+
 # Crear carpetas requeridas por Laravel
 RUN mkdir -p \
     storage/app/public \
