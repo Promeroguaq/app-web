@@ -814,17 +814,17 @@
                     <i class="fas fa-tachometer-alt"></i>
                     Inicio
                 </a>
-                <a href="/departamentos" class="nav-item {{ request()->is('departamentos*') ? 'active' : '' }}">
+                <a href="/departamentos" class="nav-item {{ request()->is('departamentos*') || request()->is('municipios*') || request()->is('destinos*') ? 'active' : '' }}">
                     <i class="fas fa-map-marked-alt"></i>
                     Destinos
                 </a>
-                <a href="/categorias" class="nav-item {{ request()->is('categorias*') ? 'active' : '' }}">
+                <a href="/categorias" class="nav-item {{ request()->is('capitales*') || request()->is('regiones*') || request()->is('gastronomia*') || request()->is('agencias') || request()->is('fiestas-y-ferias*') || request()->is('puntos-interes*') ? 'active' : '' }}">
                     <i class="fas fa-th-large"></i>
                     Categorías
                 </a>
-                <a href="/agencias" class="nav-item {{ request()->is('agencias*') ? 'active' : '' }}">
-                    <i class="fas fa-building"></i>
-                    Agencias
+                <a href="{{ route('configuracion') }}" class="nav-item {{ request()->is('configuracion*') ? 'active' : '' }}">
+                    <i class="fas fa-cog"></i>
+                    Configuración
                 </a>
             </nav>
         </aside>

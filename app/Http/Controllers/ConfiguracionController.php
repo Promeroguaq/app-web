@@ -2,8 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Departamento;
-use App\Models\Municipio;
 use Illuminate\Http\Request;
 
 class ConfiguracionController extends Controller
@@ -13,14 +11,18 @@ class ConfiguracionController extends Controller
      */
     public function index()
     {
-        // Obtener departamentos para configuraciones regionales
-        $departamentos = Departamento::orderBy('NOMBRE_DEPARTAMENTO')->get();
-        
-        // Obtener municipios para configuraciones locales
-        $municipios = Municipio::orderBy('NOMBRE_MUNICIPIOS')->take(12)->get();
+        // Regiones naturales de Colombia para preferencias
+        $regiones = [
+            (object)['slug' => 'caribe', 'name' => 'Región Caribe', 'shortName' => 'Caribe'],
+            (object)['slug' => 'andina', 'name' => 'Región Andina', 'shortName' => 'Andina'],
+            (object)['slug' => 'pacifica', 'name' => 'Región Pacífica', 'shortName' => 'Pacífica'],
+            (object)['slug' => 'amazonia', 'name' => 'Región Amazónica', 'shortName' => 'Amazonía'],
+            (object)['slug' => 'llanos', 'name' => 'Región Orinoquía', 'shortName' => 'Llanos'],
+            (object)['slug' => 'insular', 'name' => 'Región Insular', 'shortName' => 'Insular']
+        ];
 
         // Enviar datos a la vista
-        return view('pages.configuracion', compact('departamentos', 'municipios'));
+        return view('pages.configuracion', compact('regiones'));
     }
     
     /**

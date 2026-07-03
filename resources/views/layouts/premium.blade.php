@@ -941,7 +941,7 @@
                 </div>
                 <span>Inicio</span>
             </a>
-            <a href="/departamentos" class="nav-item {{ request()->is('departamentos*') || request()->is('municipios*') || request()->is('puntos-interes*') || request()->is('playas*') ? 'active' : '' }}">
+            <a href="/departamentos" class="nav-item {{ request()->is('departamentos*') || request()->is('municipios*') || request()->is('destinos*') ? 'active' : '' }}">
                 <div class="nav-icon-wrapper">
                     <i class="fas fa-map-marked-alt"></i>
                 </div>
@@ -952,20 +952,20 @@
             <div class="categories-dropdown">
                 <button
                     type="button"
-                    class="nav-item categories-toggle {{ request()->is('departamentos*') || request()->is('municipios*') || request()->is('capitales*') || request()->is('regiones*') || request()->is('puntos-interes*') || request()->is('gastronomia*') || request()->is('agencias') || request()->is('fiestas-y-ferias*') ? 'active' : '' }}"
-                    aria-expanded="{{ request()->is('departamentos*') || request()->is('municipios*') || request()->is('capitales*') || request()->is('regiones*') || request()->is('puntos-interes*') || request()->is('gastronomia*') || request()->is('agencias') || request()->is('fiestas-y-ferias*') ? 'true' : 'false' }}"
+                    class="nav-item categories-toggle {{ request()->is('capitales*') || request()->is('regiones*') || request()->is('gastronomia*') || request()->is('agencias') || request()->is('fiestas-y-ferias*') || request()->is('puntos-interes/islas*') || request()->is('puntos-interes/deportes-aventura*') || request()->is('puntos-interes/ciclismo*') || request()->is('puntos-interes/termales*') || request()->is('puntos-interes/playas*') || request()->is('puntos-interes/reservas-naturales*') || request()->is('puntos-interes/actividades-parques*') || request()->is('puntos-interes/desiertos-lagunas*') || request()->is('puntos-interes/museos*') || request()->is('puntos-interes/iglesias*') || request()->is('puntos-interes/parques-tematicos*') ? 'active' : '' }}"
+                    aria-expanded="{{ request()->is('capitales*') || request()->is('regiones*') || request()->is('gastronomia*') || request()->is('agencias') || request()->is('fiestas-y-ferias*') || request()->is('puntos-interes/islas*') || request()->is('puntos-interes/deportes-aventura*') || request()->is('puntos-interes/ciclismo*') || request()->is('puntos-interes/termales*') || request()->is('puntos-interes/playas*') || request()->is('puntos-interes/reservas-naturales*') || request()->is('puntos-interes/actividades-parques*') || request()->is('puntos-interes/desiertos-lagunas*') || request()->is('puntos-interes/museos*') || request()->is('puntos-interes/iglesias*') || request()->is('puntos-interes/parques-tematicos*') ? 'true' : 'false' }}"
                     aria-controls="categories-submenu"
                 >
                     <div class="nav-icon-wrapper">
                         <i class="fas fa-th-large"></i>
                     </div>
                     <span>Categorías</span>
-                    <i class="fas fa-chevron-down text-xs ml-auto transition-transform duration-200 {{ request()->is('departamentos*') || request()->is('municipios*') || request()->is('capitales*') || request()->is('regiones*') || request()->is('puntos-interes*') || request()->is('gastronomia*') || request()->is('agencias') || request()->is('fiestas-y-ferias*') ? 'rotate-180' : '' }}"></i>
+                    <i class="fas fa-chevron-down text-xs ml-auto transition-transform duration-200 {{ request()->is('capitales*') || request()->is('regiones*') || request()->is('gastronomia*') || request()->is('agencias') || request()->is('fiestas-y-ferias*') || request()->is('puntos-interes/islas*') || request()->is('puntos-interes/deportes-aventura*') || request()->is('puntos-interes/ciclismo*') || request()->is('puntos-interes/termales*') || request()->is('puntos-interes/playas*') || request()->is('puntos-interes/reservas-naturales*') || request()->is('puntos-interes/actividades-parques*') || request()->is('puntos-interes/desiertos-lagunas*') || request()->is('puntos-interes/museos*') || request()->is('puntos-interes/iglesias*') || request()->is('puntos-interes/parques-tematicos*') ? 'rotate-180' : '' }}"></i>
                 </button>
 
                 <div
                     id="categories-submenu"
-                    class="categories-submenu {{ request()->is('departamentos*') || request()->is('municipios*') || request()->is('capitales*') || request()->is('regiones*') || request()->is('puntos-interes*') || request()->is('gastronomia*') || request()->is('agencias') || request()->is('fiestas-y-ferias*') ? 'open' : '' }}"
+                    class="categories-submenu {{ request()->is('capitales*') || request()->is('regiones*') || request()->is('gastronomia*') || request()->is('agencias') || request()->is('fiestas-y-ferias*') || request()->is('puntos-interes/islas*') || request()->is('puntos-interes/deportes-aventura*') || request()->is('puntos-interes/ciclismo*') || request()->is('puntos-interes/termales*') || request()->is('puntos-interes/playas*') || request()->is('puntos-interes/reservas-naturales*') || request()->is('puntos-interes/actividades-parques*') || request()->is('puntos-interes/desiertos-lagunas*') || request()->is('puntos-interes/museos*') || request()->is('puntos-interes/iglesias*') || request()->is('puntos-interes/parques-tematicos*') ? 'open' : '' }}"
                 >
                     <!-- Geográficas -->
                     <div class="category-group">
