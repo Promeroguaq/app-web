@@ -10,6 +10,7 @@ export default defineConfig({
         }),
         VitePWA({
             registerType: 'prompt',
+            base: '/',
             includeAssets: ['favicon.ico', 'apple-touch-icon.png'],
             manifest: {
                 id: '/',

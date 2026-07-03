@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\URL;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -23,6 +24,11 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // Force HTTPS in production (behind reverse proxy like Render)
+        if ($this->app->environment('production')) {
+            URL::forceScheme('https');
+        }
+
         // Share menu image URL globally - CACHED to avoid query on every page load
         View::composer('*', function ($view) {
             $menuImageUrl = Cache::remember('menu_image_url', 3600, function () {

@@ -18,8 +18,12 @@
     
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="{{ asset('build/manifest.webmanifest') }}">
+    
     <!-- PWA Meta Tags -->
     <meta name="theme-color" content="#0f2d52">
+    <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <link rel="apple-touch-icon" href="{{ asset('images/pwa/apple-touch-icon.png') }}">

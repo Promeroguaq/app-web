@@ -859,9 +859,41 @@ document.addEventListener('DOMContentLoaded', function() {
     const pwaInstallContainer = document.getElementById('pwa-install-container');
     const iosInstallContainer = document.getElementById('ios-install-container');
 
+    // Initialize PWA UI when TurismoApp is ready
+    const initPWAUI = () => {
+        const turismoApp = window.TurismoApp;
+        
+        if (!turismoApp) {
+            console.warn('⚠️ TurismoApp not available');
+            return;
+        }
+
+        // Hide install containers if already in standalone mode
+        if (turismoApp.isStandalone) {
+            if (pwaInstallContainer) pwaInstallContainer.classList.add('hidden');
+            if (iosInstallContainer) iosInstallContainer.classList.add('hidden');
+            return;
+        }
+
+        // Show iOS instructions on iOS when not in standalone mode
+        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+        if (isIOS && iosInstallContainer) {
+            iosInstallContainer.classList.remove('hidden');
+        }
+    };
+
+    // Listen for PWA ready event
+    window.addEventListener('pwa-ready', initPWAUI);
+
+    // Also initialize immediately if TurismoApp is already available
+    if (window.TurismoApp) {
+        initPWAUI();
+    }
+
     // Show install button when available (Android/Chrome)
     window.addEventListener('pwa-install-available', () => {
-        if (pwaInstallContainer && !window.TurismoApp.isStandalone) {
+        const turismoApp = window.TurismoApp;
+        if (pwaInstallContainer && turismoApp && !turismoApp.isStandalone) {
             pwaInstallContainer.classList.remove('hidden');
         }
     });
@@ -872,17 +904,5 @@ document.addEventListener('DOMContentLoaded', function() {
             pwaInstallContainer.classList.add('hidden');
         }
     });
-
-    // Show iOS instructions on iOS when not in standalone mode
-    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-    if (isIOS && !window.TurismoApp.isStandalone && iosInstallContainer) {
-        iosInstallContainer.classList.remove('hidden');
-    }
-
-    // Hide install containers if already in standalone mode
-    if (window.TurismoApp.isStandalone) {
-        if (pwaInstallContainer) pwaInstallContainer.classList.add('hidden');
-        if (iosInstallContainer) iosInstallContainer.classList.add('hidden');
-    }
 });
 </script>

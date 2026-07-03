@@ -29,6 +29,9 @@ window.TurismoApp = window.TurismoApp || {};
 window.TurismoApp.isStandalone = window.matchMedia('(display-mode: standalone)').matches || 
                                     window.navigator.standalone === true;
 
+// Disparar evento cuando TurismoApp está inicializado
+window.dispatchEvent(new CustomEvent('pwa-ready'));
+
 // Capturar evento beforeinstallprompt para instalación personalizada
 let deferredPrompt;
 window.addEventListener('beforeinstallprompt', (e) => {
