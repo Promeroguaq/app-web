@@ -160,6 +160,11 @@
                         <i class="fas fa-map text-[10px] md:text-sm"></i> {{ $item->departamento_nombre }}
                     </div>
                     @endif
+                    @if($item->region)
+                    <div class="flex items-center gap-2 text-[9px] md:text-xs opacity-90 mt-1">
+                        <i class="fas fa-compass text-[9px] md:text-xs"></i> {{ $item->region }}
+                    </div>
+                    @endif
                 </div>
             </div>
             <div class="p-3 md:p-5 bg-white">
