@@ -102,22 +102,34 @@ class SearchController extends Controller
         }
 
         // Buscar en Playas
-        $playas = \DB::table('tabla_playas')
-            ->where('NOMBRE_PLAYAS', 'LIKE', "%{$query}%")
-            ->select('ID_PLAYAS as id', 'NOMBRE_PLAYAS as nombre')
-            ->take(8)
-            ->get()
-            ->map(function ($item) {
-                return [
-                    'id' => $item->id,
-                    'nombre' => $item->nombre,
-                    'tipo' => 'Playa',
-                    'categoria' => 'Naturaleza',
-                    'ubicacion' => 'Colombia',
-                    'url' => route('playas.show', ['id' => $item->id]),
-                    'imagen' => $this->buscarImagen($item->nombre)
-                ];
-            });
+        try {
+            $playas = \DB::table('tabla_playas')
+                ->where('NOMBRE_PLAYA', 'LIKE', '%' . $query . '%')
+                ->select([
+                    'ID_PLAYA as search_id',
+                    'NOMBRE_PLAYA as search_nombre',
+                ])
+                ->take(8)
+                ->get()
+                ->map(function ($item) {
+                    return [
+                        'id' => $item->search_id,
+                        'nombre' => $item->search_nombre,
+                        'tipo' => 'Playa',
+                        'categoria' => 'Naturaleza',
+                        'ubicacion' => 'Colombia',
+                        'url' => route('puntos-interes.playas.show', [
+                            'id' => $item->search_id,
+                        ]),
+                        'imagen' => $this->buscarImagen($item->search_nombre),
+                    ];
+                });
+        } catch (\Throwable $exception) {
+            logger()->warning('Error searching beaches', [
+                'message' => $exception->getMessage(),
+            ]);
+            $playas = collect();
+        }
 
         if ($playas->isNotEmpty()) {
             $results['Naturaleza']['Playas'] = $playas;
@@ -125,22 +137,34 @@ class SearchController extends Controller
         }
 
         // Buscar en Museos
-        $museos = \DB::table('tabla_museos')
-            ->where('NOMBRE_MUSEOS', 'LIKE', "%{$query}%")
-            ->select('ID_MUSEOS as id', 'NOMBRE_MUSEOS as nombre')
-            ->take(8)
-            ->get()
-            ->map(function ($item) {
-                return [
-                    'id' => $item->id,
-                    'nombre' => $item->nombre,
-                    'tipo' => 'Museo',
-                    'categoria' => 'Cultura',
-                    'ubicacion' => 'Colombia',
-                    'url' => route('museos.show', ['id' => $item->id]),
-                    'imagen' => $this->buscarImagen($item->nombre)
-                ];
-            });
+        try {
+            $museos = \DB::table('tabla_museos')
+                ->where('NOMBRE_MUSEO', 'LIKE', '%' . $query . '%')
+                ->select([
+                    'COL 1 as search_id',
+                    'NOMBRE_MUSEO as search_nombre',
+                ])
+                ->take(8)
+                ->get()
+                ->map(function ($item) {
+                    return [
+                        'id' => $item->search_id,
+                        'nombre' => $item->search_nombre,
+                        'tipo' => 'Museo',
+                        'categoria' => 'Cultura',
+                        'ubicacion' => 'Colombia',
+                        'url' => route('puntos-interes.museos.show', [
+                            'id' => $item->search_id,
+                        ]),
+                        'imagen' => $this->buscarImagen($item->search_nombre)
+                    ];
+                });
+        } catch (\Throwable $exception) {
+            logger()->warning('Error searching museums', [
+                'message' => $exception->getMessage(),
+            ]);
+            $museos = collect();
+        }
 
         if ($museos->isNotEmpty()) {
             $results['Cultura']['Museos'] = $museos;
@@ -148,22 +172,32 @@ class SearchController extends Controller
         }
 
         // Buscar en Deportes de Aventura
-        $aventura = \DB::table('tabla_deportes_aventura')
-            ->where('NOMBRE_DEPORTES_AVENTURA', 'LIKE', "%{$query}%")
-            ->select('ID_DEPORTES_AVENTURA as id', 'NOMBRE_DEPORTES_AVENTURA as nombre')
-            ->take(8)
-            ->get()
-            ->map(function ($item) {
-                return [
-                    'id' => $item->id,
-                    'nombre' => $item->nombre,
-                    'tipo' => 'Deporte de Aventura',
-                    'categoria' => 'Actividades',
-                    'ubicacion' => 'Colombia',
-                    'url' => route('deportes-aventura.show', ['slug' => \Illuminate\Support\Str::slug($item->nombre)]),
-                    'imagen' => $this->buscarImagen($item->nombre)
-                ];
-            });
+        try {
+            $aventura = \DB::table('tabla_deporte_aventura')
+                ->where('NOMBRE_DEPORTE_AVENTURA', 'LIKE', '%' . $query . '%')
+                ->select([
+                    'ID_DEPORTES as search_id',
+                    'NOMBRE_DEPORTE_AVENTURA as search_nombre',
+                ])
+                ->take(8)
+                ->get()
+                ->map(function ($item) {
+                    return [
+                        'id' => $item->search_id,
+                        'nombre' => $item->search_nombre,
+                        'tipo' => 'Deporte de Aventura',
+                        'categoria' => 'Actividades',
+                        'ubicacion' => 'Colombia',
+                        'url' => route('puntos-interes.deportes-aventura.show', ['slug' => \Illuminate\Support\Str::slug($item->search_nombre)]),
+                        'imagen' => $this->buscarImagen($item->search_nombre)
+                    ];
+                });
+        } catch (\Throwable $exception) {
+            logger()->warning('Error searching adventure sports', [
+                'message' => $exception->getMessage(),
+            ]);
+            $aventura = collect();
+        }
 
         if ($aventura->isNotEmpty()) {
             $results['Actividades']['Deportes de Aventura'] = $aventura;
@@ -171,22 +205,32 @@ class SearchController extends Controller
         }
 
         // Buscar en Termales
-        $termales = \DB::table('tabla_termales')
-            ->where('NOMBRE_TERMALES', 'LIKE', "%{$query}%")
-            ->select('ID_TERMALES as id', 'NOMBRE_TERMALES as nombre')
-            ->take(8)
-            ->get()
-            ->map(function ($item) {
-                return [
-                    'id' => $item->id,
-                    'nombre' => $item->nombre,
-                    'tipo' => 'Termal',
-                    'categoria' => 'Naturaleza',
-                    'ubicacion' => 'Colombia',
-                    'url' => route('puntos-interes.termales.show', ['id' => $item->id]),
-                    'imagen' => $this->buscarImagen($item->nombre)
-                ];
-            });
+        try {
+            $termales = \DB::table('tabla_termales')
+                ->where('NOMBRE_TERMAL', 'LIKE', '%' . $query . '%')
+                ->select([
+                    'ID_TERMALES as search_id',
+                    'NOMBRE_TERMAL as search_nombre',
+                ])
+                ->take(8)
+                ->get()
+                ->map(function ($item) {
+                    return [
+                        'id' => $item->search_id,
+                        'nombre' => $item->search_nombre,
+                        'tipo' => 'Termal',
+                        'categoria' => 'Naturaleza',
+                        'ubicacion' => 'Colombia',
+                        'url' => route('puntos-interes.termales.show', ['id' => $item->search_id]),
+                        'imagen' => $this->buscarImagen($item->search_nombre)
+                    ];
+                });
+        } catch (\Throwable $exception) {
+            logger()->warning('Error searching thermal springs', [
+                'message' => $exception->getMessage(),
+            ]);
+            $termales = collect();
+        }
 
         if ($termales->isNotEmpty()) {
             $results['Naturaleza']['Termales'] = $termales;
@@ -194,22 +238,29 @@ class SearchController extends Controller
         }
 
         // Buscar en Desiertos/Lagunas
-        $desiertos = \DB::table('tabla_desierto_laguna')
-            ->where('COL 2', 'LIKE', "%{$query}%")
-            ->select('COL 1 as id', 'COL 2 as nombre')
-            ->take(8)
-            ->get()
-            ->map(function ($item) {
-                return [
-                    'id' => $item->id,
-                    'nombre' => $item->nombre,
-                    'tipo' => 'Desierto/Laguna',
-                    'categoria' => 'Naturaleza',
-                    'ubicacion' => 'Colombia',
-                    'url' => route('puntos-interes.desiertos-lagunas.show', ['id' => $item->id]),
-                    'imagen' => $this->buscarImagen($item->nombre)
-                ];
-            });
+        try {
+            $desiertos = \DB::table('tabla_desierto_laguna')
+                ->where('NOMBRE_DESIERTO_LAGUNAS', 'LIKE', '%' . $query . '%')
+                ->select('ID_DESIERTO as id', 'NOMBRE_DESIERTO_LAGUNAS as nombre')
+                ->take(8)
+                ->get()
+                ->map(function ($item) {
+                    return [
+                        'id' => $item->id,
+                        'nombre' => $item->nombre,
+                        'tipo' => 'Desierto/Laguna',
+                        'categoria' => 'Naturaleza',
+                        'ubicacion' => 'Colombia',
+                        'url' => route('puntos-interes.desiertos-lagunas.show', ['id' => $item->id]),
+                        'imagen' => $this->buscarImagen($item->nombre)
+                    ];
+                });
+        } catch (\Throwable $exception) {
+            logger()->warning('Error searching deserts/lagoons', [
+                'message' => $exception->getMessage(),
+            ]);
+            $desiertos = collect();
+        }
 
         if ($desiertos->isNotEmpty()) {
             $results['Naturaleza']['Desiertos/Lagunas'] = $desiertos;
@@ -217,22 +268,29 @@ class SearchController extends Controller
         }
 
         // Buscar en Reservas/Parques
-        $reservas = \DB::table('tabla_reservas')
-            ->where('NOMBRE_RESERVAS_O_PARQUES', 'LIKE', "%{$query}%")
-            ->select('ID_RESERVAS as id', 'NOMBRE_RESERVAS_O_PARQUES as nombre')
-            ->take(8)
-            ->get()
-            ->map(function ($item) {
-                return [
-                    'id' => $item->id,
-                    'nombre' => $item->nombre,
-                    'tipo' => 'Reserva/Parque',
-                    'categoria' => 'Naturaleza',
-                    'ubicacion' => 'Colombia',
-                    'url' => route('reservas-parques.show', ['id' => $item->id]),
-                    'imagen' => $this->buscarImagen($item->nombre)
-                ];
-            });
+        try {
+            $reservas = \DB::table('tabla_reservas')
+                ->where('NOMBRE_RESERVAS_O_PARQUES', 'LIKE', '%' . $query . '%')
+                ->select('ID_RESERVAS as id', 'NOMBRE_RESERVAS_O_PARQUES as nombre')
+                ->take(8)
+                ->get()
+                ->map(function ($item) {
+                    return [
+                        'id' => $item->id,
+                        'nombre' => $item->nombre,
+                        'tipo' => 'Reserva/Parque',
+                        'categoria' => 'Naturaleza',
+                        'ubicacion' => 'Colombia',
+                        'url' => route('reservas-parques.show', ['id' => $item->id]),
+                        'imagen' => $this->buscarImagen($item->nombre)
+                    ];
+                });
+        } catch (\Throwable $exception) {
+            logger()->warning('Error searching reserves/parks', [
+                'message' => $exception->getMessage(),
+            ]);
+            $reservas = collect();
+        }
 
         if ($reservas->isNotEmpty()) {
             $results['Naturaleza']['Reservas/Parques'] = $reservas;
@@ -240,22 +298,29 @@ class SearchController extends Controller
         }
 
         // Buscar en Islas
-        $islas = \DB::table('tabla_islas')
-            ->where('NOMBRE_ISLA', 'LIKE', "%{$query}%")
-            ->select('ID_ISLA as id', 'NOMBRE_ISLA as nombre')
-            ->take(8)
-            ->get()
-            ->map(function ($item) {
-                return [
-                    'id' => $item->id,
-                    'nombre' => $item->nombre,
-                    'tipo' => 'Isla',
-                    'categoria' => 'Destinos',
-                    'ubicacion' => 'Colombia',
-                    'url' => route('puntos-interes.islas.show', ['id' => $item->id]),
-                    'imagen' => $this->buscarImagen($item->nombre)
-                ];
-            });
+        try {
+            $islas = \DB::table('tabla_islas')
+                ->where('NOMBRE_ISLA', 'LIKE', '%' . $query . '%')
+                ->select('ID_ISLA as id', 'NOMBRE_ISLA as nombre')
+                ->take(8)
+                ->get()
+                ->map(function ($item) {
+                    return [
+                        'id' => $item->id,
+                        'nombre' => $item->nombre,
+                        'tipo' => 'Isla',
+                        'categoria' => 'Destinos',
+                        'ubicacion' => 'Colombia',
+                        'url' => route('puntos-interes.islas.show', ['id' => $item->id]),
+                        'imagen' => $this->buscarImagen($item->nombre)
+                    ];
+                });
+        } catch (\Throwable $exception) {
+            logger()->warning('Error searching islands', [
+                'message' => $exception->getMessage(),
+            ]);
+            $islas = collect();
+        }
 
         if ($islas->isNotEmpty()) {
             $results['Destinos']['Islas'] = $islas;
@@ -263,22 +328,29 @@ class SearchController extends Controller
         }
 
         // Buscar en Iglesias
-        $iglesias = \DB::table('tabla_iglesias')
-            ->where('NOMBRE_IGLESIAS', 'LIKE', "%{$query}%")
-            ->select('ID_IGLESIAS as id', 'NOMBRE_IGLESIAS as nombre')
-            ->take(8)
-            ->get()
-            ->map(function ($item) {
-                return [
-                    'id' => $item->id,
-                    'nombre' => $item->nombre,
-                    'tipo' => 'Iglesia',
-                    'categoria' => 'Cultura',
-                    'ubicacion' => 'Colombia',
-                    'url' => route('puntos-interes.iglesias.show', ['id' => $item->id]),
-                    'imagen' => $this->buscarImagen($item->nombre)
-                ];
-            });
+        try {
+            $iglesias = \DB::table('tabla_iglesias')
+                ->where('NOMBRE_IGLESIA', 'LIKE', '%' . $query . '%')
+                ->select('ID_IGLESIA as id', 'NOMBRE_IGLESIA as nombre')
+                ->take(8)
+                ->get()
+                ->map(function ($item) {
+                    return [
+                        'id' => $item->id,
+                        'nombre' => $item->nombre,
+                        'tipo' => 'Iglesia',
+                        'categoria' => 'Cultura',
+                        'ubicacion' => 'Colombia',
+                        'url' => route('puntos-interes.iglesias.show', ['id' => $item->id]),
+                        'imagen' => $this->buscarImagen($item->nombre)
+                    ];
+                });
+        } catch (\Throwable $exception) {
+            logger()->warning('Error searching churches', [
+                'message' => $exception->getMessage(),
+            ]);
+            $iglesias = collect();
+        }
 
         if ($iglesias->isNotEmpty()) {
             $results['Cultura']['Iglesias'] = $iglesias;
@@ -286,22 +358,32 @@ class SearchController extends Controller
         }
 
         // Buscar en Parques Temáticos
-        $parques = \DB::table('tabla_parques_tematicos')
-            ->where('NOMBRE_PARQUES_TEMATICOS', 'LIKE', "%{$query}%")
-            ->select('ID_PARQUES_TEMATICOS as id', 'NOMBRE_PARQUES_TEMATICOS as nombre')
-            ->take(8)
-            ->get()
-            ->map(function ($item) {
-                return [
-                    'id' => $item->id,
-                    'nombre' => $item->nombre,
-                    'tipo' => 'Parque Temático',
-                    'categoria' => 'Actividades',
-                    'ubicacion' => 'Colombia',
-                    'url' => route('puntos-interes.parques-tematicos.show', ['id' => $item->id]),
-                    'imagen' => $this->buscarImagen($item->nombre)
-                ];
-            });
+        try {
+            $parques = \DB::table('tabla_parque_tematicos')
+                ->where('NOMBRE_PARQUES_TEMÁTICOS', 'LIKE', '%' . $query . '%')
+                ->select([
+                    'ID_PARQUES as search_id',
+                    'NOMBRE_PARQUES_TEMÁTICOS as search_nombre',
+                ])
+                ->take(8)
+                ->get()
+                ->map(function ($item) {
+                    return [
+                        'id' => $item->search_id,
+                        'nombre' => $item->search_nombre,
+                        'tipo' => 'Parque Temático',
+                        'categoria' => 'Actividades',
+                        'ubicacion' => 'Colombia',
+                        'url' => route('puntos-interes.parques-tematicos.show', ['id' => $item->search_id]),
+                        'imagen' => $this->buscarImagen($item->search_nombre)
+                    ];
+                });
+        } catch (\Throwable $exception) {
+            logger()->warning('Error searching theme parks', [
+                'message' => $exception->getMessage(),
+            ]);
+            $parques = collect();
+        }
 
         if ($parques->isNotEmpty()) {
             $results['Actividades']['Parques Temáticos'] = $parques;
@@ -309,22 +391,29 @@ class SearchController extends Controller
         }
 
         // Buscar en Ferias/Fiestas
-        $ferias = \DB::table('tabla_ferias_fiestas')
-            ->where('NOMBRE_FERIAS_FIESTAS', 'LIKE', "%{$query}%")
-            ->select('ID_FERIAS_FIESTAS as id', 'NOMBRE_FERIAS_FIESTAS as nombre')
-            ->take(8)
-            ->get()
-            ->map(function ($item) {
-                return [
-                    'id' => $item->id,
-                    'nombre' => $item->nombre,
-                    'tipo' => 'Feria/Fiesta',
-                    'categoria' => 'Eventos',
-                    'ubicacion' => 'Colombia',
-                    'url' => route('fiestas-ferias.show', ['id' => $item->id]),
-                    'imagen' => $this->buscarImagen($item->nombre)
-                ];
-            });
+        try {
+            $ferias = \DB::table('tabla_ferias')
+                ->where('NOMBRE_FERIAS_Y_FIESTAS', 'LIKE', '%' . $query . '%')
+                ->select('ID_FIESTA as id', 'NOMBRE_FERIAS_Y_FIESTAS as nombre')
+                ->take(8)
+                ->get()
+                ->map(function ($item) {
+                    return [
+                        'id' => $item->id,
+                        'nombre' => $item->nombre,
+                        'tipo' => 'Feria/Fiesta',
+                        'categoria' => 'Eventos',
+                        'ubicacion' => 'Colombia',
+                        'url' => route('fiestas-ferias.show', ['id' => $item->id]),
+                        'imagen' => $this->buscarImagen($item->nombre)
+                    ];
+                });
+        } catch (\Throwable $exception) {
+            logger()->warning('Error searching fairs/festivals', [
+                'message' => $exception->getMessage(),
+            ]);
+            $ferias = collect();
+        }
 
         if ($ferias->isNotEmpty()) {
             $results['Eventos']['Ferias/Fiestas'] = $ferias;
@@ -332,22 +421,29 @@ class SearchController extends Controller
         }
 
         // Buscar en Platos Típicos
-        $platos = \DB::table('tabla_platos_tipicos')
-            ->where('NOMBRE_PLATOS_TIPICOS', 'LIKE', "%{$query}%")
-            ->select('ID_PLATOS_TIPICOS as id', 'NOMBRE_PLATOS_TIPICOS as nombre')
-            ->take(8)
-            ->get()
-            ->map(function ($item) {
-                return [
-                    'id' => $item->id,
-                    'nombre' => $item->nombre,
-                    'tipo' => 'Plato Típico',
-                    'categoria' => 'Gastronomía',
-                    'ubicacion' => 'Colombia',
-                    'url' => route('gastronomia.show', ['departmentSlug' => 'colombia', 'platoSlug' => \Illuminate\Support\Str::slug($item->nombre)]),
-                    'imagen' => $this->buscarImagen($item->nombre)
-                ];
-            });
+        try {
+            $platos = \DB::table('tabla_gastronomia')
+                ->where('PLATOS_TIPICOS', 'LIKE', '%' . $query . '%')
+                ->select('ID_PLATOS as id', 'PLATOS_TIPICOS as nombre')
+                ->take(8)
+                ->get()
+                ->map(function ($item) {
+                    return [
+                        'id' => $item->id,
+                        'nombre' => $item->nombre,
+                        'tipo' => 'Plato Típico',
+                        'categoria' => 'Gastronomía',
+                        'ubicacion' => 'Colombia',
+                        'url' => route('gastronomia.show', ['departmentSlug' => 'colombia', 'platoSlug' => \Illuminate\Support\Str::slug($item->nombre)]),
+                        'imagen' => $this->buscarImagen($item->nombre)
+                    ];
+                });
+        } catch (\Throwable $exception) {
+            logger()->warning('Error searching typical dishes', [
+                'message' => $exception->getMessage(),
+            ]);
+            $platos = collect();
+        }
 
         if ($platos->isNotEmpty()) {
             $results['Gastronomía']['Platos Típicos'] = $platos;
@@ -355,22 +451,29 @@ class SearchController extends Controller
         }
 
         // Buscar en Actividades de Parques
-        $actividades = \DB::table('tabla_actividades_parques')
-            ->where('NOMBRE_ACTIVIDADES', 'LIKE', "%{$query}%")
-            ->select('ID_ACTIVIDADES as id', 'NOMBRE_ACTIVIDADES as nombre')
-            ->take(8)
-            ->get()
-            ->map(function ($item) {
-                return [
-                    'id' => $item->id,
-                    'nombre' => $item->nombre,
-                    'tipo' => 'Actividad',
-                    'categoria' => 'Actividades',
-                    'ubicacion' => 'Colombia',
-                    'url' => route('actividades.show', ['id' => $item->id]),
-                    'imagen' => $this->buscarImagen($item->nombre)
-                ];
-            });
+        try {
+            $actividades = \DB::table('tabla_actividad_parque')
+                ->where('NOMBRE_ACTIVIDAD_EN_PARQUE', 'LIKE', '%' . $query . '%')
+                ->select('ID_ACTIVIDAD as id', 'NOMBRE_ACTIVIDAD_EN_PARQUE as nombre')
+                ->take(8)
+                ->get()
+                ->map(function ($item) {
+                    return [
+                        'id' => $item->id,
+                        'nombre' => $item->nombre,
+                        'tipo' => 'Actividad',
+                        'categoria' => 'Actividades',
+                        'ubicacion' => 'Colombia',
+                        'url' => route('actividades.show', ['id' => $item->id]),
+                        'imagen' => $this->buscarImagen($item->nombre)
+                    ];
+                });
+        } catch (\Throwable $exception) {
+            logger()->warning('Error searching park activities', [
+                'message' => $exception->getMessage(),
+            ]);
+            $actividades = collect();
+        }
 
         if ($actividades->isNotEmpty()) {
             $results['Actividades']['Actividades'] = $actividades;

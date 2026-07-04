@@ -11,13 +11,14 @@ class DesiertoLaguna extends Model
 
     protected $table = 'tabla_desierto_laguna';
 
-    protected $primaryKey = 'id';
+    protected $primaryKey = 'ID_DESIERTO';
+
+    public $timestamps = false;
 
     protected $fillable = [
-        'COL 1',
-        'COL 2',
-        'COL 3',
-        'COL 4',
-        'COL 5'
+        'ID_DESIERTO',
+        'NOMBRE_DESIERTO_LAGUNAS',
+        'DESCRIPCION',
+        'ID_LOCALITIES'
     ];
 }

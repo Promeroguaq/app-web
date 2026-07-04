@@ -73,7 +73,9 @@ class PuntoInteresController extends Controller
                 }
 
                 // Buscar imagen usando ImageHelper (evitando repeticiones)
-                $nombre = trim($deporte->NOMBRE_DEPORTES_AVENTURA ?? '');
+                $nombre = trim($deporte->NOMBRE_DEPORTE_AVENTURA ?? '');
+                // Formatear título: primera letra de cada palabra en mayúscula
+                $nombreFormateado = ucwords(strtolower($nombre));
                 $imagenData = \App\Helpers\ImageHelper::getReservaParqueImage($nombre, $usedImages, $imagenesMap);
 
                 if ($imagenData['url']) {
@@ -85,9 +87,10 @@ class PuntoInteresController extends Controller
 
                 return (object)[
                     'id' => $deporte->ID_DEPORTES,
-                    'nombre' => $nombre ?: 'Deporte de aventura',
+                    'nombre' => $nombreFormateado ?: 'Deporte de aventura',
                     'descripcion' => $deporte->DESCRIPCION ?? '',
                     'localidad' => $localidad,
+                    'municipios' => $deporte->MUNICIPIOS ?? '',
                     'imagen' => $imagenData['url'],
                     'slug' => $slug
                 ];
@@ -152,11 +155,11 @@ class PuntoInteresController extends Controller
                 // Buscar imagen usando ImageHelper con deduplicación
                 $nombre = trim($desierto->NOMBRE_DESIERTO_LAGUNAS ?? '');
                 $imagenData = \App\Helpers\ImageHelper::getReservaParqueImage($nombre, $usedImages, $imagenesMap);
-                
+
                 if ($imagenData['url']) {
                     $usedImages[] = $imagenData['url'];
                 }
-                
+
                 $desierto_con_imagen = (object)[
                     'id' => $desierto->ID_DESIERTO,
                     'nombre' => $nombre ?: 'Desierto o laguna',
@@ -1084,15 +1087,20 @@ class PuntoInteresController extends Controller
 
             \Log::info('Deporte aventura show solicitado', [
                 'slug' => $slug,
-                'nombre' => $deporte->NOMBRE_DEPORTES_AVENTURA,
+                'nombre' => $deporte->NOMBRE_DEPORTE_AVENTURA,
                 'relacionados_count' => $relacionados->count()
             ]);
 
+            // Formatear nombre del deporte
+            $nombre = trim($deporte->NOMBRE_DEPORTE_AVENTURA ?? '');
+            $nombreFormateado = ucwords(strtolower($nombre));
+
             $item = (object)[
                 'id' => $deporte->ID_DEPORTES,
-                'nombre' => trim($deporte->NOMBRE_DEPORTES_AVENTURA ?? ''),
+                'nombre' => $nombreFormateado,
                 'descripcion' => $deporte->DESCRIPCION,
                 'localidad' => $localidad,
+                'municipios' => $deporte->MUNICIPIOS ?? '',
                 'imagen' => $imagen,
                 'slug' => $deporte->slug
             ];
@@ -1110,19 +1118,19 @@ class PuntoInteresController extends Controller
     public function desiertosLagunasShow($id)
     {
         try {
-            $desierto = \DB::table('tabla_desierto_laguna')->where('ID_DESIERTO', $id)->first();
-            
+            $desierto = \DB::table('tabla_desierto_laguna')->where('COL 1', $id)->first();
+
             if (!$desierto) {
                 abort(404);
             }
-            
+
             // Obtener nombre de localidad
             $localidad = null;
             if (!empty($desierto->ID_LOCALITIES)) {
                 $loc = \DB::table('tabla_localities')->where('ID_LOCALITIES', $desierto->ID_LOCALITIES)->first();
                 $localidad = $loc ? $loc->NOMBRE_LOCALITIES : null;
             }
-            
+
             $item = (object)[
                 'id' => $desierto->ID_DESIERTO,
                 'nombre' => $desierto->NOMBRE_DESIERTO_LAGUNAS,
@@ -1130,7 +1138,7 @@ class PuntoInteresController extends Controller
                 'localidad' => $localidad,
                 'imagen' => $this->buscarImagen($desierto->NOMBRE_DESIERTO_LAGUNAS, 'desierto')
             ];
-            
+
             return view('pages.detalle-punto-interes', compact('item'))->with('tipo', 'Desierto o Laguna');
         } catch (\Exception $e) {
             abort(404);

@@ -170,21 +170,22 @@ class DashboardController extends Controller
         $municipios = \DB::table('tabla_municipios')
             ->whereIn('NOMBRE_MUNICIPIOS', ['Cartagena', 'Medellín', 'Bogotá'])
             ->get();
-            
+
         foreach ($municipios as $municipio) {
-            $depto = \DB::table('tabla_departamentos')
-                ->where('ID_DEPARTAMENTO', $municipio->ID_DEPARTAMENTO)
+            // Obtener departamento mediante tabla_localities
+            $locality = \DB::table('tabla_localities')
+                ->where('ID', $municipio->ID_LOCALITIES)
                 ->first();
-            
-            if ($depto) {
-                $deptoSlug = \Illuminate\Support\Str::slug($depto->NOMBRE_DEPARTAMENTO);
+
+            if ($locality) {
+                $deptoSlug = \Illuminate\Support\Str::slug($locality->DEPARTAMENTO);
                 $muniSlug = \Illuminate\Support\Str::slug($municipio->NOMBRE_MUNICIPIOS);
-                
+
                 $destinos[] = [
-                    'id' => $municipio->ID_MUNICIPIOS,
+                    'id' => $municipio->ID,
                     'nombre' => $municipio->NOMBRE_MUNICIPIOS,
                     'categoria' => 'Municipio',
-                    'ubicacion' => $depto->NOMBRE_DEPARTAMENTO,
+                    'ubicacion' => $locality->DEPARTAMENTO,
                     'imagen' => $this->buscarImagenEnTabla($municipio->NOMBRE_MUNICIPIOS),
                     'calificacion' => 4.5,
                     'tipo' => 'municipio',
@@ -233,20 +234,19 @@ class DashboardController extends Controller
         }
         
         // 4. Desiertos/Lagunas (Desierto de la Tatacoa)
-        $desierto = \DB::table('tabla_desierto_laguna')
-            ->where('COL 2', 'like', '%Tatacoa%')
+        $desierto = DesiertoLaguna::where('NOMBRE_DESIERTO_LAGUNAS', 'like', '%Tatacoa%')
             ->first();
 
         if ($desierto) {
             $destinos[] = [
-                'id' => $desierto->{'COL 1'},
-                'nombre' => $desierto->{'COL 2'},
+                'id' => $desierto->ID_DESIERTO,
+                'nombre' => $desierto->NOMBRE_DESIERTO_LAGUNAS,
                 'categoria' => 'Desierto',
                 'ubicacion' => 'Huila',
-                'imagen' => $this->buscarImagenEnTabla($desierto->{'COL 2'}),
+                'imagen' => $this->buscarImagenEnTabla($desierto->NOMBRE_DESIERTO_LAGUNAS),
                 'calificacion' => 4.7,
                 'tipo' => 'desierto-laguna',
-                'url' => route('puntos-interes.desiertos-lagunas.show', ['id' => $desierto->{'COL 1'}])
+                'url' => route('puntos-interes.desiertos-lagunas.show', ['id' => $desierto->ID_DESIERTO])
             ];
         }
         
@@ -272,21 +272,22 @@ class DashboardController extends Controller
         $cafetera = \DB::table('tabla_municipios')
             ->whereIn('NOMBRE_MUNICIPIOS', ['Salento', 'Armenia'])
             ->first();
-            
+
         if ($cafetera) {
-            $depto = \DB::table('tabla_departamentos')
-                ->where('ID_DEPARTAMENTO', $cafetera->ID_DEPARTAMENTO)
+            // Obtener departamento mediante tabla_localities
+            $locality = \DB::table('tabla_localities')
+                ->where('ID', $cafetera->ID_LOCALITIES)
                 ->first();
-            
-            if ($depto) {
-                $deptoSlug = \Illuminate\Support\Str::slug($depto->NOMBRE_DEPARTAMENTO);
+
+            if ($locality) {
+                $deptoSlug = \Illuminate\Support\Str::slug($locality->DEPARTAMENTO);
                 $muniSlug = \Illuminate\Support\Str::slug($cafetera->NOMBRE_MUNICIPIOS);
-                
+
                 $destinos[] = [
-                    'id' => $cafetera->ID_MUNICIPIOS,
+                    'id' => $cafetera->ID,
                     'nombre' => 'Eje Cafetero - ' . $cafetera->NOMBRE_MUNICIPIOS,
                     'categoria' => 'Paisaje Cultural',
-                    'ubicacion' => $depto->NOMBRE_DEPARTAMENTO,
+                    'ubicacion' => $locality->DEPARTAMENTO,
                     'imagen' => $this->buscarImagenEnTabla($cafetera->NOMBRE_MUNICIPIOS),
                     'calificacion' => 4.8,
                     'tipo' => 'municipio',
