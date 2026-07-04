@@ -6,19 +6,58 @@
 <!-- Main Container -->
 <div class="w-full max-w-7xl mx-auto overflow-x-hidden">
 
-<!-- Hero Section Immersive -->
-<div class="hero-section rounded-[28px] md:rounded-[32px] mb-8 md:mb-12 w-full overflow-hidden relative min-h-[420px] md:min-h-[460px]" style="background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 50%, #1e40af 100%);">
-    <div class="hero-overlay rounded-[28px] md:rounded-[32px]"></div>
-    <div class="absolute bottom-0 left-0 right-0 p-5 md:p-8 lg:p-10 xl:p-16 text-white">
-        <div class="glass-badge inline-block mb-3 md:mb-4 lg:mb-6">
-            🗺️ 6 Regiones Naturales
+<!-- Hero Section Premium Redesign - Full Background Image -->
+<div class="relative h-[230px] sm:h-[250px] md:h-[280px] lg:h-[300px] xl:h-[340px] overflow-hidden rounded-[32px] mb-8 md:mb-12 w-full">
+    <!-- Full background image - Cartagena coastal landscape -->
+    <img
+        src="https://m.rutascolombia.com/Imagenes_app/capital_cities/cartagena/cartagena.jpg"
+        alt="Paisaje costero de Cartagena, Colombia"
+        class="absolute inset-0 w-full h-full object-cover"
+        loading="eager"
+        fetchpriority="high"
+    >
+
+    <!-- Progressive overlay - left to right gradient for text legibility -->
+    <div class="absolute inset-0" style="background: linear-gradient(to right, #0c4a6e 0%, #0c4a6e 40%, rgba(12, 74, 110, 0.7) 60%, rgba(12, 74, 110, 0.3) 80%, rgba(12, 74, 110, 0.1) 100%);"></div>
+
+    <!-- Bottom overlay for content integration -->
+    <div class="absolute inset-0 bg-gradient-to-t from-[#0c4a6e]/30 via-transparent to-transparent"></div>
+
+    <!-- Decorative texture overlay - subtle geographic pattern -->
+    <div class="absolute inset-0 opacity-5" style="background-image: radial-gradient(circle at 20% 50%, rgba(255,255,255,0.1) 0%, transparent 50%), radial-gradient(circle at 80% 50%, rgba(255,255,255,0.05) 0%, transparent 50%);"></div>
+
+    <!-- Main content - centered vertically -->
+    <div class="absolute inset-0 flex items-center p-6 md:p-10 lg:p-16">
+        <div class="relative z-10 max-w-2xl">
+            <!-- Badge -->
+            <div class="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/20 px-4 py-2 rounded-full mb-4 md:mb-6">
+                <span class="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></span>
+                <span class="text-white/90 text-xs md:text-sm font-medium tracking-wide uppercase">🗺️ 6 Regiones Naturales</span>
+            </div>
+
+            <!-- Title -->
+            <h1 class="font-display text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold text-white mb-3 md:mb-4 leading-tight" style="text-shadow: 0 2px 20px rgba(0,0,0,0.3);">
+                Departamentos de Colombia
+            </h1>
+
+            <!-- Description -->
+            <p class="text-white/80 text-sm md:text-base lg:text-lg mb-6 md:mb-8 max-w-xl leading-relaxed">
+                Explora las 6 regiones naturales y sus 32 departamentos
+            </p>
+
+            <!-- Decorative chips -->
+            <div class="flex flex-wrap gap-2 md:gap-3">
+                <span class="inline-flex items-center gap-1.5 px-3 py-1.5 md:px-4 md:py-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full text-white/90 text-xs md:text-sm font-medium hover:bg-white/15 transition-all cursor-default">
+                    <i class="fas fa-map text-xs md:text-sm"></i> Caribe
+                </span>
+                <span class="inline-flex items-center gap-1.5 px-3 py-1.5 md:px-4 md:py-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full text-white/90 text-xs md:text-sm font-medium hover:bg-white/15 transition-all cursor-default">
+                    <i class="fas fa-mountain text-xs md:text-sm"></i> Andina
+                </span>
+                <span class="inline-flex items-center gap-1.5 px-3 py-1.5 md:px-4 md:py-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full text-white/90 text-xs md:text-sm font-medium hover:bg-white/15 transition-all cursor-default">
+                    <i class="fas fa-water text-xs md:text-sm"></i> Pacífica
+                </span>
+            </div>
         </div>
-        <h1 class="font-display text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold mb-2 md:mb-3 lg:mb-4 leading-tight" style="text-shadow: 2px 2px 8px rgba(0,0,0,0.5);">
-            Departamentos de Colombia
-        </h1>
-        <p class="text-sm md:text-base lg:text-lg xl:text-xl opacity-90 max-w-full md:max-w-2xl" style="text-shadow: 1px 1px 4px rgba(0,0,0,0.5);">
-            Explora las 6 regiones naturales y sus 32 departamentos
-        </p>
     </div>
 </div>
 
@@ -52,56 +91,19 @@
 <!-- All Departments -->
 <h2 class="font-display text-xl sm:text-2xl md:text-3xl font-bold text-midnight-900 mb-4 md:mb-6">Todos los Departamentos</h2>
 
-<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 mb-8 md:mb-12">
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6 mb-8 md:mb-12">
 
     @forelse($items as $item)
-    @php
-        $deptUrl = $item->slug ? '/departamentos/' . $item->slug : '#';
-    @endphp
-    <div class="rounded-[20px] md:rounded-[32px] overflow-hidden bg-white shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300 w-full">
-        @if($deptUrl !== '#')
-        <a href="{{ $deptUrl }}" class="block">
-        @else
-        <div class="block opacity-50 cursor-not-allowed">
-        @endif
-            <div class="relative h-48 sm:h-52 md:h-56 overflow-hidden w-full">
-                @if($item->imagen)
-                    <img src="{{ $item->imagen }}" alt="{{ $item->nombre }}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
-                @else
-                    <div class="w-full h-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
-                        <span class="text-6xl">🏛️</span>
-                    </div>
-                @endif
-                <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
-                <div class="absolute top-3 left-3 md:top-4 md:left-4 bg-white/90 backdrop-blur-sm px-3 py-1 md:px-4 md:py-2 rounded-full text-xs md:text-sm font-semibold text-gray-800 shadow-md z-10">
-                    <i class="fas fa-landmark mr-1 text-xs md:text-sm"></i> Departamento
-                </div>
-            </div>
-            <div class="p-4 md:p-6 bg-white">
-                <h3 class="font-display text-base md:text-lg lg:text-xl xl:text-2xl font-bold text-gray-900 mb-2">{{ $item->nombre }}</h3>
-                <p class="text-xs md:text-sm text-gray-600 mb-3 md:mb-4 line-clamp-2">{{ Str::limit($item->descripcion, 100) ?? 'Departamento de Colombia' }}</p>
-                <div class="flex items-center justify-between pt-2 md:pt-3 border-t border-gray-200">
-                    <div class="flex items-center gap-2 text-xs md:text-sm text-gray-500">
-                        <i class="fas fa-map-marker-alt text-indigo-500 text-xs md:text-sm"></i>
-                        <span>Colombia</span>
-                    </div>
-                    @if($deptUrl !== '#')
-                    <span class="text-indigo-600 font-semibold text-xs md:text-sm flex items-center gap-2 hover:gap-3 transition-all">
-                        Ver más <i class="fas fa-arrow-right text-xs md:text-sm"></i>
-                    </span>
-                    @else
-                    <span class="text-gray-400 font-semibold text-xs md:text-sm">
-                        No disponible
-                    </span>
-                    @endif
-                </div>
-            </div>
-        @if($deptUrl !== '#')
-        </a>
-        @else
-        </div>
-        @endif
-    </div>
+    <x-cards.tourism-card
+        :id="$item->id"
+        :title="$item->nombre"
+        :description="$item->descripcion ?? 'Información turística en actualización.'"
+        :image="$item->imagen"
+        :badge="'🏛️ Departamento'"
+        :location="$item->region ? 'Región: ' . $item->region : 'Colombia'"
+        :detailUrl="route('departamentos.show.slug', $item->slug)"
+        :fallbackTheme="'nature'"
+    />
     @empty
     <div class="col-span-full glass-card p-8 md:p-12 text-center text-gray-500">
         <i class="fas fa-map text-3xl md:text-4xl mb-3 md:mb-4 opacity-50"></i>

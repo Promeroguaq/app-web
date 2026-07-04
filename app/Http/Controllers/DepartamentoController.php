@@ -15,20 +15,23 @@ class DepartamentoController extends Controller
     public function index()
     {
         try {
-            // Obtener datos de la tabla tabla_departamentos
-            $departamentos = \DB::table('tabla_departamentos')->orderBy('NOMBRE_DEPARTAMENTO')->get();
+            // Obtener datos de la tabla tabla_departamentos con región desde tabla_localities
+            $departamentos = \DB::table('tabla_departamentos as d')
+                ->leftJoin('tabla_localities as l', function($join) {
+                    $join->on('d.NOMBRE_DEPARTAMENTO', '=', 'l.DEPARTAMENTO');
+                })
+                ->select(
+                    'd.ID_DEPARTAMENTO',
+                    'd.NOMBRE_DEPARTAMENTO',
+                    'd.DESCRIPCION',
+                    \DB::raw('MAX(l.REGION) as region')
+                )
+                ->groupBy('d.ID_DEPARTAMENTO', 'd.NOMBRE_DEPARTAMENTO', 'd.DESCRIPCION')
+                ->orderBy('d.NOMBRE_DEPARTAMENTO')
+                ->get();
             
             // Log para debug: contar departamentos raw
             \Log::info('Departamentos raw count', ['count' => $departamentos->count()]);
-            
-            // Deduplicar departamentos por ID_DEPARTAMENTO para evitar duplicados
-            $departamentosUnicos = $departamentos->unique('ID_DEPARTAMENTO')->values();
-            
-            // Log para debug: contar departamentos únicos
-            \Log::info('Departamentos únicos count', [
-                'count' => $departamentosUnicos->count(),
-                'names' => $departamentosUnicos->pluck('NOMBRE_DEPARTAMENTO')->values()
-            ]);
             
             // Cargar imágenes una sola vez en memoria para evitar consultas repetidas
             $imagenes = Cache::remember('imagenes_map_global', 1800, function () {
@@ -42,7 +45,7 @@ class DepartamentoController extends Controller
             $imagenesUsadas = [];
             
             // Combinar departamentos con sus imágenes usando búsqueda en memoria
-            $departamentos_con_imagenes = $departamentosUnicos->map(function($depto) use ($imagenesPorNombre, &$imagenesUsadas) {
+            $departamentos_con_imagenes = $departamentos->map(function($depto) use ($imagenesPorNombre, &$imagenesUsadas) {
                 $nombreNormalizado = ImageHelper::cleanString($depto->NOMBRE_DEPARTAMENTO);
                 
                 // Buscar imagen por nombre exacto en memoria
@@ -55,9 +58,10 @@ class DepartamentoController extends Controller
                     }
                 }
                 
-                // Log para debug: imagen resuelta
-                \Log::info('Imagen departamento resuelta', [
+                // Log para debug: imagen y región resueltas
+                \Log::info('Departamento resuelto', [
                     'departamento' => $depto->NOMBRE_DEPARTAMENTO,
+                    'region' => $depto->region,
                     'image_url' => $imagen
                 ]);
                 
@@ -69,12 +73,14 @@ class DepartamentoController extends Controller
                     'nombre' => $depto->NOMBRE_DEPARTAMENTO,
                     'descripcion' => $depto->DESCRIPCION ?? null,
                     'imagen' => $imagen,
-                    'slug' => $slug
+                    'slug' => $slug,
+                    'region' => $depto->region
                 ];
             });
 
             return view('pages.departamentos', ['items' => $departamentos_con_imagenes]);
         } catch (\Exception $e) {
+            \Log::error('Error loading departamentos: ' . $e->getMessage());
             return view('pages.departamentos', [
                 'items' => collect([]),
                 'error' => 'La tabla de departamentos no está disponible en este momento.'
