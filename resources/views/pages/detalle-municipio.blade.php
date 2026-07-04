@@ -125,6 +125,17 @@ function getExperienceGradient($category) {
             </div>
         </div>
         @endif
+        @if($item->region)
+        <div class="flex items-center gap-3 md:gap-4 p-3 md:p-4 bg-white/50 rounded-2xl">
+            <div class="w-10 h-10 md:w-12 md:h-12 bg-gradient-to-br from-[#1D4ED8] to-[#1E40AF] rounded-xl flex items-center justify-center flex-shrink-0">
+                <i class="fas fa-compass text-white text-lg md:text-xl"></i>
+            </div>
+            <div>
+                <div class="text-[10px] md:text-xs text-gray-500 font-medium">Región</div>
+                <div class="font-bold text-midnight-900 text-sm md:text-base">{{ $item->region }}</div>
+            </div>
+        </div>
+        @endif
         <div class="flex items-center gap-3 md:gap-4 p-3 md:p-4 bg-white/50 rounded-2xl">
             <div class="w-10 h-10 md:w-12 md:h-12 bg-gradient-to-br from-[#1D4ED8] to-[#1E40AF] rounded-xl flex items-center justify-center flex-shrink-0">
                 <i class="fas fa-thermometer-half text-white text-lg md:text-xl"></i>
@@ -134,17 +145,23 @@ function getExperienceGradient($category) {
                 <div class="font-bold text-midnight-900 text-sm md:text-base">Tropical</div>
             </div>
         </div>
-        <div class="flex items-center gap-3 md:gap-4 p-3 md:p-4 bg-white/50 rounded-2xl">
-            <div class="w-10 h-10 md:w-12 md:h-12 bg-gradient-to-br from-[#1D4ED8] to-[#1E40AF] rounded-xl flex items-center justify-center flex-shrink-0">
-                <i class="fas fa-users text-white text-lg md:text-xl"></i>
-            </div>
-            <div>
-                <div class="text-[10px] md:text-xs text-gray-500 font-medium">Población</div>
-                <div class="font-bold text-midnight-900 text-sm md:text-base">100K+</div>
-            </div>
-        </div>
     </div>
 </div>
+
+<!-- Description Section -->
+@if($item->descripcion)
+<div class="bg-white/80 backdrop-blur-sm p-4 md:p-6 mb-6 md:mb-8 rounded-[20px] md:rounded-[32px] shadow-lg">
+    <h2 class="font-display text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold text-midnight-900 mb-3 md:mb-6">Sobre {{ $item->nombre }}</h2>
+    <div class="prose prose-sm md:prose-base max-w-none text-gray-700 leading-relaxed">
+        {!! nl2br(e($item->descripcion)) !!}
+    </div>
+</div>
+@else
+<div class="bg-white/80 backdrop-blur-sm p-4 md:p-6 mb-6 md:mb-8 rounded-[20px] md:rounded-[32px] shadow-lg">
+    <h2 class="font-display text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold text-midnight-900 mb-3 md:mb-6">Sobre {{ $item->nombre }}</h2>
+    <p class="text-gray-600 text-sm md:text-base">Aún no hay una descripción disponible para este municipio.</p>
+</div>
+@endif
 
 <!-- Visual Gallery -->
 <div class="mb-6 md:mb-8">

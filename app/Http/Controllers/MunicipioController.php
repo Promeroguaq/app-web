@@ -252,14 +252,28 @@ class MunicipioController extends Controller
                 'total_unicas_por_nombre' => $imagenesPorNombre->count()
             ]);
 
+            // Cargar descripciones de municipios en una sola consulta para evitar N+1
+            $municipiosNombres = $municipios->pluck('nombre')->unique()->values();
+            $descripcionesMap = \DB::table('tabla_municipios')
+                ->whereIn('NOMBRE_MUNICIPIOS', $municipiosNombres)
+                ->whereNotNull('DESCRIPCION')
+                ->where('DESCRIPCION', '!=', '')
+                ->pluck('DESCRIPCION', 'NOMBRE_MUNICIPIOS');
+
             // Combinar con datos del municipio e imágenes
-            $municipios_con_localidad = $municipios->map(function($municipio) use ($imagenesPorNombre) {
+            $municipios_con_localidad = $municipios->map(function($municipio) use ($imagenesPorNombre, $descripcionesMap) {
                 $imagen = ImageHelper::getMunicipioImage($municipio->nombre, $municipio->departamento_nombre, $imagenesPorNombre);
+
+                // Obtener descripción desde el mapa precargado
+                $descripcionPreview = null;
+                if (isset($descripcionesMap[$municipio->nombre])) {
+                    $descripcionPreview = \Illuminate\Support\Str::limit($descripcionesMap[$municipio->nombre], 150);
+                }
 
                 return (object)[
                     'id' => $municipio->id,
                     'nombre' => $municipio->nombre,
-                    'descripcion' => 'Municipio de ' . $municipio->nombre . ', ' . $municipio->departamento_nombre,
+                    'descripcion' => $descripcionPreview ?? 'Municipio de ' . $municipio->nombre . ', ' . $municipio->departamento_nombre,
                     'departamento_nombre' => $municipio->departamento_nombre,
                     'region' => $municipio->region,
                     'imagen' => $imagen,
@@ -318,7 +332,7 @@ class MunicipioController extends Controller
         try {
             \Log::info("Intentando cargar municipio con ID: " . $id);
             
-            // Obtener el municipio desde tabla_localities (fuente oficial)
+            // Obtener el municipio desde tabla_localities (fuente oficial de ubicación)
             $locality = \DB::table('tabla_localities')
                 ->where('ID', $id)
                 ->first();
@@ -337,6 +351,17 @@ class MunicipioController extends Controller
             $municipio_nombre = $locality->MUNICIPIOS;
             $departamento_nombre = $locality->DEPARTAMENTO;
             $region = $locality->REGION;
+            
+            // Obtener descripción desde tabla_municipios (fuente oficial de contenido)
+            // Unir por nombre de municipio porque ID_LOCALITIES no coincide correctamente
+            $municipioDescripcion = \DB::table('tabla_municipios')
+                ->where('NOMBRE_MUNICIPIOS', $municipio_nombre)
+                ->first();
+            
+            $descripcion = null;
+            if ($municipioDescripcion && !empty($municipioDescripcion->DESCRIPCION)) {
+                $descripcion = $municipioDescripcion->DESCRIPCION;
+            }
             
             // Obtener imagen usando ImageHelper
             $imagen = ImageHelper::getMunicipioImage($municipio_nombre, $departamento_nombre);
@@ -358,7 +383,7 @@ class MunicipioController extends Controller
             $item = (object)[
                 'id' => $locality->ID,
                 'nombre' => $municipio_nombre,
-                'descripcion' => 'Municipio de ' . $municipio_nombre . ', ' . $departamento_nombre,
+                'descripcion' => $descripcion,
                 'departamento_nombre' => $departamento_nombre,
                 'region' => $region,
                 'imagen' => $imagen,
