@@ -165,14 +165,14 @@ class MunicipioController extends Controller
             \Log::info("Municipios en BD: " . $municipiosCount);
             \Log::info("Departamentos en BD: " . $departamentosCount);
             
-            // Cargar municipios primero sin join para evitar duplicados
-            $query = \DB::table('tabla_municipios')
-                ->select(
-                    'tabla_municipios.ID_MUNICIPIOS as id',
-                    'tabla_municipios.NOMBRE_MUNICIPIOS as nombre',
-                    'tabla_municipios.DESCRIPCION as descripcion',
-                    'tabla_municipios.ID_DEPARTAMENTO as departamento_id'
-                );
+            // Cargar municipios desde tabla_municipios
+            $query = \DB::table('tabla_municipios as m')
+                ->select([
+                    'm.ID as id',
+                    'm.NOMBRE_MUNICIPIOS as nombre',
+                    'm.DESCRIPCION as descripcion',
+                    'm.ID_LOCALITIES as localities_id',
+                ]);
             
             // Aplicar filtro de búsqueda normalizada
             if ($request->has('search') && !empty($request->search)) {
@@ -181,12 +181,12 @@ class MunicipioController extends Controller
                 
                 $query->where(function($q) use ($searchTerm, $normalizedSearch) {
                     // Búsqueda por nombre (con y sin normalizar)
-                    $q->where('tabla_municipios.NOMBRE_MUNICIPIOS', 'like', '%' . $searchTerm . '%')
-                      ->orWhere('tabla_municipios.DESCRIPCION', 'like', '%' . $searchTerm . '%');
+                    $q->where('m.NOMBRE_MUNICIPIOS', 'like', '%' . $searchTerm . '%')
+                      ->orWhere('m.DESCRIPCION', 'like', '%' . $searchTerm . '%');
                     
                     // Búsqueda normalizada (para tildes y mayúsculas)
                     if ($normalizedSearch) {
-                        $q->orWhereRaw("REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(LOWER(tabla_municipios.NOMBRE_MUNICIPIOS), 'á', 'a'), 'é', 'e'), 'í', 'i'), 'ó', 'o'), 'ú', 'u') LIKE ?", ['%' . $normalizedSearch . '%']);
+                        $q->orWhereRaw("REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(LOWER(m.NOMBRE_MUNICIPIOS), 'á', 'a'), 'é', 'e'), 'í', 'i'), 'ó', 'o'), 'ú', 'u') LIKE ?", ['%' . $normalizedSearch . '%']);
                     }
                 });
             }
@@ -196,9 +196,15 @@ class MunicipioController extends Controller
                 $departamentoSlug = $request->departamento;
                 $departamentos = $this->getDepartments();
                 $departamento = $departamentos->firstWhere('slug', $departamentoSlug);
-                
+
                 if ($departamento) {
-                    $query->where('tabla_municipios.ID_DEPARTAMENTO', $departamento['id']);
+                    // Filtrar por departamento usando subquery con tabla_localities
+                    $query->whereExists(function ($query) use ($departamento) {
+                        $query->select(\DB::raw(1))
+                            ->from('tabla_localities as l')
+                            ->whereRaw('LOWER(TRIM(l.MUNICIPIOS)) = LOWER(TRIM(m.NOMBRE_MUNICIPIOS))')
+                            ->where('l.DEPARTAMENTO', $departamento['name']);
+                    });
                 }
             }
             
@@ -212,20 +218,10 @@ class MunicipioController extends Controller
             
             // Aplicar paginación
             $municipios = $query
-                ->orderBy('tabla_municipios.NOMBRE_MUNICIPIOS')
+                ->orderBy('m.NOMBRE_MUNICIPIOS')
                 ->offset(($page - 1) * $perPage)
                 ->limit($perPage)
                 ->get();
-            
-            // Cargar departamentos por separado para evitar duplicados por join
-            $departamentoIds = $municipios->pluck('departamento_id')->filter()->unique()->toArray();
-            $departamentosData = [];
-            if (!empty($departamentoIds)) {
-                $departamentosData = \DB::table('tabla_departamentos')
-                    ->whereIn('ID_DEPARTAMENTO', $departamentoIds)
-                    ->get()
-                    ->keyBy('ID_DEPARTAMENTO');
-            }
             
             // Cargar imágenes una sola vez en memoria para evitar consultas repetidas
             $imagenes = Cache::remember('imagenes_map_global', 1800, function () {
@@ -240,42 +236,80 @@ class MunicipioController extends Controller
                 'total_unicas_por_nombre' => $imagenesPorNombre->count()
             ]);
             
-            // Combinar con datos del municipio e imágenes
-            $municipios_con_localidad = $municipios->map(function($municipio) use ($departamentosData, $imagenesPorNombre) {
-                // Obtener nombre del departamento
-                $departamentoNombre = null;
-                if (!empty($municipio->departamento_id) && isset($departamentosData[$municipio->departamento_id])) {
-                    $departamentoNombre = $departamentosData[$municipio->departamento_id]->NOMBRE_DEPARTAMENTO;
+            // Normalizar datos de municipios
+            // Resolver departamento buscando por nombre en tabla_localities con múltiples estrategias
+            $municipios_normalizados = $municipios->map(function($municipio) use ($imagenesPorNombre) {
+                $nombreMunicipio = $municipio->nombre;
+                
+                // Estrategia 1: Coincidencia exacta normalizada
+                $nombreDepartamento = null;
+                $nombreRegion = null;
+                
+                $locality = \DB::table('tabla_localities')
+                    ->whereRaw('LOWER(TRIM(MUNICIPIOS)) = LOWER(TRIM(?))', [$nombreMunicipio])
+                    ->first();
+                
+                // Estrategia 2: Si no hay coincidencia, intentar quitando paréntesis
+                if (!$locality && preg_match('/^(.*?)\s*\([^)]*\)$/', $nombreMunicipio, $matches)) {
+                    $nombreSinParentesis = trim($matches[1]);
+                    $locality = \DB::table('tabla_localities')
+                        ->whereRaw('LOWER(TRIM(MUNICIPIOS)) = LOWER(TRIM(?))', [$nombreSinParentesis])
+                        ->first();
                 }
                 
-                $imagen = ImageHelper::getMunicipioImage($municipio->nombre, $departamentoNombre, $imagenesPorNombre);
+                // Estrategia 3: Si no hay coincidencia, intentar búsqueda aproximada
+                if (!$locality) {
+                    $nombreParaBusqueda = preg_replace('/\s*\([^)]*\)/', '', $nombreMunicipio);
+                    $nombreParaBusqueda = trim($nombreParaBusqueda);
+                    
+                    if (strlen($nombreParaBusqueda) >= 4) {
+                        $locality = \DB::table('tabla_localities')
+                            ->whereRaw('LOWER(TRIM(MUNICIPIOS)) LIKE LOWER(TRIM(?))', [$nombreParaBusqueda . '%'])
+                            ->first();
+                    }
+                }
                 
+                // Estrategia 4: Fallback a ID_LOCALITIES si existe (último recurso)
+                if (!$locality && !empty($municipio->localities_id)) {
+                    $locality = \DB::table('tabla_localities')
+                        ->where('ID', $municipio->localities_id)
+                        ->first();
+                }
+                
+                if ($locality) {
+                    $nombreDepartamento = $locality->DEPARTAMENTO;
+                    $nombreRegion = $locality->REGION;
+                }
+
+                $imagen = ImageHelper::getMunicipioImage($nombreMunicipio, $nombreDepartamento, $imagenesPorNombre);
+
                 return (object)[
                     'id' => $municipio->id,
-                    'nombre' => $municipio->nombre,
+                    'nombre' => $nombreMunicipio,
                     'descripcion' => $municipio->descripcion,
-                    'departamento_id' => $municipio->departamento_id,
-                    'departamento_nombre' => $departamentoNombre,
+                    'localities_id' => $municipio->localities_id,
+                    'departamento' => $nombreDepartamento,
+                    'region' => $nombreRegion,
                     'imagen' => $imagen,
-                    'slug' => $this->normalizeText($municipio->nombre),
-                    'departamento_slug' => $this->normalizeText($departamentoNombre ?? '')
+                    'slug' => $this->normalizeText($nombreMunicipio),
+                    'departamento_slug' => $this->normalizeText($nombreDepartamento ?? '')
                 ];
             });
             
             \Log::info("Municipios cargados", [
                 'total_raw' => $municipios->count(),
-                'total_mapped' => $municipios_con_localidad->count(),
+                'total_mapped' => $municipios_normalizados->count(),
                 'page' => $page,
                 'per_page' => $perPage,
                 'total_filtered' => $total
             ]);
             
-            if ($municipios_con_localidad->count() > 0) {
-                \Log::info("Primer municipio ID: " . $municipios_con_localidad->first()->id . ", Nombre: " . $municipios_con_localidad->first()->nombre);
+            if ($municipios_normalizados->count() > 0) {
+                \Log::info("Primer municipio ID: " . $municipios_normalizados->first()->id . ", Nombre: " . $municipios_normalizados->first()->nombre . ", Departamento: " . ($municipios_normalizados->first()->departamento ?? 'N/A'));
             }
 
             return view('pages.municipios', [
-                'items' => $municipios_con_localidad,
+                'items' => $municipios_normalizados,
                 'search' => $request->search ?? '',
                 'departamento' => $request->departamento ?? '',
                 'region' => $request->region ?? '',
@@ -309,84 +343,60 @@ class MunicipioController extends Controller
      */
     public function show($id)
     {
-        try {
-            \Log::info("Intentando cargar municipio con ID: " . $id);
-            
-            // Primero obtener el municipio sin join para evitar timeout
-            $municipio = \DB::table('tabla_municipios')
-                ->where('ID_MUNICIPIOS', $id)
-                ->first();
-            
-            if (!$municipio) {
-                \Log::error("Municipio no encontrado con ID: " . $id);
-                // Intentar buscar por nombre como fallback
-                $municipio = \DB::table('tabla_municipios')
-                    ->where('NOMBRE_MUNICIPIOS', 'like', '%' . $id . '%')
-                    ->first();
-                
-                if (!$municipio) {
-                    // Retornar vista de error en lugar de JSON 404
-                    return view('pages.detalle-municipio', [
-                        'item' => null,
-                        'error' => 'Municipio no encontrado con ID: ' . $id,
-                        'tipo' => 'Municipio'
-                    ]);
-                }
-            }
-            
-            // Obtener nombre del departamento por separado
-            $departamento_nombre = 'Colombia';
-            try {
-                $depto = \DB::table('tabla_departamentos')
-                    ->where('ID_DEPARTAMENTO', $municipio->ID_DEPARTAMENTO)
-                    ->first();
-                if ($depto) {
-                    $departamento_nombre = $depto->NOMBRE_DEPARTAMENTO;
-                }
-            } catch (\Exception $e) {
-                // Si falla, usar valor por defecto
-            }
-            
-            // Obtener imagen usando ImageHelper
-            $imagen = ImageHelper::getMunicipioImage($municipio->NOMBRE_MUNICIPIOS, $departamento_nombre);
-            
-            // Generar slugs para URLs
-            $departmentSlug = $this->normalizeText($departamento_nombre);
-            $municipalitySlug = $this->normalizeText($municipio->NOMBRE_MUNICIPIOS);
-            
-            // Cargar categorías de puntos de interés desde BD
-            $categorias = $this->loadMunicipalityCategories($municipio->ID_MUNICIPIOS, $municipio->NOMBRE_MUNICIPIOS, $departamento_nombre);
+        \Log::info("Intentando cargar municipio con ID: " . $id);
 
-            // Cargar experiencias locales contextuales
-            $experienciasLocales = \App\Helpers\LocalExperienceResolver::forMunicipality(
-                $municipio->NOMBRE_MUNICIPIOS,
-                $departamento_nombre,
-                $municipio->ID_DEPARTAMENTO
-            );
+        // NOTA: tabla_municipios tiene ID (no ID_MUNICIPIOS) e ID_LOCALITIES (no ID_DEPARTAMENTO)
+        $municipio = \DB::table('tabla_municipios')
+            ->where('ID', $id)
+            ->first();
 
-            $item = (object)[
-                'id' => $municipio->ID_MUNICIPIOS,
-                'nombre' => $municipio->NOMBRE_MUNICIPIOS,
-                'descripcion' => $municipio->DESCRIPCION ?? 'Sin descripción',
-                'departamento_id' => $municipio->ID_DEPARTAMENTO,
-                'departamento_nombre' => $departamento_nombre,
-                'imagen' => $imagen,
-                'slug' => $municipalitySlug,
-                'departamento_slug' => $departmentSlug,
-                'categorias' => $categorias,
-                'experiencias_locales' => $experienciasLocales
-            ];
-
-            return view('pages.detalle-municipio', compact('item'))->with('tipo', 'Municipio');
-        } catch (\Exception $e) {
-            \Log::error("Error en MunicipioController@show: " . $e->getMessage());
-            // Retornar vista de error en lugar de JSON 500
-            return view('pages.detalle-municipio', [
-                'item' => null,
-                'error' => 'Error al cargar el municipio: ' . $e->getMessage(),
-                'tipo' => 'Municipio'
-            ]);
+        if (!$municipio) {
+            \Log::error("Municipio no encontrado con ID: " . $id);
+            abort(404);
         }
+
+        // Obtener nombre del departamento desde tabla_localities
+        $departamento_nombre = 'Colombia';
+        if (!empty($municipio->ID_LOCALITIES)) {
+            $locality = \DB::table('tabla_localities')
+                ->where('ID', $municipio->ID_LOCALITIES)
+                ->first();
+            if ($locality) {
+                $departamento_nombre = $locality->DEPARTAMENTO;
+            }
+        }
+
+        // Obtener imagen usando ImageHelper
+        $imagen = ImageHelper::getMunicipioImage($municipio->NOMBRE_MUNICIPIOS, $departamento_nombre);
+
+        // Generar slugs para URLs
+        $departmentSlug = $this->normalizeText($departamento_nombre);
+        $municipalitySlug = $this->normalizeText($municipio->NOMBRE_MUNICIPIOS);
+
+        // Cargar categorías de puntos de interés desde BD
+        $categorias = $this->loadMunicipalityCategories($municipio->ID, $municipio->NOMBRE_MUNICIPIOS, $departamento_nombre);
+
+        // Cargar experiencias locales contextuales
+        $experienciasLocales = \App\Helpers\LocalExperienceResolver::forMunicipality(
+            $municipio->NOMBRE_MUNICIPIOS,
+            $departamento_nombre,
+            $municipio->ID_LOCALITIES
+        );
+
+        $item = (object)[
+            'id' => $municipio->ID,
+            'nombre' => $municipio->NOMBRE_MUNICIPIOS,
+            'descripcion' => $municipio->DESCRIPCION ?? 'Sin descripción',
+            'localities_id' => $municipio->ID_LOCALITIES,
+            'departamento_nombre' => $departamento_nombre,
+            'imagen' => $imagen,
+            'slug' => $municipalitySlug,
+            'departamento_slug' => $departmentSlug,
+            'categorias' => $categorias,
+            'experiencias_locales' => $experienciasLocales
+        ];
+
+        return view('pages.detalle-municipio', compact('item'))->with('tipo', 'Municipio');
     }
 
     /**
@@ -394,67 +404,106 @@ class MunicipioController extends Controller
      */
     public function showBySlugs($departmentSlug, $municipalitySlug)
     {
-        try {
-            \Log::info('Buscando municipio por slugs', [
-                'departmentSlug' => $departmentSlug,
+        \Log::info('Buscando municipio por slugs', [
+            'departmentSlug' => $departmentSlug,
+            'municipalitySlug' => $municipalitySlug,
+        ]);
+
+        // Buscar municipio por slug del nombre en tabla_municipios
+        $municipio = \DB::table('tabla_municipios')
+            ->whereRaw("REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(LOWER(NOMBRE_MUNICIPIOS), 'á', 'a'), 'é', 'e'), 'í', 'i'), 'ó', 'o'), 'ú', 'u') = ?", [$municipalitySlug])
+            ->first();
+
+        if (!$municipio) {
+            \Log::warning('Municipio no encontrado en showBySlugs', [
                 'municipalitySlug' => $municipalitySlug,
             ]);
+            abort(404);
+        }
 
-            // Buscar departamento por slug usando normalización SQL
-            $departamento = \DB::table('tabla_departamentos')
-                ->whereRaw("REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(LOWER(NOMBRE_DEPARTAMENTO), 'á', 'a'), 'é', 'e'), 'í', 'i'), 'ó', 'o'), 'ú', 'u') = ?", [$departmentSlug])
+        // Obtener departamento de tabla_localities por coincidencia de nombre con múltiples estrategias
+        $nombreDepartamento = null;
+        $nombreRegion = null;
+        
+        // Estrategia 1: Coincidencia exacta normalizada
+        $locality = \DB::table('tabla_localities')
+            ->whereRaw('LOWER(TRIM(MUNICIPIOS)) = LOWER(TRIM(?))', [$municipio->NOMBRE_MUNICIPIOS])
+            ->first();
+        
+        // Estrategia 2: Si no hay coincidencia, intentar quitando paréntesis
+        if (!$locality && preg_match('/^(.*?)\s*\([^)]*\)$/', $municipio->NOMBRE_MUNICIPIOS, $matches)) {
+            $nombreSinParentesis = trim($matches[1]);
+            $locality = \DB::table('tabla_localities')
+                ->whereRaw('LOWER(TRIM(MUNICIPIOS)) = LOWER(TRIM(?))', [$nombreSinParentesis])
                 ->first();
-
-            if (!$departamento) {
-                \Log::warning('Departamento no encontrado en showBySlugs', ['departmentSlug' => $departmentSlug]);
-                abort(404);
+        }
+        
+        // Estrategia 3: Si no hay coincidencia, intentar búsqueda aproximada
+        if (!$locality) {
+            $nombreParaBusqueda = preg_replace('/\s*\([^)]*\)/', '', $municipio->NOMBRE_MUNICIPIOS);
+            $nombreParaBusqueda = trim($nombreParaBusqueda);
+            
+            if (strlen($nombreParaBusqueda) >= 4) {
+                $locality = \DB::table('tabla_localities')
+                    ->whereRaw('LOWER(TRIM(MUNICIPIOS)) LIKE LOWER(TRIM(?))', [$nombreParaBusqueda . '%'])
+                    ->first();
             }
-
-            // Buscar municipio por slug dentro del departamento usando normalización SQL
-            $municipio = \DB::table('tabla_municipios')
-                ->where('ID_DEPARTAMENTO', $departamento->ID_DEPARTAMENTO)
-                ->whereRaw("REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(LOWER(NOMBRE_MUNICIPIOS), 'á', 'a'), 'é', 'e'), 'í', 'i'), 'ó', 'o'), 'ú', 'u') = ?", [$municipalitySlug])
+        }
+        
+        // Estrategia 4: Fallback a ID_LOCALITIES si existe (último recurso)
+        if (!$locality && !empty($municipio->ID_LOCALITIES)) {
+            $locality = \DB::table('tabla_localities')
+                ->where('ID', $municipio->ID_LOCALITIES)
                 ->first();
+        }
+        
+        if ($locality) {
+            $nombreDepartamento = $locality->DEPARTAMENTO;
+            $nombreRegion = $locality->REGION;
+        }
 
-            if (!$municipio) {
-                \Log::warning('Municipio no encontrado en showBySlugs', [
-                    'departmentSlug' => $departmentSlug,
-                    'municipalitySlug' => $municipalitySlug,
-                    'departamento' => $departamento->NOMBRE_DEPARTAMENTO,
-                ]);
-                abort(404);
-            }
+        $nombreMunicipio = $municipio->NOMBRE_MUNICIPIOS;
 
-            // Obtener imagen usando ImageHelper
-            $imagen = ImageHelper::getMunicipioImage($municipio->NOMBRE_MUNICIPIOS, $departamento->NOMBRE_DEPARTAMENTO);
+        \Log::info('Municipio encontrado por slugs', [
+            'municipioId' => $municipio->ID,
+            'municipio' => $nombreMunicipio,
+            'departamento' => $nombreDepartamento ?? 'No disponible',
+            'region' => $nombreRegion ?? 'No disponible',
+        ]);
 
-            // Cargar categorías de puntos de interés desde BD
-            $categorias = $this->loadMunicipalityCategories($municipio->ID_MUNICIPIOS, $municipio->NOMBRE_MUNICIPIOS, $departamento->NOMBRE_DEPARTAMENTO);
+        // Obtener imagen usando ImageHelper
+        $imagen = ImageHelper::getMunicipioImage($nombreMunicipio, $nombreDepartamento);
 
-            // Cargar experiencias locales contextuales
-            $experienciasLocales = \App\Helpers\LocalExperienceResolver::forMunicipality(
-                $municipio->NOMBRE_MUNICIPIOS,
-                $departamento->NOMBRE_DEPARTAMENTO,
-                $municipio->ID_DEPARTAMENTO
-            );
+        // Cargar categorías de puntos de interés desde BD
+        $categorias = $this->loadMunicipalityCategories($municipio->ID, $nombreMunicipio, $nombreDepartamento ?? 'Colombia');
 
-            // Cargar reviews del municipio
-            $municipioModel = \App\Models\Municipio::find($municipio->ID_MUNICIPIOS);
-            $reviews = $municipioModel ? $municipioModel->reviews()->approved()->latest()->get() : collect();
-            $averageRating = $municipioModel ? $municipioModel->averageRating() : 0;
-            $reviewsCount = $municipioModel ? $municipioModel->reviewsCount() : 0;
+        // Cargar experiencias locales contextuales
+        $experienciasLocales = \App\Helpers\LocalExperienceResolver::forMunicipality(
+            $nombreMunicipio,
+            $nombreDepartamento ?? 'Colombia',
+            $municipio->ID_LOCALITIES
+        );
 
-            // Cargar mapa de imágenes una sola vez para platos típicos - CACHED
-            $imagenesMap = Cache::remember('imagenes_map_global', 1800, function () {
-                return \DB::table('tabla_imagenes')
-                    ->select('ID_IMAGEN', 'NOMBRE_IMAGEN', 'RUTA')
-                    ->get();
-            });
+        // Cargar reviews del municipio
+        $municipioModel = \App\Models\Municipio::find($municipio->ID);
+        $reviews = $municipioModel ? $municipioModel->reviews()->approved()->latest()->get() : collect();
+        $averageRating = $municipioModel ? $municipioModel->averageRating() : 0;
+        $reviewsCount = $municipioModel ? $municipioModel->reviewsCount() : 0;
 
-            // Cargar platos típicos del departamento (sabores del departamento, evitando repeticiones)
-            $usedImages = [];
+        // Cargar mapa de imágenes una sola vez para platos típicos - CACHED
+        $imagenesMap = Cache::remember('imagenes_map_global', 1800, function () {
+            return \DB::table('tabla_imagenes')
+                ->select('ID_IMAGEN', 'NOMBRE_IMAGEN', 'RUTA')
+                ->get();
+        });
+
+        // Cargar platos típicos del departamento (sabores del departamento, evitando repeticiones)
+        $usedImages = [];
+        $platosTipicos = collect([]);
+        
+        if ($nombreDepartamento) {
             $platosTipicos = \DB::table('tabla_gastronomia')
-                ->where('DEPARTAMENTO', $departamento->NOMBRE_DEPARTAMENTO)
+                ->where('DEPARTAMENTO', $nombreDepartamento)
                 ->get()
                 ->filter(function ($row) {
                     $nombre = trim($row->PLATOS_TIPICOS ?? '');
@@ -483,25 +532,24 @@ class MunicipioController extends Controller
                 })
                 ->take(6)
                 ->values();
-
-            $item = (object)[
-                'id' => $municipio->ID_MUNICIPIOS,
-                'nombre' => $municipio->NOMBRE_MUNICIPIOS,
-                'descripcion' => $municipio->DESCRIPCION ?? 'Sin descripción',
-                'departamento_id' => $municipio->ID_DEPARTAMENTO,
-                'departamento_nombre' => $departamento->NOMBRE_DEPARTAMENTO,
-                'imagen' => $imagen,
-                'slug' => $municipalitySlug,
-                'departamento_slug' => $departmentSlug,
-                'categorias' => $categorias,
-                'experiencias_locales' => $experienciasLocales,
-                'platosTipicos' => $platosTipicos
-            ];
-
-            return view('pages.detalle-municipio', compact('item', 'reviews', 'averageRating', 'reviewsCount'))->with('tipo', 'Municipio');
-        } catch (\Exception $e) {
-            abort(404);
         }
+
+        $item = (object)[
+            'id' => $municipio->ID,
+            'nombre' => $nombreMunicipio,
+            'descripcion' => $municipio->DESCRIPCION ?? 'Sin descripción',
+            'localities_id' => $municipio->ID_LOCALITIES,
+            'departamento_nombre' => $nombreDepartamento ?? 'Colombia',
+            'region' => $nombreRegion,
+            'imagen' => $imagen,
+            'slug' => $municipalitySlug,
+            'departamento_slug' => $departmentSlug,
+            'categorias' => $categorias,
+            'experiencias_locales' => $experienciasLocales,
+            'platosTipicos' => $platosTipicos
+        ];
+
+        return view('pages.detalle-municipio', compact('item', 'reviews', 'averageRating', 'reviewsCount'))->with('tipo', 'Municipio');
     }
 
     /**
@@ -509,32 +557,40 @@ class MunicipioController extends Controller
      */
     public function porDepartamento($departamento_id)
     {
-        try {
-            $municipios = \DB::table('tabla_municipios')
-                ->where('ID_DEPARTAMENTO', $departamento_id)
-                ->orderBy('NOMBRE_MUNICIPIOS')
-                ->get();
-            
-            // Combinar con datos del municipio
-            $municipios_con_localidad = $municipios->map(function($municipio) {
-                $municipio_con_localidad = (object)[
-                    'id' => $municipio->ID_MUNICIPIOS,
-                    'nombre' => $municipio->NOMBRE_MUNICIPIOS,
-                    'descripcion' => $municipio->DESCRIPCION
-                ];
-                
-                return $municipio_con_localidad;
-            });
+        // NOTA: tabla_municipios no tiene ID_DEPARTAMENTO, se relaciona via tabla_localities
+        // Este método necesita el nombre del departamento en lugar del ID
+        // Buscar localities del departamento
+        $localities = \DB::table('tabla_localities')
+            ->where('DEPARTAMENTO', $departamento_id)
+            ->pluck('ID')
+            ->toArray();
 
-            return view('pages.municipios', [
-                'items' => $municipios_con_localidad,
-                'departamento_id' => $departamento_id
-            ]);
-        } catch (\Exception $e) {
+        if (empty($localities)) {
             return view('pages.municipios', [
                 'items' => collect([]),
-                'error' => 'La tabla de municipios no está disponible en este momento.'
+                'error' => 'No se encontraron municipios para el departamento: ' . $departamento_id
             ]);
         }
+
+        $municipios = \DB::table('tabla_municipios')
+            ->whereIn('ID_LOCALITIES', $localities)
+            ->orderBy('NOMBRE_MUNICIPIOS')
+            ->get();
+
+        // Combinar con datos del municipio
+        $municipios_con_localidad = $municipios->map(function($municipio) {
+            $municipio_con_localidad = (object)[
+                'id' => $municipio->ID,
+                'nombre' => $municipio->NOMBRE_MUNICIPIOS,
+                'descripcion' => $municipio->DESCRIPCION
+            ];
+
+            return $municipio_con_localidad;
+        });
+
+        return view('pages.municipios', [
+            'items' => $municipios_con_localidad,
+            'departamento' => $departamento_id
+        ]);
     }
 }
