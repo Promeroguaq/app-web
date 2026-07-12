@@ -3,6 +3,9 @@
 @section('title', 'Reservas Naturales')
 
 @section('content')
+<!-- Main Container -->
+<div class="w-full max-w-7xl mx-auto overflow-x-hidden">
+
 <!-- Hero Section -->
 <div style="height: 350px; border-radius: 20px; overflow: hidden; position: relative; margin-bottom: 48px; box-shadow: 0 20px 40px rgba(0,0,0,0.15); background: linear-gradient(135deg, #064e3b 0%, #10b981 50%, #059669 100%);">
     <div style="position: absolute; bottom: 0; left: 0; right: 0; padding: 48px; color: white;">
@@ -43,47 +46,20 @@
 </div>
 @endif
 
-<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 24px; margin-bottom: 48px;">
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6 mb-8 md:mb-12">
     
     @forelse($items as $item)
-    <a href="{{ route('puntos-interes.reservas-naturales.show', $item->id) }}" style="text-decoration: none; color: inherit;">
-    <div style="border-radius: 16px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.08); transition: all 0.3s ease; cursor: pointer; background: white;" onmouseover="this.style.transform='translateY(-8px)'; this.style.boxShadow='0 12px 24px rgba(0,0,0,0.15)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 12px rgba(0,0,0,0.08)'">
-        <div style="height: 220px; position: relative; overflow: hidden;">
-            @if($item->imagen)
-                <img src="{{ $item->imagen }}" alt="{{ $item->nombre }}" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
-            @else
-                <div style="width: 100%; height: 100%; background: linear-gradient(135deg, #10b981 0%, #059669 100%); display: flex; align-items: center; justify-content: center;">
-                    <span style="color: white; font-size: 4rem;">🌲</span>
-                </div>
-            @endif
-            <div style="position: absolute; top: 12px; left: 12px; background: rgba(16, 185, 129, 0.95); backdrop-filter: blur(10px); padding: 6px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; color: white; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
-                � Reserva Natural
-            </div>
-            <div style="position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, transparent 100%); padding: 16px; color: white;">
-                <div style="display: flex; gap: 16px; font-size: 0.875rem; font-weight: 500;">
-                    <span style="display: flex; align-items: center; gap: 4px;">
-                        <i class="fas fa-leaf"></i> Biodiversidad
-                    </span>
-                    <span style="display: flex; align-items: center; gap: 4px;">
-                        <i class="fas fa-shield-alt"></i> Protegido
-                    </span>
-                </div>
-            </div>
-        </div>
-        <div style="padding: 20px;">
-            <h3 style="font-family: 'Space Grotesk', sans-serif; font-size: 1.25rem; font-weight: 700; color: #1e293b; margin-bottom: 8px; line-height: 1.3;">
-                {{ $item->nombre }}
-            </h3>
-            <p style="color: #64748b; margin-bottom: 12px; line-height: 1.5; font-size: 0.95rem;">
-                {{ Str::limit($item->descripcion, 100) }}
-            </p>
-            <div style="display: flex; align-items: center; gap: 8px; font-size: 0.875rem; color: #64748b;">
-                <i class="fas fa-map-marker-alt" style="color: #10b981;"></i>
-                <span>{{ $item->localidad ?? 'Colombia' }}</span>
-            </div>
-        </div>
-    </div>
-    </a>
+    <x-cards.tourism-card
+        :id="$item->id"
+        :title="$item->nombre"
+        :description="$item->descripcion ?? 'Información turística en actualización.'"
+        :image="$item->imagen"
+        :badge="'🌲 Reserva Natural'"
+        :location="$item->localidad"
+        :secondaryLocation="$item->departamento"
+        :detailUrl="route('puntos-interes.reservas-naturales.show', ['id' => $item->id])"
+        :fallbackTheme="'nature'"
+    />
     @empty
     <div style="grid-column: 1 / -1; text-align: center; padding: 40px; color: #64748b;">
         No hay reservas naturales registradas en este momento.
@@ -107,5 +83,10 @@
             🌡️ Termales
         </button>
     </div>
+</div>
+
+<!-- Padding bottom para navegación móvil -->
+<div class="h-20 md:h-0"></div>
+
 </div>
 @endsection

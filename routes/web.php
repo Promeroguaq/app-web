@@ -19,6 +19,16 @@ use App\Http\Controllers\CapitalController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\ReservaParqueController;
 use App\Http\Controllers\FeriaController;
+use App\Http\Controllers\IglesiaController;
+use App\Http\Controllers\MuseoController;
+use App\Http\Controllers\ParqueTematicoController;
+use App\Http\Controllers\CiclismoController;
+use App\Http\Controllers\TermalController;
+use App\Http\Controllers\DesiertoLagunaController;
+use App\Http\Controllers\ActividadParqueController;
+use App\Http\Controllers\IslaController;
+use App\Http\Controllers\DeporteAventuraController;
+use App\Http\Controllers\PlayaController;
 
 /*
 |--------------------------------------------------------------------------
@@ -236,25 +246,25 @@ Route::prefix('puntos-interes')
         // Deportes de aventura.
         Route::get(
             '/deportes-aventura',
-            [PuntoInteresController::class, 'deportesAventura']
+            [DeporteAventuraController::class, 'index']
         )->name('deportes-aventura');
 
         Route::get(
-            '/deportes-aventura/{slug}',
-            [PuntoInteresController::class, 'deportesAventuraShow']
+            '/deportes-aventura/{id}',
+            [DeporteAventuraController::class, 'show']
         )
-            ->where('slug', '[A-Za-z0-9\-]+')
+            ->whereNumber('id')
             ->name('deportes-aventura.show');
 
         // Desiertos y lagunas.
         Route::get(
             '/desiertos-lagunas',
-            [PuntoInteresController::class, 'desiertosLagunas']
+            [DesiertoLagunaController::class, 'index']
         )->name('desiertos-lagunas');
 
         Route::get(
             '/desiertos-lagunas/{id}',
-            [PuntoInteresController::class, 'desiertosLagunasShow']
+            [DesiertoLagunaController::class, 'show']
         )
             ->whereNumber('id')
             ->name('desiertos-lagunas.show');
@@ -262,12 +272,12 @@ Route::prefix('puntos-interes')
         // Iglesias.
         Route::get(
             '/iglesias',
-            [PuntoInteresController::class, 'iglesias']
+            [IglesiaController::class, 'index']
         )->name('iglesias');
 
         Route::get(
             '/iglesias/{id}',
-            [PuntoInteresController::class, 'iglesiasShow']
+            [IglesiaController::class, 'show']
         )
             ->whereNumber('id')
             ->name('iglesias.show');
@@ -275,12 +285,12 @@ Route::prefix('puntos-interes')
         // Islas.
         Route::get(
             '/islas',
-            [PuntoInteresController::class, 'islas']
+            [IslaController::class, 'index']
         )->name('islas');
 
         Route::get(
             '/islas/{id}',
-            [PuntoInteresController::class, 'islasShow']
+            [IslaController::class, 'show']
         )
             ->whereNumber('id')
             ->name('islas.show');
@@ -288,12 +298,12 @@ Route::prefix('puntos-interes')
         // Museos.
         Route::get(
             '/museos',
-            [PuntoInteresController::class, 'museos']
+            [MuseoController::class, 'index']
         )->name('museos');
 
         Route::get(
             '/museos/{id}',
-            [PuntoInteresController::class, 'museosShow']
+            [MuseoController::class, 'show']
         )
             ->whereNumber('id')
             ->name('museos.show');
@@ -301,12 +311,12 @@ Route::prefix('puntos-interes')
         // Parques temáticos.
         Route::get(
             '/parques-tematicos',
-            [PuntoInteresController::class, 'parquesTematicos']
+            [ParqueTematicoController::class, 'index']
         )->name('parques-tematicos');
 
         Route::get(
             '/parques-tematicos/{id}',
-            [PuntoInteresController::class, 'parquesTematicosShow']
+            [ParqueTematicoController::class, 'show']
         )
             ->whereNumber('id')
             ->name('parques-tematicos.show');
@@ -314,12 +324,12 @@ Route::prefix('puntos-interes')
         // Playas.
         Route::get(
             '/playas',
-            [PuntoInteresController::class, 'playas']
+            [PlayaController::class, 'index']
         )->name('playas');
 
         Route::get(
             '/playas/{id}',
-            [PuntoInteresController::class, 'playasShow']
+            [PlayaController::class, 'show']
         )
             ->whereNumber('id')
             ->name('playas.show');
@@ -327,12 +337,12 @@ Route::prefix('puntos-interes')
         // Reservas naturales.
         Route::get(
             '/reservas-naturales',
-            [PuntoInteresController::class, 'reservasNaturales']
+            [ReservaParqueController::class, 'reservasNaturales']
         )->name('reservas-naturales');
 
         Route::get(
             '/reservas-naturales/{id}',
-            [PuntoInteresController::class, 'reservasNaturalesShow']
+            [ReservaParqueController::class, 'show']
         )
             ->whereNumber('id')
             ->name('reservas-naturales.show');
@@ -340,12 +350,12 @@ Route::prefix('puntos-interes')
         // Termales.
         Route::get(
             '/termales',
-            [PuntoInteresController::class, 'termales']
+            [TermalController::class, 'index']
         )->name('termales');
 
         Route::get(
             '/termales/{id}',
-            [PuntoInteresController::class, 'termalesShow']
+            [TermalController::class, 'show']
         )
             ->whereNumber('id')
             ->name('termales.show');
@@ -359,31 +369,31 @@ Route::prefix('puntos-interes')
         // Ciclismo.
         Route::get(
             '/ciclismo',
-            [PuntoInteresController::class, 'ciclismo']
+            [CiclismoController::class, 'index']
         )->name('ciclismo');
 
         Route::get(
-            '/ciclismo/{slug}',
-            [PuntoInteresController::class, 'showCiclismo']
+            '/ciclismo/{id}',
+            [CiclismoController::class, 'show']
         )
-            ->where('slug', '[A-Za-z0-9\-]+')
+            ->whereNumber('id')
             ->name('ciclismo.show');
 
         // Fiestas y ferias dentro de puntos de interés.
         Route::get(
             '/fiestas-ferias',
-            [PuntoInteresController::class, 'fiestasFerias']
+            [FeriaController::class, 'index']
         )->name('fiestas-ferias');
 
         // Actividades en parques.
         Route::get(
             '/actividades-parques',
-            [PuntoInteresController::class, 'actividadesParques']
+            [ActividadParqueController::class, 'index']
         )->name('actividades-parques');
 
         Route::get(
             '/actividades-parques/{id}',
-            [PuntoInteresController::class, 'actividadesParquesShow']
+            [ActividadParqueController::class, 'show']
         )
             ->whereNumber('id')
             ->name('actividades-parques.show');

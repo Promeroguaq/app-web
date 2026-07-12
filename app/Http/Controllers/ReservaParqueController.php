@@ -77,6 +77,13 @@ class ReservaParqueController extends Controller
 
             // Construir query base con filtros
             $query = DB::table('tabla_reservas')
+                ->leftJoin('tabla_localities as locality', 'tabla_reservas.ID_LOCALITIES', '=', 'locality.ID')
+                ->select(
+                    'tabla_reservas.*',
+                    'locality.MUNICIPIOS as locality_municipio',
+                    'locality.DEPARTAMENTO as locality_departamento',
+                    'locality.REGION as locality_region'
+                )
                 ->whereNotNull('NOMBRE_RESERVAS_O_PARQUES')
                 ->where('NOMBRE_RESERVAS_O_PARQUES', '!=', 'NOMBRE_RESERVAS_O_PARQUES');
 
@@ -162,8 +169,9 @@ class ReservaParqueController extends Controller
                     'descripcion' => $descripcion,
                     'locality_id' => $localityId,
                     'region_id' => $regionId,
-                    'departamento' => $departamentoNombre,
-                    'region' => $regionNombre,
+                    'departamento' => $row->locality_departamento ?? $departamentoNombre,
+                    'region' => $row->locality_region ?? $regionNombre,
+                    'locality_municipio' => $row->locality_municipio,
                     'imagen' => $imagenData['url'],
                     'imagen_id' => $imagenData['id'],
                     'match_type' => $imagenData['match_type'],
@@ -199,6 +207,70 @@ class ReservaParqueController extends Controller
                 'perPage' => 12,
                 'page' => 1,
                 'error' => 'Error al cargar la página de reservas y parques.'
+            ]);
+        }
+    }
+
+    /**
+     * Mostrar reservas naturales (vista simplificada para /puntos-interes/reservas-naturales)
+     */
+    public function reservasNaturales()
+    {
+        try {
+            // Obtener datos de la tabla tabla_reservas con leftJoin a tabla_localities
+            // Relación: tabla_reservas.ID_LOCALITIES = tabla_localities.ID
+            $reservas = \DB::table('tabla_reservas as r')
+                ->leftJoin('tabla_localities as l', 'r.ID_LOCALITIES', '=', 'l.ID')
+                ->select([
+                    'r.ID_RESERVAS',
+                    'r.NOMBRE_RESERVAS_O_PARQUES',
+                    'r.DESCRIPCION',
+                    'r.ID_LOCALITIES',
+                    'l.MUNICIPIOS as localidad_municipio',
+                    'l.DEPARTAMENTO as localidad_departamento',
+                    'l.REGION as localidad_region',
+                ])
+                ->get();
+
+            // Cargar imágenes en memoria una sola vez - CACHED
+            $imagenesMap = \Cache::remember('imagenes_map_global', 1800, function () {
+                return \DB::table('tabla_imagenes')
+                    ->select('ID_IMAGEN', 'NOMBRE_IMAGEN', 'RUTA')
+                    ->get();
+            });
+
+            // Array para rastrear imágenes usadas (evitar repeticiones)
+            $usedImages = [];
+
+            // Combinar con imágenes usando datos pre-cargados
+            $items = $reservas->map(function($item) use (&$usedImages, $imagenesMap) {
+                // Buscar imagen usando ImageHelper con deduplicación
+                $nombre = trim($item->NOMBRE_RESERVAS_O_PARQUES ?? '');
+                $imagenData = \App\Helpers\ImageHelper::getReservaParqueImage($nombre, $usedImages, $imagenesMap);
+
+                if ($imagenData['url']) {
+                    $usedImages[] = $imagenData['url'];
+                }
+
+                $reserva_con_imagen = (object)[
+                    'id' => $item->ID_RESERVAS,
+                    'nombre' => $nombre ?: 'Reserva Natural',
+                    'descripcion' => $item->DESCRIPCION ?? '',
+                    'localidad' => $item->localidad_municipio ?? null,
+                    'departamento' => $item->localidad_departamento ?? null,
+                    'region' => $item->localidad_region ?? null,
+                    'imagen' => $imagenData['url']
+                ];
+
+                return $reserva_con_imagen;
+            });
+
+            return view('pages.reservas-naturales', compact('items'));
+        } catch (\Exception $e) {
+            \Log::error('Error en ReservaParqueController@reservasNaturales: ' . $e->getMessage());
+            return view('pages.reservas-naturales', [
+                'items' => collect([]),
+                'error' => 'Error al cargar las reservas naturales.'
             ]);
         }
     }
@@ -242,6 +314,13 @@ class ReservaParqueController extends Controller
 
             // Buscar la reserva por ID
             $row = DB::table('tabla_reservas')
+                ->leftJoin('tabla_localities as locality', 'tabla_reservas.ID_LOCALITIES', '=', 'locality.ID')
+                ->select(
+                    'tabla_reservas.*',
+                    'locality.MUNICIPIOS as locality_municipio',
+                    'locality.DEPARTAMENTO as locality_departamento',
+                    'locality.REGION as locality_region'
+                )
                 ->where('ID_RESERVAS', $id)
                 ->whereNotNull('NOMBRE_RESERVAS_O_PARQUES')
                 ->where('NOMBRE_RESERVAS_O_PARQUES', '!=', 'NOMBRE_RESERVAS_O_PARQUES')
@@ -279,8 +358,9 @@ class ReservaParqueController extends Controller
                 'descripcion' => $descripcion,
                 'locality_id' => $localityId,
                 'region_id' => $regionId,
-                'departamento' => $departamentoNombre,
-                'region' => $regionNombre,
+                'departamento' => $row->locality_departamento ?? $departamentoNombre,
+                'region' => $row->locality_region ?? $regionNombre,
+                'locality_municipio' => $row->locality_municipio,
                 'imagen' => $imagenData['url'],
                 'imagen_id' => $imagenData['id'],
                 'match_type' => $imagenData['match_type'],
@@ -290,6 +370,13 @@ class ReservaParqueController extends Controller
             // Cargar reservas relacionadas (evitando repeticiones)
             $usedImages = [$reserva->imagen];
             $relatedRows = DB::table('tabla_reservas')
+                ->leftJoin('tabla_localities as locality', 'tabla_reservas.ID_LOCALITIES', '=', 'locality.ID')
+                ->select(
+                    'tabla_reservas.*',
+                    'locality.MUNICIPIOS as locality_municipio',
+                    'locality.DEPARTAMENTO as locality_departamento',
+                    'locality.REGION as locality_region'
+                )
                 ->where('ID_RESERVAS', '!=', $reserva->id)
                 ->whereNotNull('NOMBRE_RESERVAS_O_PARQUES')
                 ->where('NOMBRE_RESERVAS_O_PARQUES', '!=', 'NOMBRE_RESERVAS_O_PARQUES')
@@ -328,8 +415,9 @@ class ReservaParqueController extends Controller
                     'descripcion' => $descripcion,
                     'locality_id' => $localityId,
                     'region_id' => $regionId,
-                    'departamento' => $departamentoNombre,
-                    'region' => $regionNombre,
+                    'departamento' => $row->locality_departamento ?? $departamentoNombre,
+                    'region' => $row->locality_region ?? $regionNombre,
+                    'locality_municipio' => $row->locality_municipio,
                     'imagen' => $imagenData['url'],
                     'imagen_id' => $imagenData['id'],
                     'match_type' => $imagenData['match_type'],
