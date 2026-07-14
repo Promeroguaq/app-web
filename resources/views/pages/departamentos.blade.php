@@ -101,7 +101,7 @@
         :image="$item->imagen"
         :badge="'🏛️ Departamento'"
         :location="$item->region ? 'Región: ' . $item->region : 'Colombia'"
-        :detailUrl="route('departamentos.show.slug', $item->slug)"
+        :detailUrl="'/departamentos/' . $item->id"
         :fallbackTheme="'nature'"
     />
     @empty

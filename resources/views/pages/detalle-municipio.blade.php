@@ -45,123 +45,32 @@ function getExperienceGradient($category) {
     <div class="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
 <!-- Hero Section -->
-<div class="relative h-[40vh] sm:h-[50vh] md:h-[60vh] lg:h-[75vh] min-h-[300px] md:min-h-[400px] lg:min-h-[600px] overflow-hidden rounded-[24px] sm:rounded-[28px] md:rounded-[32px] mb-6 md:mb-8 w-full">
-    @if($item->imagen)
-    <img src="{{ $item->imagen }}" alt="{{ $item->nombre }}" class="absolute inset-0 w-full h-full object-cover">
-    @else
-    <div class="absolute inset-0 bg-gradient-to-br from-[#1D4ED8] to-[#1E40AF] flex items-center justify-center">
-        <i class="fas fa-city text-white text-4xl md:text-5xl lg:text-8xl opacity-30"></i>
-    </div>
-    @endif
-    <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-black/30"></div>
-    <div class="absolute bottom-0 left-0 right-0 p-4 md:p-8 lg:p-16 text-white">
-        <div class="bg-white/90 backdrop-blur-sm inline-block mb-2 md:mb-6 px-2 py-1 md:px-4 md:py-2 rounded-full text-[10px] md:text-sm font-semibold text-gray-800 shadow-md z-10">
-            🏙️ Municipio
-        </div>
-        <h1 class="font-display text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-7xl font-bold mb-2 md:mb-4 leading-tight" style="text-shadow: 2px 2px 12px rgba(0,0,0,0.8);">
-            {{ $item->nombre }}
-        </h1>
-        <p id="descripcion-hero" class="text-xs md:text-sm lg:text-lg xl:text-xl opacity-90 max-w-full md:max-w-3xl mb-3 md:mb-6 line-clamp-4 md:line-clamp-none" style="text-shadow: 1px 1px 6px rgba(0,0,0,0.6);">
-            {{ $item->descripcion ?? 'Descubre los tesoros ocultos de este increíble municipio' }}
-        </p>
-        <button id="btn-leer-mas" onclick="toggleDescripcion()" class="md:hidden text-xs text-white/80 underline mb-3 md:mb-6">
-            Leer más
-        </button>
-        <div class="flex flex-wrap gap-2 md:gap-4 mb-3 md:mb-6">
-            @if($item->departamento_nombre)
-            <div class="bg-white/20 backdrop-blur-sm px-2 py-1 md:px-3 md:py-1.5 rounded-full text-[10px] md:text-sm text-white border border-white/30">
-                <i class="fas fa-map mr-1 md:mr-2 text-[10px] md:text-sm"></i> {{ $item->departamento_nombre }}
-            </div>
-            @endif
-            <div class="bg-white/20 backdrop-blur-sm px-2 py-1 md:px-3 md:py-1.5 rounded-full text-[10px] md:text-sm text-white border border-white/30">
-                <i class="fas fa-flag mr-1 md:mr-2 text-[10px] md:text-sm"></i> Colombia
-            </div>
-        </div>
-        <div class="flex flex-wrap gap-2 md:gap-4">
-            <button onclick="scrollToSection('lugares-destacados')" class="w-full sm:w-auto px-4 py-3 md:px-8 md:py-4 bg-gradient-to-r from-[#1D4ED8] to-[#1E40AF] text-white rounded-full font-semibold text-xs md:text-lg hover:shadow-2xl transition-all hover:scale-105 cursor-pointer">
-                🗺️ Explorar Lugares
-            </button>
-            <button onclick="scrollToSection('informacion-municipio')" class="w-full sm:w-auto px-4 py-3 md:px-8 md:py-4 bg-white/20 backdrop-blur-md text-white rounded-full font-semibold text-xs md:text-lg hover:bg-white/30 transition-all border border-white/30 cursor-pointer">
-                📍 Ver Información
-            </button>
-        </div>
-    </div>
-</div>
-
-<!-- Premium Stats -->
-<div class="bg-white/80 backdrop-blur-sm p-4 md:p-6 mb-6 md:mb-8 rounded-[20px] md:rounded-[32px] shadow-lg">
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6">
-        <div class="bg-white/90 backdrop-blur-sm p-3 md:p-6 text-center rounded-[20px] md:rounded-[32px] shadow-lg">
-            <div class="text-xl md:text-2xl lg:text-3xl xl:text-4xl font-bold text-[#1D4ED8] mb-1 md:mb-2">25°C</div>
-            <div class="text-[10px] md:text-xs lg:text-sm text-gray-600 font-medium">Temperatura</div>
-        </div>
-        <div class="bg-white/90 backdrop-blur-sm p-3 md:p-6 text-center rounded-[20px] md:rounded-[32px] shadow-lg">
-            <div class="text-xl md:text-2xl lg:text-3xl xl:text-4xl font-bold text-[#1D4ED8] mb-1 md:mb-2">4.7</div>
-            <div class="text-[10px] md:text-xs lg:text-sm text-gray-600 font-medium">Calificación</div>
-        </div>
-        <div class="bg-white/90 backdrop-blur-sm p-3 md:p-6 text-center rounded-[20px] md:rounded-[32px] shadow-lg">
-            <div class="text-xl md:text-2xl lg:text-3xl xl:text-4xl font-bold text-[#1D4ED8] mb-1 md:mb-2">50+</div>
-            <div class="text-[10px] md:text-xs lg:text-sm text-gray-600 font-medium">Atracciones</div>
-        </div>
-        <div class="bg-white/90 backdrop-blur-sm p-3 md:p-6 text-center rounded-[20px] md:rounded-[32px] shadow-lg">
-            <div class="text-xl md:text-2xl lg:text-3xl xl:text-4xl font-bold text-[#1D4ED8] mb-1 md:mb-2">12</div>
-            <div class="text-[10px] md:text-xs lg:text-sm text-gray-600 font-medium">Categorías</div>
-        </div>
-    </div>
-</div>
+<x-detail.detail-hero
+    :title="$item->nombre"
+    :subtitle="$item->descripcion"
+    :image="$item->imagen"
+    :badge="'🏙️ Municipio'"
+    :location="$item->departamento_nombre ? $item->departamento_nombre . ', Colombia' : 'Colombia'"
+    :fallbackTheme="'city'"
+/>
 
 <!-- Municipality Info Section -->
-<div id="informacion-municipio" class="bg-white/80 backdrop-blur-sm p-4 md:p-6 mb-6 md:mb-8 rounded-[20px] md:rounded-[32px] shadow-lg">
-    <h2 class="font-display text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold text-midnight-900 mb-3 md:mb-6">Información del Municipio</h2>
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-6">
-        @if($item->departamento_nombre)
-        <div class="flex items-center gap-3 md:gap-4 p-3 md:p-4 bg-white/50 rounded-2xl">
-            <div class="w-10 h-10 md:w-12 md:h-12 bg-gradient-to-br from-[#1D4ED8] to-[#1E40AF] rounded-xl flex items-center justify-center flex-shrink-0">
-                <i class="fas fa-map text-white text-lg md:text-xl"></i>
-            </div>
-            <div>
-                <div class="text-[10px] md:text-xs text-gray-500 font-medium">Departamento</div>
-                <div class="font-bold text-midnight-900 text-sm md:text-base">{{ $item->departamento_nombre }}</div>
-            </div>
-        </div>
-        @endif
-        @if($item->region)
-        <div class="flex items-center gap-3 md:gap-4 p-3 md:p-4 bg-white/50 rounded-2xl">
-            <div class="w-10 h-10 md:w-12 md:h-12 bg-gradient-to-br from-[#1D4ED8] to-[#1E40AF] rounded-xl flex items-center justify-center flex-shrink-0">
-                <i class="fas fa-compass text-white text-lg md:text-xl"></i>
-            </div>
-            <div>
-                <div class="text-[10px] md:text-xs text-gray-500 font-medium">Región</div>
-                <div class="font-bold text-midnight-900 text-sm md:text-base">{{ $item->region }}</div>
-            </div>
-        </div>
-        @endif
-        <div class="flex items-center gap-3 md:gap-4 p-3 md:p-4 bg-white/50 rounded-2xl">
-            <div class="w-10 h-10 md:w-12 md:h-12 bg-gradient-to-br from-[#1D4ED8] to-[#1E40AF] rounded-xl flex items-center justify-center flex-shrink-0">
-                <i class="fas fa-thermometer-half text-white text-lg md:text-xl"></i>
-            </div>
-            <div>
-                <div class="text-[10px] md:text-xs text-gray-500 font-medium">Clima</div>
-                <div class="font-bold text-midnight-900 text-sm md:text-base">Tropical</div>
-            </div>
-        </div>
-    </div>
-</div>
+@php
+    $infoItems = [];
+    if(isset($item->departamento_nombre) && $item->departamento_nombre) {
+        $infoItems[] = ['label' => 'Departamento', 'value' => $item->departamento_nombre, 'icon' => 'fa-map'];
+    }
+    if(isset($item->region) && $item->region) {
+        $infoItems[] = ['label' => 'Región', 'value' => $item->region, 'icon' => 'fa-compass'];
+    }
+@endphp
+<x-detail.info-grid :items="$infoItems" />
 
 <!-- Description Section -->
-@if($item->descripcion)
-<div class="bg-white/80 backdrop-blur-sm p-4 md:p-6 mb-6 md:mb-8 rounded-[20px] md:rounded-[32px] shadow-lg">
-    <h2 class="font-display text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold text-midnight-900 mb-3 md:mb-6">Sobre {{ $item->nombre }}</h2>
-    <div class="prose prose-sm md:prose-base max-w-none text-gray-700 leading-relaxed">
-        {!! nl2br(e($item->descripcion)) !!}
-    </div>
-</div>
-@else
-<div class="bg-white/80 backdrop-blur-sm p-4 md:p-6 mb-6 md:mb-8 rounded-[20px] md:rounded-[32px] shadow-lg">
-    <h2 class="font-display text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold text-midnight-900 mb-3 md:mb-6">Sobre {{ $item->nombre }}</h2>
-    <p class="text-gray-600 text-sm md:text-base">Aún no hay una descripción disponible para este municipio.</p>
-</div>
-@endif
+<x-detail.description-section 
+    :title="'Sobre ' . $item->nombre"
+    :description="$item->descripcion"
+/>
 
 <!-- Visual Gallery -->
 <div class="mb-6 md:mb-8">

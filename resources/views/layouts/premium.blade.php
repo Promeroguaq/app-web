@@ -200,7 +200,7 @@
             transition: none !important;
         }
 
-        .reduce-motion .sidebar:hover {
+        .reduce-motion .sidebar.collapsed {
             width: 80px !important;
         }
 
@@ -252,20 +252,19 @@
         /* Premium Sidebar */
         .sidebar {
             width: 80px;
-            min-height: 100vh;
+            height: 100vh;
             background: #FCFBF8;
             position: fixed;
             left: 0;
             top: 0;
             z-index: 1000;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: width 0.3s ease-in-out;
             display: flex;
             flex-direction: column;
-            align-items: center;
-            padding: 1.5rem 0;
+            overflow: hidden;
+            overflow-x: hidden;
             box-shadow: 4px 0 24px rgba(0,0,0,0.08);
             border-right: 1px solid rgba(0,0,0,0.06);
-            overflow: hidden;
         }
 
         .sidebar::before {
@@ -275,32 +274,42 @@
             background: radial-gradient(circle at top left, rgba(16,185,129,0.06), transparent 40%);
             pointer-events: none;
         }
-        
-        .sidebar:hover {
-            width: 240px;
+
+        .sidebar.expanded {
+            width: 256px;
+        }
+
+        .sidebar.collapsed {
+            width: 80px;
         }
         
         .sidebar-logo {
             width: 100%;
-            max-width: 95px;
+            max-width: 110px;
             height: auto;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-bottom: 2rem;
+            margin: 0 auto 2rem auto;
             flex-shrink: 0;
-            padding: 0 0.5rem;
+            padding: 0.5rem;
+            transition: all 0.3s ease-in-out;
         }
 
         .sidebar-logo img {
             width: 100%;
             height: auto;
             object-fit: contain;
+            transition: all 0.3s ease-in-out;
+        }
+
+        .sidebar.collapsed .sidebar-logo img {
+            max-width: 45px;
         }
 
         @media (min-width: 768px) {
             .sidebar-logo {
-                max-width: 120px;
+                max-width: 140px;
                 margin-bottom: 2.5rem;
             }
         }
@@ -310,7 +319,12 @@
             flex-direction: column;
             gap: 0.5rem;
             width: 100%;
-            padding: 0 0.75rem;
+            padding: 1.5rem 0.75rem;
+            flex: 1;
+            min-height: 0;
+            overflow-y: auto;
+            overflow-x: hidden;
+            overscroll-contain;
         }
 
         .nav-label {
@@ -322,6 +336,11 @@
             padding: 0 0.5rem;
             margin-bottom: 0.5rem;
             white-space: nowrap;
+            transition: opacity 0.2s ease-in-out;
+        }
+
+        .sidebar.collapsed .nav-label {
+            display: none;
         }
 
         @media (min-width: 768px) {
@@ -346,26 +365,39 @@
             min-height: 44px;
         }
 
+        .sidebar.collapsed .nav-item {
+            justify-content: center;
+            padding: 0.75rem 0;
+        }
+
         .nav-item i {
             font-size: 1.1rem;
             min-width: 20px;
             text-align: center;
             color: #64748b !important;
             transition: color 0.25s ease-out;
+            flex-shrink: 0;
         }
 
         .nav-item span {
-            opacity: 0;
-            transform: translateX(-8px);
-            transition: all 0.25s ease-out;
+            opacity: 1;
+            transform: translateX(0);
+            transition: opacity 0.2s ease-in-out;
             font-weight: 500;
             font-size: 0.875rem;
             color: #1e293b !important;
         }
 
-        .sidebar:hover .nav-item span {
-            opacity: 1;
-            transform: translateX(0);
+        .sidebar.collapsed .nav-item span {
+            display: none;
+        }
+
+        .sidebar.collapsed .categories-toggle .fa-chevron-down {
+            display: none;
+        }
+
+        .sidebar.collapsed .categories-submenu {
+            display: none;
         }
 
         .nav-item:hover {
@@ -476,6 +508,23 @@
             padding: 0.25rem 0.75rem 0.25rem 0.5rem;
             text-transform: uppercase;
             letter-spacing: 0.05em;
+            transition: opacity 0.2s ease-in-out;
+        }
+
+        .sidebar.collapsed .category-group-title {
+            display: none;
+        }
+
+        .sidebar.collapsed .sidebar-footer {
+            display: none;
+        }
+
+        .sidebar.expanded + .main {
+            margin-left: 256px;
+        }
+
+        .sidebar.collapsed + .main {
+            margin-left: 80px;
         }
 
         .nav-item-sub {
@@ -509,6 +558,7 @@
             margin-left: 80px;
             min-height: 100vh;
             background: #f8f5f0;
+            transition: margin-left 0.3s ease-in-out;
         }
         
         /* Glassmorphism Card */
@@ -581,34 +631,37 @@
         
         /* Desktop collapsed rail mode - only for tablets/laptops (1024px - 1279px) */
         @media (min-width: 1024px) and (max-width: 1279px) {
-            .sidebar {
+            .sidebar.collapsed {
                 width: 72px;
             }
 
-            .sidebar:hover {
-                width: 72px;
+            .sidebar.expanded {
+                width: 240px;
             }
 
-            /* Collapsed rail mode - icon only */
-            .sidebar .nav-label,
-            .sidebar .category-group-title,
-            .sidebar .nav-item span,
-            .sidebar .categories-toggle span,
-            .sidebar .categories-toggle .fa-chevron-down {
+            .sidebar.collapsed .nav-label,
+            .sidebar.collapsed .category-group-title,
+            .sidebar.collapsed .nav-item span,
+            .sidebar.collapsed .categories-toggle span,
+            .sidebar.collapsed .categories-toggle .fa-chevron-down {
                 display: none;
             }
 
-            .sidebar .nav-item,
-            .sidebar .categories-toggle {
+            .sidebar.collapsed .nav-item,
+            .sidebar.collapsed .categories-toggle {
                 justify-content: center;
                 padding: 0.75rem;
             }
 
-            .sidebar .nav-icon-wrapper {
+            .sidebar.collapsed .nav-icon-wrapper {
                 margin-right: 0;
             }
 
-            .sidebar .categories-submenu {
+            .sidebar.collapsed .categories-submenu {
+                display: none;
+            }
+
+            .sidebar.collapsed .sidebar-footer {
                 display: none;
             }
 
@@ -641,93 +694,19 @@
         
         @media (max-width: 768px) {
             .sidebar {
-                transform: translateX(-100%);
-                width: min(88vw, 340px);
-                background: #FCFBF8;
-                border-radius: 0;
-                box-shadow: 4px 0 24px rgba(0,0,0,0.15);
-            }
-
-            .sidebar.show {
-                transform: translateX(0);
-            }
-
-            /* Ensure text is always visible in mobile drawer */
-            .nav-item {
-                color: #334155 !important;
-                min-height: 52px;
-            }
-
-            .nav-item span {
-                opacity: 1 !important;
-                transform: translateX(0) !important;
-                display: block !important;
-            }
-
-            .nav-item i {
-                color: #64748b !important;
-            }
-
-            .nav-icon-wrapper {
-                background: #e2e8f0;
-            }
-
-            .nav-item:hover .nav-icon-wrapper {
-                background: #cbd5e1;
-            }
-
-            .nav-item.active {
-                background: #1e3a5f;
-                color: white !important;
-            }
-
-            .nav-item.active .nav-icon-wrapper {
-                background: rgba(255,255,255,0.2);
-            }
-
-            .nav-item.active i {
-                color: white !important;
-            }
-
-            .nav-item.active span {
-                color: white !important;
-            }
-
-            .nav-label {
-                opacity: 1;
-                font-size: 0.75rem;
-                padding: 0.5rem 1rem;
-            }
-
-            .category-group-title {
-                font-size: 0.7rem;
-                padding: 0.5rem 1rem 0.25rem 1.5rem;
-            }
-
-            .nav-item-sub {
-                padding: 0.75rem 1rem 0.75rem 1.5rem;
-                font-size: 0.9rem;
-                min-height: 48px;
-            }
-
-            .nav-item-sub span {
-                font-size: 0.9rem;
-            }
-
-            /* Hide decorative footer in mobile */
-            .sidebar > div:last-child {
                 display: none;
             }
 
             .main {
                 margin-left: 0;
-                padding: 1rem;
+                padding: 0;
+                padding-bottom: calc(72px + env(safe-area-inset-bottom));
             }
 
             .hero-section {
                 height: auto;
-                min-height: 350px;
-                max-height: 500px;
+                min-height: 280px;
+                max-height: 400px;
                 border-radius: 20px;
                 margin-bottom: 1.5rem;
             }
@@ -739,6 +718,16 @@
             .glass-badge {
                 padding: 0.3rem 0.6rem;
                 font-size: 0.7rem;
+            }
+
+            /* Mobile Card Improvements */
+            .cinematic-card {
+                box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+            }
+
+            .cinematic-card:hover {
+                transform: translateY(-4px) scale(1.01);
+                box-shadow: 0 12px 32px rgba(0, 0, 0, 0.2);
             }
 
             /* Hide hamburger button when drawer is open */
@@ -907,11 +896,85 @@
                 display: flex;
             }
         }
+
+        /* Desktop toggle button */
+        .sidebar-toggle-btn {
+            position: fixed;
+            left: 80px;
+            top: 1rem;
+            z-index: 999;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #FCFBF8;
+            border: 1px solid rgba(0,0,0,0.06);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease-in-out;
+            box-shadow: 2px 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .sidebar-toggle-btn:hover {
+            background: #f1f5f9;
+        }
+
+        .sidebar.expanded ~ .sidebar-toggle-btn {
+            left: 256px;
+        }
+
+        @media (max-width: 1023px) {
+            .sidebar-toggle-btn {
+                display: none;
+            }
+        }
+
+        /* Tooltip for collapsed sidebar */
+        .nav-tooltip {
+            position: absolute;
+            left: 100%;
+            top: 50%;
+            transform: translateY(-50%);
+            margin-left: 8px;
+            padding: 6px 12px;
+            background: #1e293b;
+            color: white;
+            font-size: 0.875rem;
+            font-weight: 500;
+            border-radius: 6px;
+            white-space: nowrap;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.2s ease-in-out;
+            pointer-events: none;
+            z-index: 1001;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .nav-tooltip::before {
+            content: '';
+            position: absolute;
+            right: 100%;
+            top: 50%;
+            transform: translateY(-50%);
+            border: 6px solid transparent;
+            border-right-color: #1e293b;
+        }
+
+        .sidebar.collapsed .nav-item:hover .nav-tooltip {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .sidebar.collapsed .nav-item {
+            position: relative;
+        }
     </style>
 </head>
 <body>
-    <!-- Sidebar -->
-    <aside class="sidebar" id="sidebar">
+    <!-- Sidebar - Oculto en móvil, visible en desktop -->
+    <aside class="sidebar collapsed hidden lg:block" id="sidebar">
         <!-- Mobile Header (only visible on mobile) -->
         <div class="sidebar-mobile-header lg:hidden">
             <div class="sidebar-logo-mobile">
@@ -940,12 +1003,14 @@
                     <i class="fas fa-home"></i>
                 </div>
                 <span>Inicio</span>
+                <div class="nav-tooltip">Inicio</div>
             </a>
-            <a href="/departamentos" class="nav-item {{ request()->is('departamentos*') || request()->is('municipios*') || request()->is('destinos*') ? 'active' : '' }}">
+            <a href="/departamentos" class="nav-item {{ request()->routeIs('departamentos.*') || request()->routeIs('municipios.*') ? 'active' : '' }}">
                 <div class="nav-icon-wrapper">
                     <i class="fas fa-map-marked-alt"></i>
                 </div>
                 <span>Destinos</span>
+                <div class="nav-tooltip">Destinos</div>
             </a>
 
             <!-- Categorías Dropdown -->
@@ -961,6 +1026,7 @@
                     </div>
                     <span>Categorías</span>
                     <i class="fas fa-chevron-down text-xs ml-auto transition-transform duration-200 {{ request()->is('capitales*') || request()->is('regiones*') || request()->is('gastronomia*') || request()->is('agencias') || request()->is('fiestas-y-ferias*') || request()->is('puntos-interes/islas*') || request()->is('puntos-interes/deportes-aventura*') || request()->is('puntos-interes/ciclismo*') || request()->is('puntos-interes/termales*') || request()->is('puntos-interes/playas*') || request()->is('puntos-interes/reservas-naturales*') || request()->is('puntos-interes/actividades-parques*') || request()->is('puntos-interes/desiertos-lagunas*') || request()->is('puntos-interes/museos*') || request()->is('puntos-interes/iglesias*') || request()->is('puntos-interes/parques-tematicos*') ? 'rotate-180' : '' }}"></i>
+                    <div class="nav-tooltip">Categorías</div>
                 </button>
 
                 <div
@@ -986,15 +1052,15 @@
                             <i class="fas fa-globe-americas text-xs text-gray-400"></i>
                             <span>Regiones</span>
                         </a>
+                        <a href="{{ route('puntos-interes.islas') }}" class="nav-item nav-item-sub {{ request()->is('puntos-interes/islas*') ? 'active' : '' }}">
+                            <i class="fas fa-umbrella-beach text-xs text-gray-400"></i>
+                            <span>Islas</span>
+                        </a>
                     </div>
 
                     <!-- Naturaleza y aventura -->
                     <div class="category-group">
                         <div class="category-group-title">Naturaleza y aventura</div>
-                        <a href="{{ route('puntos-interes.islas') }}" class="nav-item nav-item-sub {{ request()->is('puntos-interes/islas*') ? 'active' : '' }}">
-                            <i class="fas fa-umbrella-beach text-xs text-gray-400"></i>
-                            <span>Islas</span>
-                        </a>
                         <a href="{{ route('puntos-interes.deportes-aventura') }}" class="nav-item nav-item-sub {{ request()->is('puntos-interes/deportes-aventura*') ? 'active' : '' }}">
                             <i class="fas fa-hiking text-xs text-gray-400"></i>
                             <span>Deportes de aventura</span>
@@ -1066,11 +1132,12 @@
                     <i class="fas fa-cog"></i>
                 </div>
                 <span>Configuración</span>
+                <div class="nav-tooltip">Configuración</div>
             </a>
         </nav>
 
-        <!-- Lema editorial inferior (hidden on mobile) -->
-        <div class="mt-auto px-3 pb-6 hidden lg:block">
+        <!-- Lema editorial inferior (hidden on mobile and when collapsed) -->
+        <div class="mt-auto px-3 pb-6 hidden lg:block sidebar-footer">
             <div class="relative">
                 <!-- Línea decorativa -->
                 <div class="h-px bg-slate-200 mb-3"></div>
@@ -1088,17 +1155,22 @@
         </div>
     </aside>
 
-    <!-- Mobile Overlay -->
-    <div class="mobile-overlay" id="mobileOverlay"></div>
+    <!-- Mobile Overlay - Oculto en móvil ya que existe bottom navigation -->
+    <div class="mobile-overlay hidden lg:hidden" id="mobileOverlay"></div>
 
-    <!-- Mobile Menu Button -->
-    <button class="mobile-menu-btn" id="mobileMenuBtn">
+    <!-- Desktop Sidebar Toggle Button -->
+    <button class="sidebar-toggle-btn hidden lg:flex" id="sidebarToggleBtn" aria-label="Toggle sidebar">
+        <i class="fas fa-chevron-right"></i>
+    </button>
+
+    <!-- Mobile Menu Button - Oculto en móvil ya que existe bottom navigation -->
+    <button class="mobile-menu-btn hidden" id="mobileMenuBtn">
         <i class="fas fa-bars"></i>
     </button>
 
     <!-- Main Content -->
     <main class="main">
-        <div class="w-full max-w-full overflow-x-hidden px-3 sm:px-4 md:px-8 lg:px-14 py-4 sm:py-6 md:py-10 lg:py-14">
+        <div class="w-full max-w-full overflow-x-hidden px-3 sm:px-4 md:px-8 lg:px-14 py-4 sm:py-6 md:py-10 lg:py-14 pb-20 lg:pb-14">
             @yield('content')
         </div>
     </main>
@@ -1109,7 +1181,9 @@
         const sidebar = document.getElementById('sidebar');
         const mobileOverlay = document.getElementById('mobileOverlay');
         const sidebarCloseBtn = document.getElementById('sidebarCloseBtn');
+        const sidebarToggleBtn = document.getElementById('sidebarToggleBtn');
         const STORAGE_KEY = 'rutas-colombia.mobile-sidebar-open';
+        const DESKTOP_STATE_KEY = 'rutas-colombia.desktop-sidebar-expanded';
 
         // Restore sidebar state from sessionStorage on page load
         function restoreSidebarState() {
@@ -1119,11 +1193,40 @@
                 mobileOverlay.classList.add('show');
                 mobileMenuBtn.classList.add('hidden-when-open');
             }
+
+            // Restore desktop collapsed/expanded state
+            const wasExpanded = localStorage.getItem(DESKTOP_STATE_KEY) === 'true';
+            if (window.innerWidth >= 1024) {
+                if (wasExpanded) {
+                    sidebar.classList.add('expanded');
+                    sidebar.classList.remove('collapsed');
+                    updateToggleButtonIcon(true);
+                } else {
+                    sidebar.classList.add('collapsed');
+                    sidebar.classList.remove('expanded');
+                    updateToggleButtonIcon(false);
+                }
+            }
+        }
+
+        // Update toggle button icon
+        function updateToggleButtonIcon(isExpanded) {
+            if (sidebarToggleBtn) {
+                const icon = sidebarToggleBtn.querySelector('i');
+                if (icon) {
+                    icon.className = isExpanded ? 'fas fa-chevron-left' : 'fas fa-chevron-right';
+                }
+            }
         }
 
         // Save sidebar state to sessionStorage
         function saveSidebarState(isOpen) {
             sessionStorage.setItem(STORAGE_KEY, isOpen ? 'true' : 'false');
+        }
+
+        // Save desktop sidebar state
+        function saveDesktopState(isExpanded) {
+            localStorage.setItem(DESKTOP_STATE_KEY, isExpanded ? 'true' : 'false');
         }
 
         // Close sidebar (used by overlay, close button, Escape)
@@ -1140,6 +1243,24 @@
             mobileOverlay.classList.add('show');
             mobileMenuBtn.classList.add('hidden-when-open');
             saveSidebarState(true);
+        }
+
+        // Toggle desktop sidebar collapsed/expanded
+        function toggleDesktopSidebar() {
+            if (window.innerWidth < 1024) return;
+
+            const isExpanded = sidebar.classList.contains('expanded');
+            if (isExpanded) {
+                sidebar.classList.remove('expanded');
+                sidebar.classList.add('collapsed');
+                saveDesktopState(false);
+                updateToggleButtonIcon(false);
+            } else {
+                sidebar.classList.remove('collapsed');
+                sidebar.classList.add('expanded');
+                saveDesktopState(true);
+                updateToggleButtonIcon(true);
+            }
         }
 
         if (mobileMenuBtn && sidebar && mobileOverlay) {
@@ -1161,6 +1282,11 @@
                 sidebarCloseBtn.addEventListener('click', closeSidebar);
             }
 
+            // Desktop sidebar toggle button
+            if (sidebarToggleBtn) {
+                sidebarToggleBtn.addEventListener('click', toggleDesktopSidebar);
+            }
+
             // Close sidebar when clicking overlay
             mobileOverlay.addEventListener('click', closeSidebar);
 
@@ -1173,6 +1299,16 @@
 
             // IMPORTANT: Do NOT close sidebar when clicking nav items
             // Links will navigate naturally, and sidebar state persists via sessionStorage
+
+            // Desktop sidebar toggle button (click on sidebar to toggle)
+            sidebar.addEventListener('click', (e) => {
+                if (window.innerWidth >= 1024) {
+                    // Only toggle if clicking on the sidebar itself, not on nav items
+                    if (e.target === sidebar || e.target.closest('.sidebar-logo')) {
+                        toggleDesktopSidebar();
+                    }
+                }
+            });
         }
 
         // Categories dropdown toggle
@@ -1183,14 +1319,37 @@
             categoriesToggle.addEventListener('click', (e) => {
                 e.preventDefault();
                 e.stopPropagation();
-                const isOpen = categoriesSubmenu.classList.contains('open');
-                categoriesSubmenu.classList.toggle('open');
-                categoriesToggle.setAttribute('aria-expanded', !isOpen);
 
-                // Rotate chevron
-                const chevron = categoriesToggle.querySelector('.fa-chevron-down');
-                if (chevron) {
-                    chevron.classList.toggle('rotate-180');
+                // If sidebar is collapsed, expand it first
+                if (window.innerWidth >= 1024 && sidebar.classList.contains('collapsed')) {
+                    sidebar.classList.remove('collapsed');
+                    sidebar.classList.add('expanded');
+                    saveDesktopState(true);
+                    updateToggleButtonIcon(true);
+
+                    // Open submenu after a short delay to allow sidebar to expand
+                    setTimeout(() => {
+                        const isOpen = categoriesSubmenu.classList.contains('open');
+                        categoriesSubmenu.classList.toggle('open');
+                        categoriesToggle.setAttribute('aria-expanded', !isOpen);
+
+                        // Rotate chevron
+                        const chevron = categoriesToggle.querySelector('.fa-chevron-down');
+                        if (chevron) {
+                            chevron.classList.toggle('rotate-180');
+                        }
+                    }, 300);
+                } else {
+                    // Normal toggle behavior
+                    const isOpen = categoriesSubmenu.classList.contains('open');
+                    categoriesSubmenu.classList.toggle('open');
+                    categoriesToggle.setAttribute('aria-expanded', !isOpen);
+
+                    // Rotate chevron
+                    const chevron = categoriesToggle.querySelector('.fa-chevron-down');
+                    if (chevron) {
+                        chevron.classList.toggle('rotate-180');
+                    }
                 }
             });
         }
@@ -1210,5 +1369,11 @@
             });
         });
     </script>
+
+    <!-- Mobile Bottom Navigation - Global -->
+    <x-mobile-bottom-nav />
+
+    <!-- Category Bottom Sheet -->
+    <x-category-bottom-sheet />
 </body>
 </html>
