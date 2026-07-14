@@ -16,8 +16,18 @@ class MuseoController extends Controller
         try {
             set_time_limit(120);
 
-            // Intentar obtener museos directamente sin DESCRIBE
-            $museos = \DB::table('tabla_museos')->limit(50)->get();
+            // Obtener museos con LEFT JOIN a tabla_localities
+            $museos = \DB::table('tabla_museos')
+                ->leftJoin('tabla_localities as locality', 'tabla_museos.ID_LOCALITIES', '=', 'locality.ID')
+                ->select(
+                    'tabla_museos.*',
+                    'locality.MUNICIPIOS as locality_municipio',
+                    'locality.DEPARTAMENTO as locality_departamento',
+                    'locality.REGION as locality_region'
+                )
+                ->limit(50)
+                ->get();
+
             \Log::info('Museos encontrados: ' . $museos->count());
 
             if ($museos->count() === 0) {
@@ -71,7 +81,9 @@ class MuseoController extends Controller
                     'nombre' => $nombre ?? 'Sin nombre',
                     'descripcion' => $descripcion ?? 'Sin descripción disponible',
                     'imagen' => $imagen,
-                    'ubicacion' => 'Colombia'
+                    'locality_municipio' => $museo->locality_municipio,
+                    'locality_departamento' => $museo->locality_departamento,
+                    'locality_region' => $museo->locality_region,
                 ];
             });
 
@@ -106,12 +118,24 @@ class MuseoController extends Controller
         try {
             set_time_limit(60);
 
-            // Intentar buscar por diferentes columnas de ID
-            $museo = \DB::table('tabla_museos')->where('COL 1', $id)->first();
-
-            if (!$museo) {
-                $museo = \DB::table('tabla_museos')->where('id_museo', $id)->first();
-            }
+            // Buscar por TODAS las columnas que puedan ser ID (misma lógica que index)
+            $museo = \DB::table('tabla_museos')
+                ->leftJoin('tabla_localities as locality', 'tabla_museos.ID_LOCALITIES', '=', 'locality.ID')
+                ->select(
+                    'tabla_museos.*',
+                    'locality.MUNICIPIOS as locality_municipio',
+                    'locality.DEPARTAMENTO as locality_departamento',
+                    'locality.REGION as locality_region'
+                )
+                ->where(function($query) use ($id) {
+                    // Intentar buscar por COL 1
+                    $query->where('COL 1', $id);
+                    // También intentar por cualquier columna que contenga 'id' (excepto id_localities, id_country)
+                    $query->orWhere(function($q) use ($id) {
+                        $q->where('ID_MUSEO', $id);
+                    });
+                })
+                ->first();
 
             if (!$museo) {
                 abort(404);
@@ -139,7 +163,7 @@ class MuseoController extends Controller
                 }
             }
 
-            // Obtener ID dinámicamente
+            // Obtener ID dinámicamente (misma lógica que index)
             $id_real = null;
             foreach ($columnas as $col) {
                 if (stripos($col, 'id') !== false && $col !== 'id_localities' && $col !== 'id_country') {
@@ -150,18 +174,16 @@ class MuseoController extends Controller
 
             $imagen = ImageHelper::getCategoriaImage('museos', $nombre);
 
-            // Obtener ubicación si existe id_localities
-            $ubicacion = 'Colombia';
-            if (isset($museo->id_localities) && $museo->id_localities) {
-                $municipio = \DB::table('tabla_municipios')->where('ID_MUNICIPIOS', $museo->id_localities)->first();
-                if ($municipio) {
-                    $departamento = \DB::table('tabla_departamentos')->where('ID_DEPARTAMENTO', $municipio->ID_DEPARTAMENTO)->first();
-                    if ($departamento) {
-                        $ubicacion = $municipio->NOMBRE_MUNICIPIOS . ', ' . $departamento->NOMBRE_DEPARTAMENTO;
-                    } else {
-                        $ubicacion = $municipio->NOMBRE_MUNICIPIOS;
-                    }
+            // Obtener ubicación desde tabla_localities
+            $ubicacion = 'Ubicación por confirmar';
+            if (isset($museo->locality_municipio) && $museo->locality_municipio) {
+                if (isset($museo->locality_departamento) && $museo->locality_departamento) {
+                    $ubicacion = $museo->locality_municipio . ', ' . $museo->locality_departamento;
+                } else {
+                    $ubicacion = $museo->locality_municipio;
                 }
+            } elseif (isset($museo->locality_departamento) && $museo->locality_departamento) {
+                $ubicacion = $museo->locality_departamento;
             }
 
             // Crear objeto con todos los datos del museo
@@ -171,7 +193,7 @@ class MuseoController extends Controller
                 'descripcion' => $descripcion ?? 'Sin descripción disponible',
                 'imagen' => $imagen,
                 'ubicacion' => $ubicacion,
-                'id_localities' => $museo->id_localities ?? null
+                'id_localities' => $museo->ID_LOCALITIES ?? null
             ];
 
             // Agregar todas las demás columnas disponibles
