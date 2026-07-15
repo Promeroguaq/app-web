@@ -25,13 +25,13 @@
                 {{ $item->nombre }}
             </h1>
             <div class="flex flex-wrap items-center gap-4 md:gap-6 text-sm md:text-base opacity-90">
-                @if($item->localidad)
+                @if(data_get($item, 'localidad'))
                 <span class="flex items-center gap-2">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
                     </svg>
-                    {{ $item->localidad }}
+                    {{ data_get($item, 'localidad') }}
                 </span>
                 @endif
                 <span class="flex items-center gap-2">
@@ -67,7 +67,7 @@
                     </div>
                     <div>
                         <div class="text-xs text-gray-500 font-medium mb-1">Ubicación</div>
-                        <div class="font-semibold text-midnight-900">{{ $item->localidad ?? 'No especificada' }}</div>
+                        <div class="font-semibold text-midnight-900">{{ data_get($item, 'localidad', 'No especificada') }}</div>
                     </div>
                 </div>
                 <div class="flex items-center gap-4 p-4 bg-gray-50 rounded-2xl">

@@ -128,10 +128,18 @@
                 </h3>
                 <div class="flex items-center gap-2 text-xs text-gray-500">
                     <i class="fas fa-map-marker-alt text-green-500"></i>
-                    @if($related->localidad)
-                        {{ $related->localidad }}
-                    @elseif($related->region)
-                        {{ $related->region }}
+                    @php
+                        $relatedLocation = trim(collect([
+                            data_get($related, 'localidad'),
+                            data_get($related, 'departamento'),
+                        ])->filter()->implode(', '));
+
+                        $relatedRegion = data_get($related, 'region');
+                    @endphp
+                    @if($relatedLocation)
+                        {{ $relatedLocation }}
+                    @elseif($relatedRegion)
+                        Región: {{ $relatedRegion }}
                     @else
                         Ubicación por confirmar
                     @endif

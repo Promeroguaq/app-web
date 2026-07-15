@@ -369,6 +369,7 @@ class ReservaParqueController extends Controller
                     'descripcion' => $descripcion,
                     'locality_id' => $localityId,
                     'region_id' => $regionId,
+                    'localidad' => $row->locality_municipio ?? null,
                     'departamento' => $row->locality_departamento ?? $departamentoNombre,
                     'region' => $row->locality_region ?? $regionNombre,
                     'locality_municipio' => $row->locality_municipio,
