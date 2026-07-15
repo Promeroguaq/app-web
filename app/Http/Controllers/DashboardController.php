@@ -211,7 +211,7 @@ class DashboardController extends Controller
                 'imagen' => $this->buscarImagenEnTabla($reserva->NOMBRE_RESERVAS_O_PARQUES),
                 'calificacion' => 4.9,
                 'tipo' => 'reserva-parque',
-                'url' => route('reservas-parques.show', ['id' => $reserva->ID_RESERVAS])
+                'url' => route('puntos-interes.reservas-naturales.show', ['id' => $reserva->ID_RESERVAS])
             ];
         }
         
@@ -264,7 +264,7 @@ class DashboardController extends Controller
                 'imagen' => $this->buscarImagenEnTabla($canoCristales->NOMBRE_RESERVAS_O_PARQUES),
                 'calificacion' => 5.0,
                 'tipo' => 'reserva-parque',
-                'url' => route('reservas-parques.show', ['id' => $canoCristales->ID_RESERVAS])
+                'url' => route('puntos-interes.reservas-naturales.show', ['id' => $canoCristales->ID_RESERVAS])
             ];
         }
         

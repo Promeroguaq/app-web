@@ -281,30 +281,6 @@ class ReservaParqueController extends Controller
     public function show($id)
     {
         try {
-            // Cargar mapa de regiones una sola vez (cacheado)
-            $regionesMap = Cache::remember('regiones_map', 1800, function () {
-                return DB::table('tabla_regiones')
-                    ->select('ID_REGION', 'NOMBRE_REGION')
-                    ->get()
-                    ->keyBy('ID_REGION');
-            });
-
-            // Cargar mapa de municipios una sola vez (cacheado)
-            $municipiosMap = Cache::remember('municipios_map', 1800, function () {
-                return DB::table('tabla_municipios')
-                    ->select('ID_MUNICIPIOS', 'NOMBRE_MUNICIPIOS', 'ID_DEPARTAMENTO')
-                    ->get()
-                    ->keyBy('ID_MUNICIPIOS');
-            });
-
-            // Cargar mapa de departamentos una sola vez (cacheado)
-            $departamentosMap = Cache::remember('departamentos_map', 1800, function () {
-                return DB::table('tabla_departamentos')
-                    ->select('ID_DEPARTAMENTO', 'NOMBRE_DEPARTAMENTO')
-                    ->get()
-                    ->keyBy('ID_DEPARTAMENTO');
-            });
-
             // Cargar mapa de imágenes una sola vez - CACHED
             $imagenesMap = Cache::remember('imagenes_map_global', 1800, function () {
                 return DB::table('tabla_imagenes')
@@ -312,7 +288,7 @@ class ReservaParqueController extends Controller
                     ->get();
             });
 
-            // Buscar la reserva por ID
+            // Buscar la reserva por ID con JOIN a tabla_localities
             $row = DB::table('tabla_reservas')
                 ->leftJoin('tabla_localities as locality', 'tabla_reservas.ID_LOCALITIES', '=', 'locality.ID')
                 ->select(
@@ -322,8 +298,6 @@ class ReservaParqueController extends Controller
                     'locality.REGION as locality_region'
                 )
                 ->where('ID_RESERVAS', $id)
-                ->whereNotNull('NOMBRE_RESERVAS_O_PARQUES')
-                ->where('NOMBRE_RESERVAS_O_PARQUES', '!=', 'NOMBRE_RESERVAS_O_PARQUES')
                 ->first();
 
             if (!$row) {
@@ -336,19 +310,9 @@ class ReservaParqueController extends Controller
             $localityId = $row->ID_LOCALITIES ?? null;
             $regionId = $row->ID_REGIÓN ?? null;
 
-            // Obtener departamento desde el municipio
-            $departamentoNombre = null;
-            if ($localityId && isset($municipiosMap[$localityId])) {
-                $municipio = $municipiosMap[$localityId];
-                if (!empty($municipio->ID_DEPARTAMENTO) && isset($departamentosMap[$municipio->ID_DEPARTAMENTO])) {
-                    $departamentoNombre = $departamentosMap[$municipio->ID_DEPARTAMENTO]->NOMBRE_DEPARTAMENTO;
-                }
-            }
-
-            $regionNombre = null;
-            if ($regionId && isset($regionesMap[$regionId])) {
-                $regionNombre = $regionesMap[$regionId]->NOMBRE_REGION;
-            }
+            // Obtener departamento y región desde el JOIN con tabla_localities
+            $departamentoNombre = $row->locality_departamento ?? null;
+            $regionNombre = $row->locality_region ?? null;
 
             $imagenData = ImageHelper::getReservaParqueImage($nombre, [], $imagenesMap);
 
@@ -383,25 +347,15 @@ class ReservaParqueController extends Controller
                 ->take(4)
                 ->get();
 
-            $relatedReservas = $relatedRows->map(function ($row) use (&$usedImages, $imagenesMap, $regionesMap, $municipiosMap, $departamentosMap) {
+            $relatedReservas = $relatedRows->map(function ($row) use (&$usedImages, $imagenesMap) {
                 $nombre = trim($row->NOMBRE_RESERVAS_O_PARQUES ?? '');
                 $descripcion = trim($row->DESCRIPCION ?? '');
                 $localityId = $row->ID_LOCALITIES ?? null;
                 $regionId = $row->ID_REGIÓN ?? null;
 
-                // Obtener departamento desde el municipio
-                $departamentoNombre = null;
-                if ($localityId && isset($municipiosMap[$localityId])) {
-                    $municipio = $municipiosMap[$localityId];
-                    if (!empty($municipio->ID_DEPARTAMENTO) && isset($departamentosMap[$municipio->ID_DEPARTAMENTO])) {
-                        $departamentoNombre = $departamentosMap[$municipio->ID_DEPARTAMENTO]->NOMBRE_DEPARTAMENTO;
-                    }
-                }
-
-                $regionNombre = null;
-                if ($regionId && isset($regionesMap[$regionId])) {
-                    $regionNombre = $regionesMap[$regionId]->NOMBRE_REGION;
-                }
+                // Obtener departamento y región desde el JOIN con tabla_localities
+                $departamentoNombre = $row->locality_departamento ?? null;
+                $regionNombre = $row->locality_region ?? null;
 
                 $imagenData = ImageHelper::getReservaParqueImage($nombre, $usedImages, $imagenesMap);
 

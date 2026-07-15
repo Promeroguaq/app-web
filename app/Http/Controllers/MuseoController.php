@@ -47,37 +47,19 @@ class MuseoController extends Controller
             $museos_con_imagenes = $museos->map(function($museo) {
                 $columnas = array_keys((array)$museo);
 
-                // Intentar obtener nombre
-                $nombre = null;
-                foreach ($columnas as $col) {
-                    if (stripos($col, 'nombre') !== false) {
-                        $nombre = $museo->$col;
-                        break;
-                    }
-                }
+                // Obtener nombre explícitamente
+                $nombre = $museo->NOMBRE_MUSEO ?? null;
 
-                // Intentar obtener descripción
-                $descripcion = null;
-                foreach ($columnas as $col) {
-                    if (stripos($col, 'desc') !== false) {
-                        $descripcion = $museo->$col;
-                        break;
-                    }
-                }
+                // Obtener descripción explícitamente
+                $descripcion = $museo->DESCRIPCION ?? null;
 
-                // Intentar obtener ID
-                $id = null;
-                foreach ($columnas as $col) {
-                    if (stripos($col, 'id') !== false && $col !== 'id_localities' && $col !== 'id_country') {
-                        $id = $museo->$col;
-                        break;
-                    }
-                }
+                // Obtener ID explícitamente (clave primaria real)
+                $id = $museo->ID_MUSEO ?? null;
 
                 $imagen = ImageHelper::getCategoriaImage('museos', $nombre);
 
                 return (object)[
-                    'id' => $id ?? $museo->{'COL 1'} ?? null,
+                    'id' => $id,
                     'nombre' => $nombre ?? 'Sin nombre',
                     'descripcion' => $descripcion ?? 'Sin descripción disponible',
                     'imagen' => $imagen,
@@ -118,7 +100,7 @@ class MuseoController extends Controller
         try {
             set_time_limit(60);
 
-            // Buscar por TODAS las columnas que puedan ser ID (misma lógica que index)
+            // Buscar por clave primaria real: ID_MUSEO
             $museo = \DB::table('tabla_museos')
                 ->leftJoin('tabla_localities as locality', 'tabla_museos.ID_LOCALITIES', '=', 'locality.ID')
                 ->select(
@@ -127,51 +109,16 @@ class MuseoController extends Controller
                     'locality.DEPARTAMENTO as locality_departamento',
                     'locality.REGION as locality_region'
                 )
-                ->where(function($query) use ($id) {
-                    // Intentar buscar por COL 1
-                    $query->where('COL 1', $id);
-                    // También intentar por cualquier columna que contenga 'id' (excepto id_localities, id_country)
-                    $query->orWhere(function($q) use ($id) {
-                        $q->where('ID_MUSEO', $id);
-                    });
-                })
+                ->where('ID_MUSEO', $id)
                 ->first();
 
             if (!$museo) {
                 abort(404);
             }
 
-            // Obtener todas las columnas disponibles
-            $columnas = array_keys((array)$museo);
-            \Log::info('Columnas del museo en show: ' . json_encode($columnas));
-
-            // Obtener nombre dinámicamente
-            $nombre = null;
-            foreach ($columnas as $col) {
-                if (stripos($col, 'nombre') !== false) {
-                    $nombre = $museo->$col;
-                    break;
-                }
-            }
-
-            // Obtener descripción dinámicamente
-            $descripcion = null;
-            foreach ($columnas as $col) {
-                if (stripos($col, 'desc') !== false) {
-                    $descripcion = $museo->$col;
-                    break;
-                }
-            }
-
-            // Obtener ID dinámicamente (misma lógica que index)
-            $id_real = null;
-            foreach ($columnas as $col) {
-                if (stripos($col, 'id') !== false && $col !== 'id_localities' && $col !== 'id_country') {
-                    $id_real = $museo->$col;
-                    break;
-                }
-            }
-
+            // Obtener datos explícitamente
+            $nombre = $museo->NOMBRE_MUSEO ?? 'Sin nombre';
+            $descripcion = $museo->DESCRIPCION ?? 'Sin descripción disponible';
             $imagen = ImageHelper::getCategoriaImage('museos', $nombre);
 
             // Obtener ubicación desde tabla_localities
@@ -188,20 +135,16 @@ class MuseoController extends Controller
 
             // Crear objeto con todos los datos del museo
             $item = (object)[
-                'id' => $id_real ?? $museo->{'COL 1'} ?? null,
-                'nombre' => $nombre ?? 'Sin nombre',
-                'descripcion' => $descripcion ?? 'Sin descripción disponible',
+                'id' => $museo->ID_MUSEO,
+                'nombre' => $nombre,
+                'descripcion' => $descripcion,
                 'imagen' => $imagen,
                 'ubicacion' => $ubicacion,
-                'id_localities' => $museo->ID_LOCALITIES ?? null
+                'id_localities' => $museo->ID_LOCALITIES ?? null,
+                'locality_municipio' => $museo->locality_municipio,
+                'locality_departamento' => $museo->locality_departamento,
+                'locality_region' => $museo->locality_region,
             ];
-
-            // Agregar todas las demás columnas disponibles
-            foreach ($columnas as $col) {
-                if (!isset($item->$col) && $col !== 'COL 1') {
-                    $item->$col = $museo->$col;
-                }
-            }
 
             return view('pages.detalle-museo', compact('item'))->with('tipo', 'Museo');
         } catch (\Exception $e) {
