@@ -3,11 +3,14 @@
 @section('title', 'Inicio')
 
 @section('content')
+<!-- Mobile Header - Solo visible en móvil -->
+<x-mobile-header :show-search="true" :show-menu="true" />
+
 <!-- Main Container -->
 <div class="w-full max-w-7xl mx-auto px-4 md:px-6 lg:px-8">
 
-<!-- Barra de búsqueda global -->
-<div class="mb-6 md:mb-8">
+<!-- Barra de búsqueda global - Solo desktop -->
+<div class="hidden md:block mb-6 md:mb-8">
     <form action="{{ route('buscar') }}" method="GET" class="relative">
         <input 
             type="text" 
@@ -26,7 +29,7 @@
 </div>
 
 <!-- Hero Section - Premium Single Column Layout -->
-<div class="relative min-h-[360px] md:min-h-[400px] lg:min-h-[420px] rounded-[36px] mb-8 md:mb-12 overflow-hidden bg-gradient-to-br from-[#07111F] via-[#0B1F2A] to-[#063B32]" style="box-shadow: 0 25px 50px rgba(0,0,0,0.6), 0 50px 100px rgba(0,0,0,0.3), 0 0 0 1px rgba(255,255,255,0.05);">
+<div class="relative min-h-[280px] md:min-h-[360px] lg:min-h-[400px] xl:min-h-[420px] rounded-[36px] md:rounded-[36px] lg:rounded-[36px] mb-6 md:mb-8 lg:mb-12 overflow-hidden bg-gradient-to-br from-[#07111F] via-[#0B1F2A] to-[#063B32]" style="box-shadow: 0 25px 50px rgba(0,0,0,0.6), 0 50px 100px rgba(0,0,0,0.3), 0 0 0 1px rgba(255,255,255,0.05);">
     <!-- Background Pattern - Subtle Topographic Lines -->
     <div class="absolute inset-0 opacity-[0.03]">
         <svg class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
@@ -128,8 +131,18 @@
     </div>
 </div>
 
-<!-- Explorar por Categoría - Premium Circular Buttons -->
-<div class="mb-8 md:mb-12">
+<!-- Mobile Quick Categories - Solo móvil -->
+<div class="lg:hidden">
+    <x-mobile-quick-categories />
+</div>
+
+<!-- Mobile Content Tabs - Solo móvil -->
+<div class="lg:hidden">
+    <x-mobile-content-tabs active="ciudades" />
+</div>
+
+<!-- Explorar por Categoría - Premium Circular Buttons - Solo desktop -->
+<div class="hidden lg:block mb-8 md:mb-12">
     <h2 class="font-display text-xl sm:text-2xl md:text-3xl font-bold text-midnight-900 mb-4 md:mb-6">Explorar por Categoría</h2>
 
     <div class="flex gap-5 md:gap-6 lg:gap-8 overflow-x-auto pb-6 px-4 md:px-0 snap-x snap-mandatory scrollbar-hide md:justify-center md:flex-wrap">

@@ -3,7 +3,8 @@
 @section('title', 'Islas de Colombia')
 
 @section('content')
-<div class="w-full max-w-7xl mx-auto px-4 md:px-6 lg:px-8 py-8 md:py-12">
+<!-- Main Container -->
+<div class="w-full max-w-7xl mx-auto overflow-x-hidden">
 
 <!-- Hero Section -->
 <div class="relative h-[300px] md:h-[400px] lg:h-[420px] rounded-[20px] md:rounded-[32px] overflow-hidden mb-6 md:mb-8 shadow-xl bg-gradient-to-br from-cyan-500 via-blue-500 to-indigo-600">
@@ -54,25 +55,16 @@
 @else
 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6 mb-6 md:mb-8">
     @foreach($items as $item)
-    <a href="{{ route('puntos-interes.islas.show', ['id' => $item->id]) }}" class="block rounded-[20px] md:rounded-[28px] overflow-hidden bg-white shadow-lg hover:shadow-xl hover:-translate-y-2 transition-all duration-300 group cursor-pointer">
-        <div class="relative h-48 md:h-56 overflow-hidden bg-gradient-to-br from-cyan-400 to-blue-500">
-            @if($item->imagen)
-            <img src="{{ $item->imagen }}" alt="{{ $item->nombre }}" class="w-full h-full object-cover">
-            @endif
-            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
-            <div class="absolute top-3 left-3">
-                <span class="px-2 py-1 bg-white/20 backdrop-blur-sm rounded-full text-xs font-medium text-white">🏝️ Isla</span>
-            </div>
-        </div>
-        <div class="p-4 md:p-5">
-            <h3 class="font-display text-base md:text-lg font-bold text-midnight-900 mb-2 line-clamp-1">{{ $item->nombre }}</h3>
-            <p class="text-gray-600 text-xs md:text-sm mb-3 line-clamp-2">{{ $item->descripcion ?? 'Explora este destino insular de Colombia.' }}</p>
-            <div class="flex items-center gap-2 text-xs md:text-sm text-gray-500">
-                <i class="fas fa-map-marker-alt text-cyan-600"></i>
-                <span>Colombia</span>
-            </div>
-        </div>
-    </a>
+    <x-cards.tourism-card
+        :id="$item->id"
+        :title="$item->nombre"
+        :description="$item->descripcion ?? 'Información turística en actualización.'"
+        :image="$item->imagen"
+        :badge="'🏝️ Isla'"
+        :location="$item->departamento ?? 'Colombia'"
+        :detailUrl="route('puntos-interes.islas.show', $item->id)"
+        :fallbackTheme="'nature'"
+    />
     @endforeach
 </div>
 @endif
@@ -93,6 +85,9 @@
         </a>
     </div>
 </div>
+
+<!-- Padding bottom para navegación móvil -->
+<div class="h-20 md:h-0"></div>
 
 </div>
 @endsection

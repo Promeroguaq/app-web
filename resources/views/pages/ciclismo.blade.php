@@ -88,44 +88,19 @@
 <div id="rutas-destacadas" class="max-w-7xl mx-auto mb-12 md:mb-16">
     <h2 class="font-display text-2xl md:text-3xl lg:text-4xl font-bold text-midnight-900 mb-8 text-center">Rutas Destacadas</h2>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
         @forelse($items as $item)
-        <div class="rounded-[28px] overflow-hidden bg-white shadow-[0_10px_35px_rgba(0,0,0,0.10)] hover:-translate-y-2 hover:scale-[1.01] transition-all duration-500 cursor-pointer group">
-            <div class="relative h-56 overflow-hidden">
-                @if($item->imagen)
-                    <img src="{{ $item->imagen }}" alt="{{ $item->nombre }}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
-                @else
-                    <div class="w-full h-full bg-gradient-to-br from-[#1D4ED8] to-[#1E40AF] flex items-center justify-center">
-                        <i class="fas fa-bicycle text-white text-6xl"></i>
-                    </div>
-                @endif
-                <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
-                <div class="absolute top-4 left-4 bg-[#1D4ED8]/90 backdrop-blur-sm px-3 py-1.5 rounded-full text-xs text-white font-semibold">
-                    🚴 Ciclismo
-                </div>
-                <div class="absolute bottom-0 left-0 right-0 p-4 text-white">
-                    <div class="flex gap-4 text-sm font-medium">
-                        <span class="flex items-center gap-2">
-                            <i class="fas fa-road"></i> Ruta
-                        </span>
-                        <span class="flex items-center gap-2">
-                            <i class="fas fa-mountain"></i> Aventura
-                        </span>
-                    </div>
-                </div>
-            </div>
-            <div class="p-5 md:p-6">
-                <h3 class="font-display text-lg md:text-xl font-bold text-gray-900 mb-2">{{ $item->nombre }}</h3>
-                <p class="text-gray-600 text-sm mb-4 line-clamp-3">{{ $item->descripcion }}</p>
-                <div class="flex items-center gap-2 text-sm text-gray-500 mb-2">
-                    <i class="fas fa-map-marker-alt text-[#1D4ED8]"></i>
-                    <span>{{ $item->localidad ?? 'Colombia' }}</span>
-                </div>
-                <a href="{{ route('puntos-interes.ciclismo.show', $item->slug) }}" class="block w-full mt-4 px-4 py-2.5 bg-gradient-to-r from-[#1D4ED8] to-[#1E40AF] text-white rounded-full font-semibold hover:shadow-lg transition-all text-sm text-center">
-                    Ver ruta
-                </a>
-            </div>
-        </div>
+        <x-cards.tourism-card
+            :id="$item->id"
+            :title="$item->nombre"
+            :description="$item->descripcion ?? 'Información turística en actualización.'"
+            :image="$item->imagen"
+            :badge="'🚴 Ciclismo'"
+            :location="$item->locality_departamento ?? 'Colombia'"
+            :secondaryLocation="$item->locality_municipio"
+            :detailUrl="route('puntos-interes.ciclismo.show', $item->id)"
+            :fallbackTheme="'adventure'"
+        />
         @empty
         <div class="col-span-full text-center py-16 text-gray-500">
             <i class="fas fa-bicycle text-6xl mb-4 text-gray-300"></i>

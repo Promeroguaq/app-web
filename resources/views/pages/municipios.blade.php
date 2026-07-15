@@ -138,50 +138,17 @@
 </div>
 
 <!-- Grid de Municipios -->
-<div id="municipios-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 mb-6 md:mb-8">
+<div id="municipios-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6 mb-6 md:mb-8">
     @forelse($items as $item)
-    <div class="rounded-[20px] md:rounded-[32px] overflow-hidden bg-white shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300 w-full">
-        <a href="{{ route('municipios.show', $item->id) }}" class="block">
-            <div class="relative h-40 sm:h-48 md:h-56 overflow-hidden w-full">
-                @if($item->imagen)
-                <img src="{{ $item->imagen }}" alt="{{ $item->nombre }}" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110">
-                @else
-                <div class="w-full h-full bg-gradient-to-br from-[#1D4ED8] to-[#1E40AF] flex items-center justify-center">
-                    <i class="fas fa-city text-white text-4xl md:text-5xl lg:text-6xl"></i>
-                </div>
-                @endif
-                <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
-                <div class="absolute top-3 left-3 md:top-4 md:left-4 bg-white/90 backdrop-blur-sm px-2 py-1 md:px-3 md:py-1.5 rounded-full text-[10px] md:text-xs font-semibold text-gray-800 shadow-md z-10">
-                    <i class="fas fa-city mr-1 text-[10px] md:text-xs"></i> Municipio
-                </div>
-                <div class="absolute bottom-3 left-3 md:bottom-4 md:left-4 text-white z-10">
-                    @if($item->departamento_nombre)
-                    <div class="flex items-center gap-2 text-[10px] md:text-sm">
-                        <i class="fas fa-map text-[10px] md:text-sm"></i> {{ $item->departamento_nombre }}
-                    </div>
-                    @endif
-                    @if($item->region)
-                    <div class="flex items-center gap-2 text-[9px] md:text-xs opacity-90 mt-1">
-                        <i class="fas fa-compass text-[9px] md:text-xs"></i> {{ $item->region }}
-                    </div>
-                    @endif
-                </div>
-            </div>
-            <div class="p-3 md:p-5 bg-white">
-                <h3 class="font-display text-sm md:text-base lg:text-lg xl:text-xl font-bold text-gray-900 mb-2">{{ $item->nombre }}</h3>
-                <p class="text-[10px] md:text-xs lg:text-sm text-gray-600 mb-2 md:mb-3 line-clamp-2">{{ Str::limit($item->descripcion, 100) ?? 'Municipio de Colombia' }}</p>
-                <div class="flex items-center justify-between pt-2 md:pt-3 border-t border-gray-200">
-                    <div class="flex items-center gap-2 text-[10px] md:text-xs lg:text-sm text-gray-500">
-                        <i class="fas fa-map-marker-alt text-[#1D4ED8] text-[10px] md:text-xs lg:text-sm"></i>
-                        <span>{{ $item->departamento_nombre ?? 'Colombia' }}</span>
-                    </div>
-                    <span class="text-[#1D4ED8] font-semibold text-[10px] md:text-xs lg:text-sm flex items-center gap-2 hover:gap-3 transition-all">
-                        Ver más <i class="fas fa-arrow-right text-[10px] md:text-xs lg:text-sm"></i>
-                    </span>
-                </div>
-            </div>
-        </a>
-    </div>
+    <x-cards.municipality-card
+        :id="$item->id"
+        :nombre="$item->nombre"
+        :descripcion="$item->descripcion"
+        :departamento="$item->departamento"
+        :imagen="$item->imagen"
+        :slug="$item->slug"
+        :departamentoSlug="$item->departamento_slug"
+    />
     @empty
     <div class="col-span-full bg-white/80 backdrop-blur-sm p-6 md:p-8 lg:p-12 text-center text-gray-500 rounded-[20px] md:rounded-[32px] shadow-lg">
         <i class="fas fa-city text-3xl md:text-4xl mb-3 md:mb-4 opacity-50"></i>

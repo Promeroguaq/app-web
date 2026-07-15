@@ -11,20 +11,18 @@ class Municipio extends Model
     use HasFactory;
 
     protected $table = 'tabla_municipios';
-    protected $primaryKey = 'ID_MUNICIPIOS';
+    protected $primaryKey = 'ID';
+    public $timestamps = false;
 
     protected $fillable = [
-        'ID_MUNICIPIOS',
-        'ID_DEPARTAMENTO',
+        'ID',
         'NOMBRE_MUNICIPIOS',
         'ID_LOCALITIES',
         'DESCRIPCION'
     ];
 
-    public function departamento()
-    {
-        return $this->belongsTo(Departamento::class, 'ID_DEPARTAMENTO', 'ID_DEPARTAMENTO');
-    }
+    // NOTE: tabla_municipios relates to tabla_localities via ID_LOCALITIES, not directly to tabla_departamentos
+    // The departamento relationship is handled in the controller via tabla_localities
 
     /**
      * Relación polimórfica con imágenes

@@ -61,9 +61,25 @@
 <div class="max-w-7xl mx-auto mb-12 md:mb-16">
     <div class="bg-white rounded-[28px] p-8 md:p-12 shadow-sm">
         <h2 class="font-display text-2xl md:text-3xl font-bold text-midnight-900 mb-6">Sobre esta actividad</h2>
-        <p class="text-gray-600 text-base leading-relaxed">
+        <p class="text-gray-600 text-base leading-relaxed mb-6">
             {{ $item->descripcion ?? 'Descripción no disponible.' }}
         </p>
+        
+        @if(!empty($item->municipios))
+            <div class="border-t border-gray-100 pt-6 mt-6">
+                <h3 class="font-display text-lg font-bold text-gray-900 mb-4">📍 Donde se practica</h3>
+                <div class="flex flex-wrap gap-2">
+                    @php
+                        $localidadesArray = array_map('trim', explode(',', $item->municipios));
+                    @endphp
+                    @foreach($localidadesArray as $localidad)
+                        <span class="inline-flex items-center gap-1 text-sm text-gray-700 bg-[#f8f5f0] px-3 py-2 rounded-full">
+                            📍 {{ $localidad }}
+                        </span>
+                    @endforeach
+                </div>
+            </div>
+        @endif
     </div>
 </div>
 

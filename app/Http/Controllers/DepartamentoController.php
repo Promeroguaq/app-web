@@ -65,8 +65,8 @@ class DepartamentoController extends Controller
                     'image_url' => $imagen
                 ]);
                 
-                // Generar slug para URLs
-                $slug = $this->normalizeText($depto->NOMBRE_DEPARTAMENTO);
+                // Generar slug para URLs - IMPORTANTE: trim() para eliminar espacios
+                $slug = $this->normalizeText(trim($depto->NOMBRE_DEPARTAMENTO));
 
                 return (object)[
                     'id' => $depto->ID_DEPARTAMENTO,
@@ -140,8 +140,9 @@ class DepartamentoController extends Controller
             ]);
 
             // Buscar departamento por slug usando LIKE con normalización SQL
+            // IMPORTANTE: trim() para eliminar espacios en la comparación
             $departamento = \DB::table('tabla_departamentos')
-                ->whereRaw("REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(LOWER(NOMBRE_DEPARTAMENTO), 'á', 'a'), 'é', 'e'), 'í', 'i'), 'ó', 'o'), 'ú', 'u') = ?", [$slug])
+                ->whereRaw("REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(LOWER(TRIM(NOMBRE_DEPARTAMENTO)), 'á', 'a'), 'é', 'e'), 'í', 'i'), 'ó', 'o'), 'ú', 'u') = ?", [$slug])
                 ->first();
 
             if (!$departamento) {
@@ -275,37 +276,81 @@ class DepartamentoController extends Controller
     {
         $categorias = [];
 
-        // Tablas de categorías disponibles en BD
+        // Tablas de categorías disponibles en BD (con prefijo tabla_)
         $categoryTables = [
-            'playas' => 'Playas',
-            'museos' => 'Museos',
-            'iglesias' => 'Iglesias',
-            'parques_tematicos' => 'Parques Temáticos',
-            'termales' => 'Termales',
-            'deportes_aventura' => 'Deportes de Aventura',
-            'ciclismo' => 'Ciclismo',
-            'desiertos_lagunas' => 'Desiertos y Lagunas',
-            'islas' => 'Islas',
+            'tabla_playas' => 'Playas',
+            'tabla_museos' => 'Museos',
+            'tabla_iglesias' => 'Iglesias',
+            'tabla_parque_tematicos' => 'Parques Temáticos',
+            'tabla_termales' => 'Termales',
+            'tabla_deportes_aventura' => 'Deportes de Aventura',
+            'tabla_ciclismo' => 'Ciclismo',
+            'tabla_desierto_laguna' => 'Desiertos y Lagunas',
+            'tabla_islas' => 'Islas',
         ];
 
         foreach ($categoryTables as $table => $displayName) {
             try {
-                // Intentar cargar datos de la tabla filtrando por country_id (asumiendo que country_id es el departamento)
+                // Intentar cargar datos de la tabla filtrando por departamento
+                // Usar columnas reales de cada tabla
                 $items = \DB::table($table)
-                    ->where('country_id', $departamentoId)
+                    ->where('DEPARTAMENTO', $departamentoNombre)
+                    ->limit(10)
                     ->get();
 
                 if ($items->count() > 0) {
-                    $categorias[$table] = $items->map(function($item) use ($table, $departamentoNombre) {
-                        // Sin imagen aleatoria - usar null para fallback premium
+                    $categorias[$table] = $items->map(function($item) use ($table, $departamentoNombre, $displayName) {
+                        // Mapear columnas según la tabla
+                        $id = null;
+                        $nombre = null;
+                        $descripcion = null;
+
+                        // Columnas por tabla
+                        if ($table === 'tabla_playas') {
+                            $id = $item->ID_PLAYA ?? $item->{'COL 1'} ?? null;
+                            $nombre = $item->NOMBRE_PLAYA ?? null;
+                            $descripcion = $item->DESCRIPCION ?? null;
+                        } elseif ($table === 'tabla_museos') {
+                            $id = $item->ID_MUSEO ?? $item->{'COL 1'} ?? null;
+                            $nombre = $item->NOMBRE_MUSEO ?? null;
+                            $descripcion = $item->DESCRIPCION ?? null;
+                        } elseif ($table === 'tabla_iglesias') {
+                            $id = $item->ID_IGLESIA ?? null;
+                            $nombre = $item->NOMBRE_IGLESIA ?? null;
+                            $descripcion = $item->DESCRIPCION ?? null;
+                        } elseif ($table === 'tabla_parque_tematicos') {
+                            $id = $item->ID_PARQUE ?? $item->{'COL 1'} ?? null;
+                            $nombre = $item->NOMBRE ?? null;
+                            $descripcion = $item->DESCRIPCION ?? null;
+                        } elseif ($table === 'tabla_termales') {
+                            $id = $item->ID_TERMALES ?? null;
+                            $nombre = $item->NOMBRE_TERMAL ?? null;
+                            $descripcion = $item->DESCRIPCION ?? null;
+                        } elseif ($table === 'tabla_deportes_aventura') {
+                            $id = $item->ID_DEPORTE ?? $item->{'COL 1'} ?? null;
+                            $nombre = $item->NOMBRE_DEPORTE ?? null;
+                            $descripcion = $item->DESCRIPCION ?? null;
+                        } elseif ($table === 'tabla_ciclismo') {
+                            $id = $item->ID_CICLISMO ?? null;
+                            $nombre = $item->NOMBRE_RUTA_CICLISMO ?? null;
+                            $descripcion = $item->DESCRIPCION ?? null;
+                        } elseif ($table === 'tabla_desierto_laguna') {
+                            $id = $item->ID_DESIERTO ?? null;
+                            $nombre = $item->NOMBRE_DESIERTO_LAGUNAS ?? null;
+                            $descripcion = $item->DESCRIPCION ?? null;
+                        } elseif ($table === 'tabla_islas') {
+                            $id = $item->ID_ISLA ?? null;
+                            $nombre = $item->NOMBRE_ISLA ?? null;
+                            $descripcion = $item->DESCRIPCION ?? null;
+                        }
 
                         return (object)[
-                            'id' => $item->id,
-                            'nombre' => $item->nombre,
-                            'descripcion' => $item->descripcion ?? 'Descubre este lugar increíble en ' . $departamentoNombre,
+                            'id' => $id,
+                            'nombre' => $nombre ?? 'Sin nombre',
+                            'descripcion' => $descripcion ?? 'Descubre este lugar increíble en ' . $departamentoNombre,
                             'categoria' => $displayName,
-                            'imagen' => $imagen,
-                            'slug' => $this->normalizeText($item->nombre),
+                            'imagen' => null,
+                            'slug' => $this->normalizeText($nombre ?? ''),
                         ];
                     })->toArray();
                 }

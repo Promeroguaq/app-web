@@ -3,8 +3,11 @@
 @section('title', 'Deportes de Aventura')
 
 @section('content')
+<!-- Main Container -->
+<div class="w-full max-w-7xl mx-auto overflow-x-hidden">
+
 <!-- Hero Premium Redesign - Full Background Image -->
-<div class="relative h-[230px] sm:h-[250px] md:h-[280px] lg:h-[300px] xl:h-[340px] overflow-hidden rounded-[32px] mb-8 md:mb-12 max-w-7xl mx-auto">
+<div class="relative h-[230px] sm:h-[250px] md:h-[280px] lg:h-[300px] xl:h-[340px] overflow-hidden rounded-[32px] mb-8 md:mb-12">
     <!-- Full background image - Adventure landscape -->
     <img
         src="https://m.rutascolombia.com/Imagenes_app/turismo_de_salud/termales_de_san_juan_purace.jpg"
@@ -65,7 +68,7 @@
 </div>
 
 <!-- Métricas Elegantes -->
-<div class="max-w-7xl mx-auto mb-12 md:mb-16">
+<div class="mb-12 md:mb-16">
     <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
         <div class="bg-white rounded-[24px] p-6 text-center shadow-sm">
             <div class="text-4xl md:text-5xl font-bold text-[#1D4ED8] mb-2">{{ $total ?? $items->count() }}</div>
@@ -87,75 +90,22 @@
 </div>
 
 <!-- Actividades Destacadas -->
-<div class="max-w-7xl mx-auto mb-12 md:mb-16">
+<div class="mb-12 md:mb-16">
     <h2 class="font-display text-2xl md:text-3xl lg:text-4xl font-bold text-midnight-900 mb-8 text-center">Actividades Destacadas</h2>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6 mb-8 md:mb-12">
         @forelse($items as $item)
-        <div class="rounded-[28px] overflow-hidden bg-white shadow-[0_10px_35px_rgba(0,0,0,0.10)] hover:-translate-y-2 hover:scale-[1.01] transition-all duration-500 cursor-pointer group">
-            <div class="relative h-56 overflow-hidden">
-                @if($item->imagen)
-                    <img src="{{ $item->imagen }}" alt="{{ $item->nombre }}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
-                    <!-- Elegant blue overlay -->
-                    <div class="absolute inset-0 bg-gradient-to-br from-[#0c4a6e]/70 via-[#1e3a5f]/50 to-[#1D4ED8]/40"></div>
-                    <!-- Bottom gradient for text legibility -->
-                    <div class="absolute inset-0 bg-gradient-to-t from-[#0c4a6e]/80 via-transparent to-transparent"></div>
-                @else
-                    <!-- Premium fallback with geographic pattern -->
-                    <div class="w-full h-full bg-gradient-to-br from-[#0c4a6e] via-[#1e3a5f] to-[#1D4ED8] relative overflow-hidden">
-                        <!-- Subtle geographic texture -->
-                        <div class="absolute inset-0 opacity-10" style="background-image: radial-gradient(circle at 30% 40%, rgba(255,255,255,0.1) 0%, transparent 50%), radial-gradient(circle at 70% 60%, rgba(255,255,255,0.05) 0%, transparent 50%);"></div>
-                        <!-- Mountain silhouette -->
-                        <div class="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-[#0c4a6e]/50 to-transparent"></div>
-                        <div class="absolute inset-0 flex items-center justify-center">
-                            <i class="fas fa-mountain text-white/20 text-8xl"></i>
-                        </div>
-                    </div>
-                @endif
-                <div class="absolute top-4 left-4 bg-white/10 backdrop-blur-md border border-white/20 px-3 py-1.5 rounded-full text-xs text-white font-semibold">
-                    🧗 Aventura
-                </div>
-                <div class="absolute bottom-0 left-0 right-0 p-4 text-white">
-                    <div class="flex gap-4 text-sm font-medium">
-                        <span class="flex items-center gap-2">
-                            <i class="fas fa-bolt"></i> Adrenalina
-                        </span>
-                        <span class="flex items-center gap-2">
-                            <i class="fas fa-shield-alt"></i> Seguro
-                        </span>
-                    </div>
-                </div>
-            </div>
-            <div class="p-5 md:p-6">
-                <h3 class="font-display text-lg md:text-xl font-bold text-gray-900 mb-2">{{ $item->nombre }}</h3>
-                <p class="text-gray-600 text-sm mb-4 line-clamp-3">{{ $item->descripcion }}</p>
-                
-                @if(!empty($item->municipios))
-                    @php
-                        $localidadesArray = array_map('trim', explode(',', $item->municipios));
-                        $localidadesMostrar = array_slice($localidadesArray, 0, 3);
-                        $totalLocalidades = count($localidadesArray);
-                        $adicional = $totalLocalidades > 3 ? ($totalLocalidades - 3) : 0;
-                    @endphp
-                    <div class="flex flex-wrap gap-2 mb-3">
-                        @foreach($localidadesMostrar as $localidad)
-                            <span class="inline-flex items-center gap-1 text-xs text-gray-600 bg-gray-50 px-2 py-1 rounded-full">
-                                📍 {{ $localidad }}
-                            </span>
-                        @endforeach
-                        @if($adicional > 0)
-                            <span class="inline-flex items-center gap-1 text-xs text-[#1D4ED8] font-medium bg-blue-50 px-2 py-1 rounded-full">
-                                + {{ $adicional }} {{ $adicional == 1 ? 'destino más' : 'destinos más' }}
-                            </span>
-                        @endif
-                    </div>
-                @endif
-                
-                <a href="{{ route('puntos-interes.deportes-aventura.show', $item->slug) }}" class="block w-full mt-4 px-4 py-2.5 bg-gradient-to-r from-[#1D4ED8] to-[#1E40AF] text-white rounded-full font-semibold hover:shadow-lg transition-all text-sm text-center">
-                    Ver actividad
-                </a>
-            </div>
-        </div>
+        <x-cards.tourism-card
+            :id="$item->id"
+            :title="$item->nombre"
+            :description="$item->descripcion ?? 'Información turística en actualización.'"
+            :image="$item->imagen"
+            :badge="'🧗 Aventura'"
+            :location="'Colombia'"
+            :secondaryLocation="$item->municipios ?? null"
+            :detailUrl="route('puntos-interes.deportes-aventura.show', $item->id)"
+            :fallbackTheme="'adventure'"
+        />
         @empty
         <div class="col-span-full text-center py-16 text-gray-500">
             <i class="fas fa-mountain text-6xl mb-4 text-gray-300"></i>
@@ -172,7 +122,7 @@
     $startPage = max(1, $page - 2);
     $endPage = min($totalPages, $page + 2);
 @endphp
-<div class="max-w-7xl mx-auto mb-12 md:mb-16">
+<div class="mb-12 md:mb-16">
     <div class="flex justify-center items-center gap-2">
         @if($page > 1)
             <a href="?page={{ $page - 1 }}" class="px-4 py-2 bg-white border border-gray-200 rounded-full text-gray-700 hover:bg-gray-50 transition-all">
@@ -198,7 +148,7 @@
 @endif
 
 <!-- CTA Final -->
-<div class="max-w-7xl mx-auto mb-12 md:mb-16">
+<div class="mb-12 md:mb-16">
     <div class="bg-gradient-to-r from-[#1D4ED8] to-[#1E40AF] rounded-[32px] p-8 md:p-12 text-center text-white">
         <h2 class="font-display text-2xl md:text-3xl lg:text-4xl font-bold mb-4">Explora Más Actividades</h2>
         <p class="text-lg opacity-90 mb-6 max-w-2xl mx-auto">Descubre otras categorías de turismo y aventura en Colombia</p>
@@ -214,5 +164,10 @@
             </a>
         </div>
     </div>
+</div>
+
+<!-- Padding bottom para navegación móvil -->
+<div class="h-20 md:h-0"></div>
+
 </div>
 @endsection

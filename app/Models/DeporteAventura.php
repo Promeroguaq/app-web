@@ -10,18 +10,17 @@ class DeporteAventura extends Model
     use HasFactory;
 
     protected $table = 'tabla_deporte_aventura';
+    protected $primaryKey = 'ID_DEPORTES';
 
     protected $fillable = [
-        'nombre',
-        'locality_id',
-        'descripcion',
+        'ID_DEPORTES',
+        'NOMBRE_DEPORTE_AVENTURA',
+        'MUNICIPIOS',
+        'DESCRIPCION'
     ];
 
-    // Relación
-    public function locality()
-    {
-        return $this->belongsTo(Locality::class);
-    }
+    // Nota: Esta tabla NO tiene ID_LOCALITIES, tiene MUNICIPIOS como texto
+    // No hay relación directa con tabla_localities
 
     /**
      * Relación polimórfica con imágenes

@@ -47,43 +47,20 @@
 </div>
 
 <!-- Activity Cards -->
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
-    
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6 mb-12">
+
     @forelse($items as $item)
-    <a href="{{ route('puntos-interes.actividades-parques.show', $item->id) }}" class="cinematic-card group cursor-pointer block">
-        <div class="relative h-72 overflow-hidden">
-            @if($item->imagen)
-                <img src="{{ $item->imagen }}" alt="{{ $item->nombre }}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
-            @else
-                <div class="w-full h-full bg-gradient-to-br from-[#1D4ED8] to-[#1E40AF] flex items-center justify-center">
-                    <span class="text-7xl">🌲</span>
-                </div>
-            @endif
-            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
-            <div class="absolute top-4 left-4 glass-badge bg-[#1D4ED8]/30">
-                🌲 Actividad
-            </div>
-            <div class="absolute bottom-0 left-0 right-0 p-4 text-white">
-                <div class="flex gap-4 text-sm font-medium mb-2">
-                    @if(isset($item->tags) && is_array($item->tags) && count($item->tags) > 0)
-                        @foreach($item->tags as $tag)
-                            <span>{{ $tag }}</span>
-                        @endforeach
-                    @else
-                        <span>Actividad</span>
-                    @endif
-                </div>
-            </div>
-        </div>
-        <div class="p-6">
-            <h3 class="font-display text-xl font-bold text-midnight-900 mb-2">{{ $item->nombre }}</h3>
-            <p class="text-gray-600 text-sm mb-4 line-clamp-2">{{ Str::limit($item->descripcion, 100) }}</p>
-            <div class="flex items-center gap-2 text-sm text-gray-500">
-                <i class="fas fa-map-marker-alt text-[#1D4ED8]"></i>
-                <span>{{ $item->localidad ?? $item->departamento ?? 'Colombia' }}</span>
-            </div>
-        </div>
-    </a>
+    <x-cards.tourism-card
+        :id="$item->id"
+        :title="$item->nombre"
+        :description="$item->descripcion ?? 'Información turística en actualización.'"
+        :image="$item->imagen"
+        :badge="'🌲 Actividad'"
+        :location="$item->locality_departamento ?? 'Colombia'"
+        :secondaryLocation="$item->locality_municipio"
+        :detailUrl="route('puntos-interes.actividades-parques.show', $item->id)"
+        :fallbackTheme="'nature'"
+    />
     @empty
     <div class="col-span-full glass-card p-12 text-center text-gray-500">
         <i class="fas fa-tree text-4xl mb-4 opacity-50"></i>

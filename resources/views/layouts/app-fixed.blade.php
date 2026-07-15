@@ -623,9 +623,9 @@
                         </a>
                     </li>
                     <li>
-                        <a href="/agencias" class="{{ request()->is('agencias*') ? 'active' : '' }}">
-                            <i class="fas fa-building"></i>
-                            Agencias
+                        <a href="{{ route('configuracion') }}" class="{{ request()->is('configuracion*') ? 'active' : '' }}">
+                            <i class="fas fa-cog"></i>
+                            Configuración
                         </a>
                     </li>
                 </ul>

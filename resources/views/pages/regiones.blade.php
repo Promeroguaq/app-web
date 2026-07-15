@@ -59,77 +59,24 @@
     <h2 class="font-display text-2xl md:text-3xl font-bold text-midnight-900">Regiones Naturales</h2>
 </div>
 
-<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 mb-8 md:mb-12">
-    @foreach($regions as $region)
-    <a href="{{ route('regiones.show', ['slug' => $region->slug]) }}" class="group block">
-        <div class="rounded-[20px] md:rounded-[32px] overflow-hidden bg-white shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300 w-full h-full">
-            <!-- Image Area -->
-            <div class="relative h-48 sm:h-56 md:h-64 overflow-hidden w-full" @if($region->image_url) style="background-image: url('{{ $region->image_url }}'); background-size: cover; background-position: center;" @else style="background: linear-gradient(135deg, {{ $region->color }} 0%, {{ $region->color }}dd 50%, {{ $region->color }}bb 100%);" @endif>
-                @if($region->image_url)
-                @if($region->slug == 'caribe')
-                <div class="absolute inset-0" style="background: linear-gradient(to top, rgba(30, 58, 138, 0.75) 0%, rgba(251, 191, 36, 0.3) 50%, rgba(251, 191, 36, 0.1) 100%);"></div>
-                @elseif($region->slug == 'andina')
-                <div class="absolute inset-0" style="background: linear-gradient(to top, rgba(5, 150, 105, 0.75) 0%, rgba(30, 58, 138, 0.4) 50%, rgba(30, 58, 138, 0.1) 100%);"></div>
-                @elseif($region->slug == 'pacifica')
-                <div class="absolute inset-0" style="background: linear-gradient(to top, rgba(30, 58, 138, 0.75) 0%, rgba(5, 150, 105, 0.4) 50%, rgba(5, 150, 105, 0.1) 100%);"></div>
-                @elseif($region->slug == 'amazonia')
-                <div class="absolute inset-0" style="background: linear-gradient(to top, rgba(5, 150, 105, 0.75) 0%, rgba(30, 58, 138, 0.5) 50%, rgba(30, 58, 138, 0.1) 100%);"></div>
-                @elseif($region->slug == 'llanos')
-                <div class="absolute inset-0" style="background: linear-gradient(to top, rgba(30, 58, 138, 0.75) 0%, rgba(249, 115, 22, 0.4) 50%, rgba(249, 115, 22, 0.1) 100%);"></div>
-                @elseif($region->slug == 'insular')
-                <div class="absolute inset-0" style="background: linear-gradient(to top, rgba(14, 165, 233, 0.75) 0%, rgba(6, 182, 212, 0.4) 50%, rgba(6, 182, 212, 0.1) 100%);"></div>
-                @else
-                <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent"></div>
-                @endif
-                @endif
-                
-                <!-- Top Left Badge -->
-                <div class="absolute top-3 left-3 md:top-4 md:left-4 bg-white/90 backdrop-blur-sm px-3 py-1 md:px-4 md:py-2 rounded-full text-xs md:text-sm font-semibold text-gray-800 shadow-md z-10">
-                    {{ $region->shortName }}
-                </div>
-                
-                <!-- Top Right Counter -->
-                <div class="absolute top-3 right-3 md:top-4 md:right-4 bg-black/50 backdrop-blur-sm px-2 py-0.5 md:px-3 md:py-1 rounded-full text-[10px] md:text-xs font-medium text-white z-10">
-                    {{ $region->departments_count }} {{ $region->departments_count == 1 ? 'depto' : 'deptos' }}
-                </div>
-            </div>
-            
-            <!-- Content Area -->
-            <div class="p-4 md:p-6 bg-white">
-                <h3 class="text-lg md:text-xl lg:text-2xl font-bold text-gray-900 mb-2">{{ $region->name }}</h3>
-                <p class="text-xs md:text-sm text-gray-600 mb-3 md:mb-4 line-clamp-2">{{ $region->description }}</p>
-                
-                <!-- Department Chips -->
-                <div class="flex flex-wrap gap-2 mb-3 md:mb-4">
-                    @foreach($region->visible_departments as $dept)
-                    <span class="px-2 py-1 md:px-3 md:py-1 bg-{{ $region->accent }}-100 text-{{ $region->accent }}-700 rounded-full text-[10px] md:text-xs font-medium">
-                        {{ $dept->name }}
-                    </span>
-                    @endforeach
-                    @if($region->remaining_departments > 0)
-                    <span class="px-2 py-1 md:px-3 md:py-1 bg-{{ $region->accent }}-100 text-{{ $region->accent }}-700 rounded-full text-[10px] md:text-xs font-medium">
-                        +{{ $region->remaining_departments }}
-                    </span>
-                    @endif
-                </div>
-                
-                <!-- Mini Statistics -->
-                @if($region->municipios_count > 0)
-                <div class="flex items-center gap-2 mb-3 md:mb-4 text-xs md:text-sm text-gray-600">
-                    <span class="font-semibold text-{{ $region->accent }}-600">{{ $region->municipios_count }} municipios</span>
-                </div>
-                @endif
-                
-                <!-- Action -->
-                <div class="flex items-center justify-between pt-2 md:pt-3 border-t border-gray-200">
-                    <span class="text-{{ $region->accent }}-600 font-semibold text-xs md:text-sm flex items-center gap-2 group-hover:gap-3 transition-all">
-                        Explorar región <i class="fas fa-arrow-right text-xs md:text-sm"></i>
-                    </span>
-                </div>
-            </div>
-        </div>
-    </a>
-    @endforeach
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6 mb-8 md:mb-12">
+    @forelse($regions as $region)
+    <x-cards.tourism-card
+        :id="$region->id"
+        :title="$region->name"
+        :description="$region->description"
+        :image="$region->image_url"
+        :badge="'🌍 ' . $region->shortName"
+        :location="$region->departments_count . ' ' . ($region->departments_count == 1 ? 'departamento' : 'departamentos')"
+        :detailUrl="route('regiones.show', ['slug' => $region->slug])"
+        :fallbackTheme="$region->slug"
+    />
+    @empty
+    <div class="col-span-full glass-card p-8 md:p-12 text-center text-gray-500">
+        <i class="fas fa-map text-3xl md:text-4xl mb-3 md:mb-4 opacity-50"></i>
+        <p class="text-sm md:text-lg">No hay regiones registradas en este momento.</p>
+    </div>
+    @endforelse
 </div>
 
 <!-- CTA Section -->

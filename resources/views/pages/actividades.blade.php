@@ -45,151 +45,25 @@
 <!-- Actividades Destacadas -->
 <h2 class="font-display text-2xl md:text-3xl font-bold text-midnight-900 mb-6 text-center">Actividades Destacadas</h2>
 
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-    
-    <!-- Actividad 1 -->
-    <div class="cinematic-card group cursor-pointer">
-        <div class="relative h-56 overflow-hidden rounded-t-[32px]" style="background: linear-gradient(135deg, #6366f1 0%, #4f46e5 50%, #4338ca 100%);">
-            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
-            <div class="absolute top-4 left-4 glass-badge bg-[#1D4ED8]/30">
-                🪂 Extremo
-            </div>
-            <div class="absolute bottom-4 left-4 text-white">
-                <div class="flex gap-4 text-sm font-medium">
-                    <span><i class="fas fa-star mr-1"></i> 5.0</span>
-                    <span><i class="fas fa-bolt mr-1"></i> Adrenalina</span>
-                </div>
-            </div>
-        </div>
-        <div class="p-5">
-            <h3 class="font-display text-xl font-bold text-midnight-900 mb-2">Paracaidismo</h3>
-            <p class="text-gray-600 text-sm mb-3 line-clamp-2">Salta desde 4000 metros de altura y admira paisajes increíbles.</p>
-            <div class="flex items-center gap-2 text-sm text-gray-500">
-                <i class="fas fa-map-marker-alt text-[#1D4ED8]"></i>
-                <span>Santa Fe de Antioquia</span>
-            </div>
-        </div>
-    </div>
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6 mb-12">
 
-    <!-- Actividad 2 -->
-    <div class="cinematic-card group cursor-pointer">
-        <div class="relative h-56 overflow-hidden rounded-t-[32px]" style="background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 50%, #0369a1 100%);">
-            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
-            <div class="absolute top-4 left-4 glass-badge bg-[#1D4ED8]/30">
-                🚣 Aventura
-            </div>
-            <div class="absolute bottom-4 left-4 text-white">
-                <div class="flex gap-4 text-sm font-medium">
-                    <span><i class="fas fa-star mr-1"></i> 5.0</span>
-                    <span><i class="fas fa-water mr-1"></i> Río</span>
-                </div>
-            </div>
-        </div>
-        <div class="p-5">
-            <h3 class="font-display text-xl font-bold text-midnight-900 mb-2">Rafting</h3>
-            <p class="text-gray-600 text-sm mb-3 line-clamp-2">Navega rápidos clase III y IV en el río Samaná.</p>
-            <div class="flex items-center gap-2 text-sm text-gray-500">
-                <i class="fas fa-map-marker-alt text-[#1D4ED8]"></i>
-                <span>San Gil, Santander</span>
-            </div>
-        </div>
+    @forelse($items as $item)
+    <x-cards.tourism-card
+        :id="$item->id"
+        :title="$item->nombre"
+        :description="$item->descripcion ?? 'Información turística en actualización.'"
+        :image="$item->imagen"
+        :badge="'🧗 Actividad'"
+        :location="'Colombia'"
+        :detailUrl="route('puntos-interes.actividades.show', $item->id)"
+        :fallbackTheme="'adventure'"
+    />
+    @empty
+    <div class="col-span-full glass-card p-12 text-center text-gray-500">
+        <i class="fas fa-hiking text-4xl mb-4 opacity-50"></i>
+        <p class="text-lg">No hay actividades registradas en este momento.</p>
     </div>
-
-    <!-- Actividad 3 -->
-    <div class="cinematic-card group cursor-pointer">
-        <div class="relative h-56 overflow-hidden rounded-t-[32px]" style="background: linear-gradient(135deg, #06b6d4 0%, #0891b2 50%, #0e7490 100%);">
-            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
-            <div class="absolute top-4 left-4 glass-badge bg-[#1D4ED8]/30">
-                🤿 Mar
-            </div>
-            <div class="absolute bottom-4 left-4 text-white">
-                <div class="flex gap-4 text-sm font-medium">
-                    <span><i class="fas fa-star mr-1"></i> 5.0</span>
-                    <span><i class="fas fa-fish mr-1"></i> Arrecifes</span>
-                </div>
-            </div>
-        </div>
-        <div class="p-5">
-            <h3 class="font-display text-xl font-bold text-midnight-900 mb-2">Buceo</h3>
-            <p class="text-gray-600 text-sm mb-3 line-clamp-2">Explora arrecifes de coral y peces tropicales.</p>
-            <div class="flex items-center gap-2 text-sm text-gray-500">
-                <i class="fas fa-map-marker-alt text-[#1D4ED8]"></i>
-                <span>Cartagena, Islas del Rosario</span>
-            </div>
-        </div>
-    </div>
-
-    <!-- Actividad 4 -->
-    <div class="cinematic-card group cursor-pointer">
-        <div class="relative h-56 overflow-hidden rounded-t-[32px]" style="background: linear-gradient(135deg, #22c55e 0%, #16a34a 50%, #15803d 100%);">
-            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
-            <div class="absolute top-4 left-4 glass-badge bg-[#1D4ED8]/30">
-                🥾 Senderismo
-            </div>
-            <div class="absolute bottom-4 left-4 text-white">
-                <div class="flex gap-4 text-sm font-medium">
-                    <span><i class="fas fa-star mr-1"></i> 5.0</span>
-                    <span><i class="fas fa-mountain mr-1"></i> Naturaleza</span>
-                </div>
-            </div>
-        </div>
-        <div class="p-5">
-            <h3 class="font-display text-xl font-bold text-midnight-900 mb-2">Trekking en Tayrona</h3>
-            <p class="text-gray-600 text-sm mb-3 line-clamp-2">Caminata por senderos ancestrales hasta playas vírgenes.</p>
-            <div class="flex items-center gap-2 text-sm text-gray-500">
-                <i class="fas fa-map-marker-alt text-[#1D4ED8]"></i>
-                <span>Santa Marta, Parque Tayrona</span>
-            </div>
-        </div>
-    </div>
-
-    <!-- Actividad 5 -->
-    <div class="cinematic-card group cursor-pointer">
-        <div class="relative h-56 overflow-hidden rounded-t-[32px]" style="background: linear-gradient(135deg, #f97316 0%, #ea580c 50%, #c2410c 100%);">
-            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
-            <div class="absolute top-4 left-4 glass-badge bg-[#1D4ED8]/30">
-                🧗 Desafío
-            </div>
-            <div class="absolute bottom-4 left-4 text-white">
-                <div class="flex gap-4 text-sm font-medium">
-                    <span><i class="fas fa-star mr-1"></i> 5.0</span>
-                    <span><i class="fas fa-mountain mr-1"></i> Rocas</span>
-                </div>
-            </div>
-        </div>
-        <div class="p-5">
-            <h3 class="font-display text-xl font-bold text-midnight-900 mb-2">Escalada en Rocas</h3>
-            <p class="text-gray-600 text-sm mb-3 line-clamp-2">Reta tus límites escalando las paredes de roca.</p>
-            <div class="flex items-center gap-2 text-sm text-gray-500">
-                <i class="fas fa-map-marker-alt text-[#1D4ED8]"></i>
-                <span>Suesca, Cundinamarca</span>
-            </div>
-        </div>
-    </div>
-
-    <!-- Actividad 6 -->
-    <div class="cinematic-card group cursor-pointer">
-        <div class="relative h-56 overflow-hidden rounded-t-[32px]" style="background: linear-gradient(135deg, #84cc16 0%, #65a30d 50%, #4d7c0f 100%);">
-            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
-            <div class="absolute top-4 left-4 glass-badge bg-[#1D4ED8]/30">
-                🌲 Bosque
-            </div>
-            <div class="absolute bottom-4 left-4 text-white">
-                <div class="flex gap-4 text-sm font-medium">
-                    <span><i class="fas fa-star mr-1"></i> 5.0</span>
-                    <span><i class="fas fa-tree mr-1"></i> Aventura</span>
-                </div>
-            </div>
-        </div>
-        <div class="p-5">
-            <h3 class="font-display text-xl font-bold text-midnight-900 mb-2">Canopy Tour</h3>
-            <p class="text-gray-600 text-sm mb-3 line-clamp-2">Vuela sobre el dosel del bosque con vistas espectaculares.</p>
-            <div class="flex items-center gap-2 text-sm text-gray-500">
-                <i class="fas fa-map-marker-alt text-[#1D4ED8]"></i>
-                <span>Eje Cafetero</span>
-            </div>
-        </div>
-    </div>
+    @endforelse
 
 </div>
 

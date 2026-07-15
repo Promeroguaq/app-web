@@ -59,45 +59,20 @@
 </div>
 
 <!-- Desert & Lagoon Cards - Premium 3D -->
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 mb-12">
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6 mb-12">
     
     @forelse($items as $item)
-    <a href="{{ route('puntos-interes.desiertos-lagunas.show', $item->id) }}" class="cinematic-card group cursor-pointer block">
-        <div class="relative h-72 overflow-hidden rounded-t-3xl">
-            @if($item->imagen)
-                <img src="{{ $item->imagen }}" alt="{{ $item->nombre }}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
-            @else
-                <div class="w-full h-full bg-gradient-to-br from-amber-600 to-orange-700 flex items-center justify-center">
-                    <span class="text-6xl">🏜️</span>
-                </div>
-            @endif
-            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
-            <div class="absolute top-4 left-4">
-                <div class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-amber-500/30 backdrop-blur-md border border-amber-400/30 text-white text-xs font-medium" style="box-shadow: 0 4px 12px rgba(217, 119, 6, 0.2);">
-                    <span>🏜️</span>
-                    <span>Destino</span>
-                </div>
-            </div>
-            <div class="absolute bottom-0 left-0 right-0 p-4 text-white">
-                <div class="flex gap-4 text-xs md:text-sm font-medium mb-2">
-                    <span class="flex items-center gap-1">
-                        <i class="fas fa-sun"></i> Natural
-                    </span>
-                    <span class="flex items-center gap-1">
-                        <i class="fas fa-water"></i> Paisaje
-                    </span>
-                </div>
-            </div>
-        </div>
-        <div class="p-6 bg-white rounded-b-3xl border border-gray-100" style="box-shadow: 0 8px 24px rgba(0,0,0,0.06), 0 16px 48px rgba(0,0,0,0.04);">
-            <h3 class="font-display text-xl font-bold text-midnight-900 mb-2">{{ $item->nombre }}</h3>
-            <p class="text-gray-600 text-sm mb-4 line-clamp-2 leading-relaxed">{{ Str::limit($item->descripcion, 100) }}</p>
-            <div class="flex items-center gap-2 text-sm text-gray-500">
-                <i class="fas fa-map-marker-alt text-amber-600"></i>
-                <span>{{ $item->localidad ?? 'Colombia' }}</span>
-            </div>
-        </div>
-    </a>
+    <x-cards.tourism-card
+        :id="$item->id"
+        :title="$item->nombre"
+        :description="$item->descripcion ?? 'Información turística en actualización.'"
+        :image="$item->imagen"
+        :badge="'🏜️ Destino Natural'"
+        :location="$item->locality_departamento ?? 'Colombia'"
+        :secondaryLocation="$item->locality_municipio"
+        :detailUrl="route('puntos-interes.desiertos-lagunas.show', $item->id)"
+        :fallbackTheme="'nature'"
+    />
     @empty
     <div class="col-span-full bg-white/90 backdrop-blur-sm p-12 text-center text-gray-500 rounded-[32px] border border-white/40" style="box-shadow: 0 8px 24px rgba(0,0,0,0.06), 0 16px 48px rgba(0,0,0,0.04);">
         <span class="text-6xl mb-4 block opacity-30">🏜️</span>

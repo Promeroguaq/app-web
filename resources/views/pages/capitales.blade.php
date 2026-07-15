@@ -85,25 +85,17 @@
 @else
 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6 mb-6 md:mb-8" id="capitales-grid">
     @foreach($items as $item)
-    <a href="{{ route('capitales.show', $item->slug) }}" class="block rounded-[20px] md:rounded-[28px] overflow-hidden bg-white shadow-lg hover:shadow-xl hover:-translate-y-2 transition-all duration-300 group cursor-pointer capital-card" data-nombre="{{ strtolower($item->nombre) }}">
-        <div class="relative h-48 md:h-56 overflow-hidden bg-gradient-to-br from-amber-400 to-orange-500">
-            @if($item->imagen)
-            <img src="{{ $item->imagen }}" alt="{{ $item->nombre }}" class="w-full h-full object-cover">
-            @endif
-            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
-            <div class="absolute top-3 left-3">
-                <span class="px-2 py-1 bg-white/20 backdrop-blur-sm rounded-full text-xs font-medium text-white">🏛️ Capital</span>
-            </div>
-        </div>
-        <div class="p-4 md:p-5">
-            <h3 class="font-display text-base md:text-lg font-bold text-midnight-900 mb-2 line-clamp-1">{{ $item->nombre }}</h3>
-            <p class="text-gray-600 text-xs md:text-sm mb-3 line-clamp-2">{{ $item->descripcion ?? 'Capital departamental de Colombia.' }}</p>
-            <div class="flex items-center gap-2 text-xs md:text-sm text-gray-500">
-                <i class="fas fa-map-marker-alt text-amber-600"></i>
-                <span>Colombia</span>
-            </div>
-        </div>
-    </a>
+    <x-cards.tourism-card
+        :id="$item->id"
+        :title="$item->nombre"
+        :description="$item->descripcion"
+        :image="$item->imagen"
+        :badge="'🏛️ Capital'"
+        :location="$item->departamento ?? 'Colombia'"
+        :secondaryLocation="$item->region"
+        :detailUrl="route('capitales.show', $item->slug)"
+        :fallbackTheme="'capital'"
+    />
     @endforeach
 </div>
 @endif
@@ -130,11 +122,13 @@
 <script>
 document.getElementById('search-capitales').addEventListener('input', function(e) {
     const searchTerm = e.target.value.toLowerCase();
-    const cards = document.querySelectorAll('.capital-card');
+    const cards = document.querySelectorAll('.tourism-card');
     
     cards.forEach(card => {
-        const nombre = card.dataset.nombre || '';
-        if (nombre.includes(searchTerm)) {
+        const title = card.querySelector('h3')?.textContent.toLowerCase() || '';
+        const location = card.querySelector('.fa-map-marker-alt')?.parentElement?.textContent.toLowerCase() || '';
+        
+        if (title.includes(searchTerm) || location.includes(searchTerm)) {
             card.style.display = 'block';
         } else {
             card.style.display = 'none';

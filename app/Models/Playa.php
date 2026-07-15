@@ -11,11 +11,18 @@ class Playa extends Model
     use HasFactory;
 
     protected $table = 'tabla_playas';
+    protected $primaryKey = 'ID_PLAYA';
 
     protected $fillable = [
-        'nombre',
-        'locality_id',
-        'descripcion',
-        'country_id',
+        'ID_PLAYA',
+        'NOMBRE_PLAYA',
+        'DESCRIPCION',
+        'ID_LOCALITIES',
+        'DEPARTAMENTO',
     ];
+
+    public function locality()
+    {
+        return $this->belongsTo(Locality::class, 'ID_LOCALITIES', 'ID');
+    }
 }

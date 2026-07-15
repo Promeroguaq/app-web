@@ -91,41 +91,19 @@
 @endif
 
 <!-- Food Photography Cards -->
-<div id="platosGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+<div id="platosGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6 mb-12">
 
     @forelse($platos as $plato)
-    <a href="{{ route('gastronomia.show', [$plato->department_slug, $plato->slug]) }}" class="cinematic-card group cursor-pointer bg-white block">
-        <!-- Food Image -->
-        <div class="relative h-72 overflow-hidden">
-            @if($plato->imagen ?? null)
-                <img src="{{ $plato->imagen }}" alt="{{ $plato->nombre ?? 'Plato' }}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
-            @else
-                <div class="w-full h-full bg-gradient-to-br from-orange-500 to-red-600 flex items-center justify-center">
-                    <span class="text-7xl">🍽️</span>
-                </div>
-            @endif
-            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
-
-            <!-- Badge -->
-            <div class="absolute top-4 left-4 glass-badge bg-orange-500/30">
-                {{ $plato->categoria ?? 'Plato Típico' }}
-            </div>
-        </div>
-
-        <!-- Content -->
-        <div class="p-6">
-            <h3 class="font-display text-xl font-bold text-midnight-900 mb-3">
-                {{ $plato->nombre ?? 'Plato Típico' }}
-            </h3>
-            <p class="text-gray-600 mb-4 line-clamp-2 text-sm">
-                {{ Str::limit($plato->descripcion ?? 'Sin descripción', 100) }}
-            </p>
-            <div class="flex items-center gap-2 text-sm text-gray-500">
-                <i class="fas fa-map-marker-alt text-orange-500"></i>
-                <span>{{ $plato->departamento }}</span>
-            </div>
-        </div>
-    </a>
+    <x-cards.tourism-card
+        :id="$plato->id"
+        :title="$plato->nombre ?? 'Plato Típico'"
+        :description="Str::limit($plato->descripcion ?? 'Sin descripción', 100)"
+        :image="$plato->imagen ?? null"
+        :badge="$plato->categoria ?? 'Plato Típico'"
+        :location="$plato->departamento ?? 'Colombia'"
+        :detailUrl="route('gastronomia.show', [$plato->department_slug, $plato->slug])"
+        :fallbackTheme="'culture'"
+    />
     @empty
     <div class="col-span-full glass-card p-12 text-center text-gray-500">
         <i class="fas fa-utensils text-4xl mb-4 opacity-50"></i>

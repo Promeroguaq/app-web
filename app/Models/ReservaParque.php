@@ -19,7 +19,7 @@ class ReservaParque extends Model
         'NOMBRE_RESERVAS_O_PARQUES',
         'ID_LOCALITIES',
         'DESCRIPCION',
-        'ID_REGION'
+        'ID_REGIÓN'
     ];
 
     /**
@@ -44,5 +44,10 @@ class ReservaParque extends Model
     public function getDescripcionAttribute()
     {
         return $this->DESCRIPCION;
+    }
+
+    public function locality()
+    {
+        return $this->belongsTo(Locality::class, 'ID_LOCALITIES', 'ID');
     }
 }

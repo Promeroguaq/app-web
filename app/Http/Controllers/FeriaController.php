@@ -15,14 +15,21 @@ class FeriaController extends Controller
      */
     public function index()
     {
-        // Cargar todas las fiestas y ferias
-        $ferias = FeriaFiesta::all();
+        // Cargar imágenes en memoria una sola vez (evitar N+1)
+        $imagenesMap = \Cache::remember('imagenes_map_global', 1800, function () {
+            return \DB::table('tabla_imagenes')
+                ->select('ID_IMAGEN', 'NOMBRE_IMAGEN', 'RUTA')
+                ->get();
+        });
+
+        // Cargar fiestas y ferias con paginación
+        $ferias = FeriaFiesta::paginate(12);
 
         // Array para rastrear imágenes ya usadas
         $usedImages = [];
 
         // Mapear datos a formato consistente
-        $feriasFormateadas = $ferias->map(function ($feria) use (&$usedImages) {
+        $feriasFormateadas = $ferias->map(function ($feria) use (&$usedImages, $imagenesMap) {
             $nombre = $feria->NOMBRE_FERIAS_Y_FIESTAS ?? null;
             $ciudadDepartamento = $feria->CIUDAD_DEPARTAMENTO ?? null;
             $fecha = $feria->FECHA ?? null;
@@ -43,8 +50,8 @@ class FeriaController extends Controller
                 $departamento = isset($partes[1]) ? trim($partes[1]) : null;
             }
 
-            // Resolver imagen usando ImageResolver
-            $imagenData = ImageResolver::forFeria($feria, $usedImages);
+            // Resolver imagen usando ImageResolver con imágenes pre-cargadas
+            $imagenData = ImageResolver::forFeria($feria, $usedImages, $imagenesMap);
 
             return [
                 'id' => $feria->ID_FIESTA,
@@ -131,7 +138,7 @@ class FeriaController extends Controller
             return !empty($feria['imagen']) && !empty($feria['nombre']) && !empty($feria['descripcion']);
         });
 
-        return view('pages.fiestas-ferias', compact('feriasPorMesOrdenadas', 'stats', 'eventoDestacado'));
+        return view('pages.fiestas-ferias', compact('feriasPorMesOrdenadas', 'stats', 'eventoDestacado', 'ferias'));
     }
 
     /**

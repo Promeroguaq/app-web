@@ -81,54 +81,18 @@
         {{ $mes }}
     </h3>
     
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
         @foreach($ferias as $feria)
-        <div class="rounded-[20px] md:rounded-[32px] overflow-hidden bg-white shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300 w-full">
-            <a href="{{ route('fiestas-ferias.show', $feria['id']) }}" class="block">
-                <div class="relative h-48 sm:h-56 md:h-64 overflow-hidden w-full">
-                    @if($feria['imagen'])
-                        <img src="{{ $feria['imagen'] }}" alt="{{ $feria['nombre'] }}" class="absolute inset-0 w-full h-full object-cover">
-                    @else
-                        <div class="absolute inset-0 w-full h-full bg-gradient-to-br from-[#ec4899] to-[#be185d]"></div>
-                    @endif
-                    <div class="absolute top-3 left-3 md:top-4 md:left-4 bg-white/90 backdrop-blur-sm px-3 py-1 md:px-4 md:py-2 rounded-full text-xs md:text-sm font-semibold text-gray-800 shadow-md z-10">
-                        🎉 {{ $feria['mes'] ?? 'Fecha por confirmar' }}
-                    </div>
-                    @if($feria['fecha'] && $feria['fecha'] !== 'FECHA')
-                    <div class="absolute top-3 right-3 md:top-4 md:right-4 bg-black/50 backdrop-blur-sm px-2 py-0.5 md:px-3 md:py-1 rounded-full text-[10px] md:text-xs font-medium text-white z-10">
-                        {{ $feria['fecha'] }}
-                    </div>
-                    @endif
-                </div>
-                <div class="p-4 md:p-6 bg-white">
-                    <h3 class="text-lg md:text-xl lg:text-2xl font-bold text-gray-900 mb-2">{{ $feria['nombre'] }}</h3>
-                    <p class="text-xs md:text-sm text-gray-600 mb-3 md:mb-4 line-clamp-2">
-                        @if($feria['descripcion'] && $feria['descripcion'] !== 'DESCRIPCION')
-                            {{ Str::limit($feria['descripcion'], 100) }}
-                        @else
-                            Celebración cultural registrada en Colombia.
-                        @endif
-                    </p>
-                    <div class="flex flex-wrap gap-2 mb-3 md:mb-4">
-                        @if($feria['ciudad'] && $feria['ciudad'] !== 'CIUDAD_DEPARTAMENTO')
-                        <span class="px-2 py-1 md:px-3 md:py-1 bg-pink-100 text-pink-700 rounded-full text-[10px] md:text-xs font-medium">
-                            {{ $feria['ciudad'] }}
-                        </span>
-                        @endif
-                        @if($feria['departamento'] && $feria['departamento'] !== 'CIUDAD_DEPARTAMENTO')
-                        <span class="px-2 py-1 md:px-3 md:py-1 bg-pink-100 text-pink-700 rounded-full text-[10px] md:text-xs font-medium">
-                            {{ $feria['departamento'] }}
-                        </span>
-                        @endif
-                    </div>
-                    <div class="flex items-center justify-between pt-2 md:pt-3 border-t border-gray-200">
-                        <span class="text-pink-600 font-semibold text-xs md:text-sm flex items-center gap-2 hover:gap-3 transition-all">
-                            Ver detalle <i class="fas fa-arrow-right text-xs md:text-sm"></i>
-                        </span>
-                    </div>
-                </div>
-            </a>
-        </div>
+        <x-cards.tourism-card
+            :id="$feria['id']"
+            :title="$feria['nombre']"
+            :description="$feria['descripcion'] ?? 'Información turística en actualización.'"
+            :image="$feria['imagen']"
+            :badge="'🎉 ' . ($feria['mes'] ?? 'Evento')"
+            :location="$feria['ciudad_departamento'] ?? ($feria['ciudad'] . ($feria['departamento'] ? ', ' . $feria['departamento'] : '')) ?? 'Colombia'"
+            :detailUrl="route('fiestas-ferias.show', $feria['id'])"
+            :fallbackTheme="'culture'"
+        />
         @endforeach
     </div>
 </div>

@@ -692,25 +692,17 @@
                     <i class="fas fa-map"></i>
                     Departamentos
                 </a>
-                <a href="/alojamiento" class="sidebar-menu-item {{ request()->is('alojamiento*') ? 'active' : '' }}">
-                    <i class="fas fa-bed"></i>
-                    Alojamiento
-                </a>
                 <a href="/rutas" class="sidebar-menu-item {{ request()->is('rutas*') ? 'active' : '' }}">
                     <i class="fas fa-route"></i>
                     Rutas
                 </a>
-                <a href="/eventos" class="sidebar-menu-item {{ request()->is('eventos*') ? 'active' : '' }}">
-                    <i class="fas fa-calendar-alt"></i>
-                    Eventos
-                </a>
-                <a href="/agencias" class="sidebar-menu-item {{ request()->is('agencias*') ? 'active' : '' }}">
-                    <i class="fas fa-building"></i>
-                    Agencias
-                </a>
                 <a href="/categorias" class="sidebar-menu-item {{ request()->is('categorias*') ? 'active' : '' }}">
                     <i class="fas fa-th-large"></i>
                     Categorías
+                </a>
+                <a href="{{ route('configuracion') }}" class="sidebar-menu-item {{ request()->is('configuracion*') ? 'active' : '' }}">
+                    <i class="fas fa-cog"></i>
+                    Configuración
                 </a>
             </nav>
         </aside>

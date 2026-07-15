@@ -10,7 +10,7 @@ class Isla extends Model
     use HasFactory;
 
     protected $table = 'tabla_islas';
-    protected $primaryKey = 'id_isla';
+    protected $primaryKey = 'ID_ISLA';
 
     protected $fillable = [
         'nombre_isla',

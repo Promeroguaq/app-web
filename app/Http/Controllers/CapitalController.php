@@ -14,8 +14,17 @@ class CapitalController extends Controller
     public function index()
     {
         try {
-            // Get all capitals from tabla_capitales
-            $capitales = DB::table('tabla_capitales')->get();
+            // Get all capitals from tabla_capitales with location data from tabla_localities
+            $capitales = DB::table('tabla_capitales as capital')
+                ->leftJoin('tabla_localities as locality', 'capital.NOMBRE_CAPITAL', '=', 'locality.MUNICIPIOS')
+                ->select(
+                    'capital.ID_CAPITAL',
+                    'capital.NOMBRE_CAPITAL',
+                    'capital.DESCRIPCION',
+                    'locality.DEPARTAMENTO as departamento',
+                    'locality.REGION as region'
+                )
+                ->get();
 
             // Load images from tabla_imagenes - CACHED
             $imagenes = Cache::remember('imagenes_map_global', 1800, function () {
@@ -25,7 +34,7 @@ class CapitalController extends Controller
                 return \App\Helpers\ImageHelper::cleanString($img->NOMBRE_IMAGEN);
             });
 
-            // Map capitals with slugs and images
+            // Map capitals with slugs, images, and location data
             $capitalesConImagen = $capitales->map(function($capital) use ($imagenesPorNombre) {
                 $nombre = trim($capital->NOMBRE_CAPITAL);
                 $nombreNormalizado = \App\Helpers\ImageHelper::cleanString($nombre);
@@ -37,11 +46,19 @@ class CapitalController extends Controller
                     $imagenUrl = $imagenesPorNombre[$nombreNormalizado]->RUTA;
                 }
 
+                // Fallback description if empty
+                $descripcion = $capital->DESCRIPCION;
+                if (empty($descripcion)) {
+                    $descripcion = 'Información turística en actualización.';
+                }
+
                 return (object)[
                     'id' => $capital->ID_CAPITAL,
                     'nombre' => $nombre,
                     'slug' => $slug,
-                    'descripcion' => $capital->DESCRIPCION ?? null,
+                    'descripcion' => $descripcion,
+                    'departamento' => $capital->departamento,
+                    'region' => $capital->region,
                     'imagen' => $imagenUrl,
                 ];
             });
@@ -56,17 +73,20 @@ class CapitalController extends Controller
     public function show($slug)
     {
         try {
-            // Find capital by slug
-            $capitales = DB::table('tabla_capitales')->get();
-            $capital = null;
-
-            foreach ($capitales as $cap) {
-                $capSlug = Str::slug($cap->NOMBRE_CAPITAL);
-                if ($capSlug === $slug) {
-                    $capital = $cap;
-                    break;
-                }
-            }
+            // Find capital by slug with location data
+            $capital = DB::table('tabla_capitales as capital')
+                ->leftJoin('tabla_localities as locality', 'capital.NOMBRE_CAPITAL', '=', 'locality.MUNICIPIOS')
+                ->select(
+                    'capital.ID_CAPITAL',
+                    'capital.NOMBRE_CAPITAL',
+                    'capital.DESCRIPCION',
+                    'locality.DEPARTAMENTO as departamento',
+                    'locality.REGION as region'
+                )
+                ->get()
+                ->first(function($cap) use ($slug) {
+                    return Str::slug($cap->NOMBRE_CAPITAL) === $slug;
+                });
 
             if (!$capital) {
                 abort(404);
@@ -86,11 +106,19 @@ class CapitalController extends Controller
                 $imagenUrl = $imagenesPorNombre[$nombreNormalizado]->RUTA;
             }
 
+            // Fallback description if empty
+            $descripcion = $capital->DESCRIPCION;
+            if (empty($descripcion)) {
+                $descripcion = 'Información turística en actualización.';
+            }
+
             $item = (object)[
                 'id' => $capital->ID_CAPITAL,
                 'nombre' => $nombre,
                 'slug' => $slug,
-                'descripcion' => $capital->DESCRIPCION ?? null,
+                'descripcion' => $descripcion,
+                'departamento' => $capital->departamento,
+                'region' => $capital->region,
                 'imagen' => $imagenUrl,
             ];
 

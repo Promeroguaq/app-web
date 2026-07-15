@@ -35,6 +35,6 @@ class Ciclismo extends Model
 
     public function locality()
     {
-        return $this->belongsTo(\App\Models\Locality::class, 'id_localities', 'ID_LOCALITIES');
+        return $this->belongsTo(Locality::class, 'ID_LOCALITIES', 'ID');
     }
 }

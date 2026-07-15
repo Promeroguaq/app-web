@@ -10,12 +10,18 @@ class Museo extends Model
     use HasFactory;
 
     protected $table = 'tabla_museos';
-    protected $primaryKey = 'id_museo';
+    protected $primaryKey = 'ID_MUSEO';
 
     protected $fillable = [
-        'nombre_museo',
-        'id_localities',
-        'descripcion',
-        'id_country'
+        'ID_MUSEO',
+        'NOMBRE_MUSEO',
+        'DESCRIPCION',
+        'ID_LOCALITIES',
+        'DEPARTAMENTO',
     ];
+
+    public function locality()
+    {
+        return $this->belongsTo(Locality::class, 'ID_LOCALITIES', 'ID');
+    }
 }

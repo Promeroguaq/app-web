@@ -467,8 +467,18 @@
                             <div class="destination-overlay">
                                 <h3 class="destination-name">{{ $item->nombre ?? $item->NOMBRE_ACTIVIDAD_EN_PARQUE ?? $item->nombre_desierto_lagunas ?? $item->NOMBRE_ISLA ?? $item->nombre_museo ?? $item->nombre_iglesia ?? $item->nombre_parque ?? $item->nombre ?? $categoryConfig['name'] . ' Destacado' }}</h3>
                                 <p class="destination-location">
-                                    <i class="fas fa-map-marker-alt"></i> 
-                                    {{ $item->ubicacion ?? $item->departamento ?? $item->region ?? 'Colombia' }}
+                                    <i class="fas fa-map-marker-alt"></i>
+                                    @if($item->locality_municipio && $item->locality_departamento)
+                                        {{ $item->locality_municipio }}, {{ $item->locality_departamento }}
+                                    @elseif($item->locality_departamento)
+                                        {{ $item->locality_departamento }}
+                                    @elseif($item->locality_municipio)
+                                        {{ $item->locality_municipio }}
+                                    @elseif($item->departamento)
+                                        {{ $item->departamento }}
+                                    @else
+                                        Ubicación por confirmar
+                                    @endif
                                 </p>
                             </div>
                         </div>
@@ -500,8 +510,18 @@
                                 <div class="destination-overlay">
                                     <h4 class="destination-name">{{ $item->nombre ?? $item->NOMBRE_ACTIVIDAD_EN_PARQUE ?? $item->nombre_desierto_lagunas ?? $item->NOMBRE_ISLA ?? $item->nombre_museo ?? $item->nombre_iglesia ?? $item->nombre_parque ?? $item->nombre ?? $categoryConfig['name'] . ' Tropical' }}</h4>
                                     <p class="destination-location">
-                                        <i class="fas fa-map-marker-alt"></i> 
-                                        {{ $item->ubicacion ?? $item->departamento ?? $item->region ?? 'Colombia' }}
+                                        <i class="fas fa-map-marker-alt"></i>
+                                        @if($item->locality_municipio && $item->locality_departamento)
+                                            {{ $item->locality_municipio }}, {{ $item->locality_departamento }}
+                                        @elseif($item->locality_departamento)
+                                            {{ $item->locality_departamento }}
+                                        @elseif($item->locality_municipio)
+                                            {{ $item->locality_municipio }}
+                                        @elseif($item->departamento)
+                                            {{ $item->departamento }}
+                                        @else
+                                            Ubicación por confirmar
+                                        @endif
                                     </p>
                                 </div>
                             </div>
@@ -533,8 +553,18 @@
                             <div class="destination-overlay">
                                 <h4 class="destination-name">{{ $item->nombre ?? $item->NOMBRE_ACTIVIDAD_EN_PARQUE ?? $item->nombre_desierto_lagunas ?? $item->NOMBRE_ISLA ?? $item->nombre_museo ?? $item->nombre_iglesia ?? $item->nombre_parque ?? $item->nombre ?? $categoryConfig['name'] . ' Hermosa' }}</h4>
                                 <p class="destination-location">
-                                    <i class="fas fa-map-marker-alt"></i> 
-                                    {{ $item->ubicacion ?? $item->departamento ?? $item->region ?? 'Colombia' }}
+                                    <i class="fas fa-map-marker-alt"></i>
+                                    @if($item->locality_municipio && $item->locality_departamento)
+                                        {{ $item->locality_municipio }}, {{ $item->locality_departamento }}
+                                    @elseif($item->locality_departamento)
+                                        {{ $item->locality_departamento }}
+                                    @elseif($item->locality_municipio)
+                                        {{ $item->locality_municipio }}
+                                    @elseif($item->departamento)
+                                        {{ $item->departamento }}
+                                    @else
+                                        Ubicación por confirmar
+                                    @endif
                                 </p>
                             </div>
                         </div>

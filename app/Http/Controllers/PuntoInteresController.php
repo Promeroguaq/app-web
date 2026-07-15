@@ -119,17 +119,11 @@ class PuntoInteresController extends Controller
     public function desiertosLagunas()
     {
         try {
-            // Obtener datos de la tabla tabla_desierto_laguna
-            $desiertos = \DB::table('tabla_desierto_laguna')->get();
-            
-            // Cargar localidades en memoria una sola vez (evitar N+1)
-            $localitiesMap = collect();
-            if (\Schema::hasTable('tabla_localities')) {
-                $localitiesMap = \DB::table('tabla_localities')
-                    ->select('ID_LOCALITIES', 'NOMBRE_LOCALITIES')
-                    ->get()
-                    ->keyBy('ID_LOCALITIES');
-            }
+            // Obtener datos de la tabla tabla_desierto_laguna con leftJoin a localidades
+            $desiertos = \DB::table('tabla_desierto_laguna as d')
+                ->leftJoin('tabla_localities as l', 'd.ID_LOCALITIES', '=', 'l.ID')
+                ->select('d.*', 'l.MUNICIPIOS as localidad_nombre', 'l.DEPARTAMENTO as localidad_departamento')
+                ->get();
             
             // Cargar imágenes en memoria una sola vez - CACHED
             $imagenesMap = \Cache::remember('imagenes_map_global', 1800, function () {
@@ -141,13 +135,11 @@ class PuntoInteresController extends Controller
             // Array para rastrear imágenes usadas (evitar repeticiones)
             $usedImages = [];
             
-            // Combinar con imágenes y localidades usando datos pre-cargados
-            $items = $desiertos->map(function($desierto) use (&$usedImages, $localitiesMap, $imagenesMap) {
-                // Obtener nombre de localidad desde mapa en memoria
-                $localidad = null;
-                if (!empty($desierto->ID_LOCALITIES) && isset($localitiesMap[$desierto->ID_LOCALITIES])) {
-                    $localidad = $localitiesMap[$desierto->ID_LOCALITIES]->NOMBRE_LOCALITIES;
-                }
+            // Combinar con imágenes usando datos pre-cargados
+            $items = $desiertos->map(function($desierto) use (&$usedImages, $imagenesMap) {
+                // Obtener nombre de localidad desde el leftJoin
+                $localidad = $desierto->localidad_nombre ?? null;
+                $departamento = $desierto->localidad_departamento ?? null;
                 
                 // Buscar imagen usando ImageHelper con deduplicación
                 $nombre = trim($desierto->NOMBRE_DESIERTO_LAGUNAS ?? '');
@@ -183,25 +175,11 @@ class PuntoInteresController extends Controller
     public function iglesias()
     {
         try {
-            // Obtener datos de la tabla tabla_iglesias
-            $iglesias = \DB::table('tabla_iglesias')->get();
-            
-            // Debug: verificar si hay datos
-            if ($iglesias->isEmpty()) {
-                return view('pages.iglesias', [
-                    'items' => collect([]),
-                    'error' => 'No se encontraron iglesias en la base de datos. La tabla tabla_iglesias está vacía.'
-                ]);
-            }
-            
-            // Cargar localidades en memoria una sola vez (evitar N+1)
-            $localitiesMap = collect();
-            if (\Schema::hasTable('tabla_localities')) {
-                $localitiesMap = \DB::table('tabla_localities')
-                    ->select('ID_LOCALITIES', 'NOMBRE_LOCALITIES')
-                    ->get()
-                    ->keyBy('ID_LOCALITIES');
-            }
+            // Obtener datos de la tabla tabla_iglesias con leftJoin a localidades
+            $iglesias = \DB::table('tabla_iglesias as i')
+                ->leftJoin('tabla_localities as l', 'i.ID_LOCALITIES', '=', 'l.ID')
+                ->select('i.*', 'l.MUNICIPIOS as localidad_nombre', 'l.DEPARTAMENTO as localidad_departamento')
+                ->get();
             
             // Cargar imágenes en memoria una sola vez - CACHED
             $imagenesMap = \Cache::remember('imagenes_map_global', 1800, function () {
@@ -213,13 +191,11 @@ class PuntoInteresController extends Controller
             // Array para rastrear imágenes usadas (evitar repeticiones)
             $usedImages = [];
             
-            // Combinar con imágenes y localidades usando datos pre-cargados
-            $items = $iglesias->map(function($iglesia) use (&$usedImages, $localitiesMap, $imagenesMap) {
-                // Obtener nombre de localidad desde mapa en memoria
-                $localidad = null;
-                if (!empty($iglesia->ID_LOCALITIES) && isset($localitiesMap[$iglesia->ID_LOCALITIES])) {
-                    $localidad = $localitiesMap[$iglesia->ID_LOCALITIES]->NOMBRE_LOCALITIES;
-                }
+            // Combinar con imágenes usando datos pre-cargados
+            $items = $iglesias->map(function($iglesia) use (&$usedImages, $imagenesMap) {
+                // Obtener nombre de localidad desde el leftJoin
+                $localidad = $iglesia->localidad_nombre ?? null;
+                $departamento = $iglesia->localidad_departamento ?? null;
                 
                 // Buscar imagen usando ImageHelper con deduplicación
                 $nombre = trim($iglesia->NOMBRE_IGLESIA ?? '');
@@ -331,25 +307,12 @@ class PuntoInteresController extends Controller
         try {
             set_time_limit(120);
 
-            // Obtener datos de la tabla tabla_museos
-            $museos = \DB::table('tabla_museos')->limit(50)->get();
-
-            // Verificar si hay datos
-            if ($museos->isEmpty()) {
-                return view('pages.museos', [
-                    'items' => collect([]),
-                    'error' => 'No se encontraron museos en la base de datos. La tabla tabla_museos está vacía.'
-                ]);
-            }
-
-            // Cargar localidades en memoria una sola vez (evitar N+1)
-            $localitiesMap = collect();
-            if (\Schema::hasTable('tabla_localities')) {
-                $localitiesMap = \DB::table('tabla_localities')
-                    ->select('ID_LOCALITIES', 'NOMBRE_LOCALITIES')
-                    ->get()
-                    ->keyBy('ID_LOCALITIES');
-            }
+            // Obtener datos de la tabla tabla_museos con leftJoin a localidades
+            $museos = \DB::table('tabla_museos as m')
+                ->leftJoin('tabla_localities as l', 'm.ID_LOCALITIES', '=', 'l.ID')
+                ->select('m.*', 'l.MUNICIPIOS as localidad_nombre', 'l.DEPARTAMENTO as localidad_departamento')
+                ->limit(50)
+                ->get();
 
             // Cargar imágenes en memoria una sola vez - CACHED
             $imagenesMap = \Cache::remember('imagenes_map_global', 1800, function () {
@@ -362,42 +325,15 @@ class PuntoInteresController extends Controller
             $usedImages = [];
 
             // Combinar con imágenes usando datos pre-cargados
-            $items = $museos->map(function($museo) use (&$usedImages, $localitiesMap, $imagenesMap) {
-                // Obtener todas las columnas disponibles
-                $columnas = array_keys((array)$museo);
+            $items = $museos->map(function($item) use (&$usedImages, $imagenesMap) {
+                // Obtener nombre de localidad desde el leftJoin
+                $localidad = $item->localidad_nombre ?? null;
+                $departamento = $item->localidad_departamento ?? null;
 
-                // Intentar obtener nombre dinámicamente
-                $nombre = null;
-                foreach ($columnas as $col) {
-                    if (stripos($col, 'nombre') !== false) {
-                        $nombre = $museo->$col;
-                        break;
-                    }
-                }
-
-                // Intentar obtener descripción dinámicamente
-                $descripcion = null;
-                foreach ($columnas as $col) {
-                    if (stripos($col, 'desc') !== false) {
-                        $descripcion = $museo->$col;
-                        break;
-                    }
-                }
-
-                // Intentar obtener ID dinámicamente
-                $id = null;
-                foreach ($columnas as $col) {
-                    if (stripos($col, 'id') !== false && $col !== 'id_localities' && $col !== 'id_country') {
-                        $id = $museo->$col;
-                        break;
-                    }
-                }
-
-                // Obtener nombre de localidad desde mapa en memoria
-                $localidad = null;
-                if (isset($museo->id_localities) && $museo->id_localities && isset($localitiesMap[$museo->id_localities])) {
-                    $localidad = $localitiesMap[$museo->id_localities]->NOMBRE_LOCALITIES;
-                }
+                // Obtener nombre y descripción de forma directa
+                $nombre = $item->NOMBRE_MUSEO ?? 'Museo';
+                $descripcion = $item->DESCRIPCION ?? 'Sin descripción disponible';
+                $id = $item->ID_MUSEO ?? null;
 
                 // Buscar imagen usando ImageHelper con deduplicación
                 $imagenData = \App\Helpers\ImageHelper::getReservaParqueImage($nombre, $usedImages, $imagenesMap);
@@ -407,9 +343,9 @@ class PuntoInteresController extends Controller
                 }
 
                 $museo_con_imagen = (object)[
-                    'id' => $id ?? $museo->{'COL 1'} ?? null,
-                    'nombre' => $nombre ?? 'Museo',
-                    'descripcion' => $descripcion ?? 'Sin descripción disponible',
+                    'id' => $id,
+                    'nombre' => $nombre,
+                    'descripcion' => $descripcion,
                     'ubicacion' => $localidad ?? 'Colombia',
                     'imagen' => $imagenData['url']
                 ];
@@ -439,17 +375,11 @@ class PuntoInteresController extends Controller
     public function parquesTematicos()
     {
         try {
-            // Obtener datos de la tabla tabla_parque_tematicos
-            $parques = \DB::table('tabla_parque_tematicos')->get();
-            
-            // Cargar localidades en memoria una sola vez (evitar N+1)
-            $localitiesMap = collect();
-            if (\Schema::hasTable('tabla_localities')) {
-                $localitiesMap = \DB::table('tabla_localities')
-                    ->select('ID_LOCALITIES', 'NOMBRE_LOCALITIES')
-                    ->get()
-                    ->keyBy('ID_LOCALITIES');
-            }
+            // Obtener datos de la tabla tabla_parque_tematicos con leftJoin a localidades
+            $parques = \DB::table('tabla_parque_tematicos as p')
+                ->leftJoin('tabla_localities as l', 'p.ID_LOCALITIES', '=', 'l.ID')
+                ->select('p.*', 'l.MUNICIPIOS as localidad_nombre', 'l.DEPARTAMENTO as localidad_departamento')
+                ->get();
             
             // Cargar imágenes en memoria una sola vez - CACHED
             $imagenesMap = \Cache::remember('imagenes_map_global', 1800, function () {
@@ -461,16 +391,14 @@ class PuntoInteresController extends Controller
             // Array para rastrear imágenes usadas (evitar repeticiones)
             $usedImages = [];
             
-            // Combinar con imágenes y localidades usando datos pre-cargados
-            $items = $parques->map(function($parque) use (&$usedImages, $localitiesMap, $imagenesMap) {
-                // Obtener nombre de localidad desde mapa en memoria
-                $localidad = null;
-                if (!empty($parque->ID_LOCALITIES) && isset($localitiesMap[$parque->ID_LOCALITIES])) {
-                    $localidad = $localitiesMap[$parque->ID_LOCALITIES]->NOMBRE_LOCALITIES;
-                }
+            // Combinar con imágenes usando datos pre-cargados
+            $items = $parques->map(function($item) use (&$usedImages, $imagenesMap) {
+                // Obtener nombre de localidad desde el leftJoin
+                $localidad = $item->localidad_nombre ?? null;
+                $departamento = $item->localidad_departamento ?? null;
                 
                 // Buscar imagen usando ImageHelper con deduplicación
-                $nombre = trim($parque->NOMBRE_PARQUES_TEMÁTICOS ?? '');
+                $nombre = trim($item->NOMBRE_PARQUES_TEMÁTICOS ?? '');
                 $imagenData = \App\Helpers\ImageHelper::getReservaParqueImage($nombre, $usedImages, $imagenesMap);
                 
                 if ($imagenData['url']) {
@@ -478,9 +406,9 @@ class PuntoInteresController extends Controller
                 }
                 
                 $parque_con_imagen = (object)[
-                    'id' => $parque->ID_PARQUES,
+                    'id' => $item->ID_PARQUES,
                     'nombre' => $nombre ?: 'Parque temático',
-                    'descripcion' => $parque->DESCRIPCION ?? '',
+                    'descripcion' => $item->DESCRIPCION ?? '',
                     'localidad' => $localidad,
                     'imagen' => $imagenData['url']
                 ];
@@ -503,17 +431,11 @@ class PuntoInteresController extends Controller
     public function playas()
     {
         try {
-            // Obtener datos de la tabla tabla_playas
-            $playas = \DB::table('tabla_playas')->get();
-            
-            // Cargar localidades en memoria una sola vez (evitar N+1)
-            $localitiesMap = collect();
-            if (\Schema::hasTable('tabla_localities')) {
-                $localitiesMap = \DB::table('tabla_localities')
-                    ->select('ID_LOCALITIES', 'NOMBRE_LOCALITIES')
-                    ->get()
-                    ->keyBy('ID_LOCALITIES');
-            }
+            // Obtener datos de la tabla tabla_playas con leftJoin a localidades
+            $playas = \DB::table('tabla_playas as p')
+                ->leftJoin('tabla_localities as l', 'p.ID_LOCALITIES', '=', 'l.ID')
+                ->select('p.*', 'l.MUNICIPIOS as localidad_nombre', 'l.DEPARTAMENTO as localidad_departamento')
+                ->get();
             
             // Cargar imágenes en memoria una sola vez - CACHED
             $imagenesMap = \Cache::remember('imagenes_map_global', 1800, function () {
@@ -525,16 +447,14 @@ class PuntoInteresController extends Controller
             // Array para rastrear imágenes usadas (evitar repeticiones)
             $usedImages = [];
             
-            // Combinar con imágenes y localidades usando datos pre-cargados
-            $items = $playas->map(function($playa) use (&$usedImages, $localitiesMap, $imagenesMap) {
-                // Obtener nombre de localidad desde mapa en memoria
-                $localidad = null;
-                if (!empty($playa->ID_LOCALITIES) && isset($localitiesMap[$playa->ID_LOCALITIES])) {
-                    $localidad = $localitiesMap[$playa->ID_LOCALITIES]->NOMBRE_LOCALITIES;
-                }
+            // Combinar con imágenes usando datos pre-cargados
+            $items = $playas->map(function($item) use (&$usedImages, $imagenesMap) {
+                // Obtener nombre de localidad desde el leftJoin
+                $localidad = $item->localidad_nombre ?? null;
+                $departamento = $item->localidad_departamento ?? null;
                 
                 // Buscar imagen usando ImageHelper con deduplicación
-                $nombre = trim($playa->NOMBRE_PLAYA ?? '');
+                $nombre = trim($item->NOMBRE_PLAYA ?? '');
                 $imagenData = \App\Helpers\ImageHelper::getReservaParqueImage($nombre, $usedImages, $imagenesMap);
                 
                 if ($imagenData['url']) {
@@ -542,9 +462,9 @@ class PuntoInteresController extends Controller
                 }
                 
                 $playa_con_imagen = (object)[
-                    'id' => $playa->ID_PLAYA,
+                    'id' => $item->ID_PLAYA,
                     'nombre' => $nombre ?: 'Playa',
-                    'descripcion' => $playa->DESCRIPCION ?? '',
+                    'descripcion' => $item->DESCRIPCION ?? '',
                     'localidad' => $localidad,
                     'imagen' => $imagenData['url']
                 ];
@@ -566,71 +486,54 @@ class PuntoInteresController extends Controller
      */
     public function reservasNaturales()
     {
-        try {
-            // Obtener datos de la tabla tabla_reservas
-            $reservas = \DB::table('tabla_reservas')->get();
-            
-            // Verificar si hay datos
-            if ($reservas->isEmpty()) {
-                return view('pages.reservas-naturales', [
-                    'items' => collect([]),
-                    'error' => 'No se encontraron reservas naturales en la base de datos. La tabla tabla_reservas está vacía.'
-                ]);
+        // Obtener datos de la tabla tabla_reservas con leftJoin a tabla_localities
+        // Relación: tabla_reservas.ID_REGIÓN = tabla_localities.REGION
+        $reservas = \DB::table('tabla_reservas as r')
+            ->leftJoin('tabla_localities as l', 'r.ID_REGIÓN', '=', 'l.REGION')
+            ->select([
+                'r.ID_RESERVAS',
+                'r.NOMBRE_RESERVAS_O_PARQUES',
+                'r.DESCRIPCION',
+                'r.ID_REGIÓN',
+                'l.MUNICIPIOS as localidad_municipio',
+                'l.DEPARTAMENTO as localidad_departamento',
+                'l.REGION as localidad_region'
+            ])
+            ->get();
+
+        // Cargar imágenes en memoria una sola vez - CACHED
+        $imagenesMap = \Cache::remember('imagenes_map_global', 1800, function () {
+            return \DB::table('tabla_imagenes')
+                ->select('ID_IMAGEN', 'NOMBRE_IMAGEN', 'RUTA')
+                ->get();
+        });
+
+        // Array para rastrear imágenes usadas (evitar repeticiones)
+        $usedImages = [];
+
+        // Combinar con imágenes usando datos pre-cargados
+        $items = $reservas->map(function($item) use (&$usedImages, $imagenesMap) {
+            // Buscar imagen usando ImageHelper con deduplicación
+            $nombre = trim($item->NOMBRE_RESERVAS_O_PARQUES ?? '');
+            $imagenData = \App\Helpers\ImageHelper::getReservaParqueImage($nombre, $usedImages, $imagenesMap);
+
+            if ($imagenData['url']) {
+                $usedImages[] = $imagenData['url'];
             }
-            
-            // Cargar localidades en memoria una sola vez (evitar N+1)
-            $localitiesMap = collect();
-            if (\Schema::hasTable('tabla_localities')) {
-                $localitiesMap = \DB::table('tabla_localities')
-                    ->select('ID_LOCALITIES', 'NOMBRE_LOCALITIES')
-                    ->get()
-                    ->keyBy('ID_LOCALITIES');
-            }
-            
-            // Cargar imágenes en memoria una sola vez - CACHED
-            $imagenesMap = \Cache::remember('imagenes_map_global', 1800, function () {
-                return \DB::table('tabla_imagenes')
-                    ->select('ID_IMAGEN', 'NOMBRE_IMAGEN', 'RUTA')
-                    ->get();
-            });
-            
-            // Array para rastrear imágenes usadas (evitar repeticiones)
-            $usedImages = [];
-            
-            // Combinar con imágenes y localidades usando datos pre-cargados
-            $items = $reservas->map(function($reserva) use (&$usedImages, $localitiesMap, $imagenesMap) {
-                // Obtener nombre de localidad desde mapa en memoria
-                $localidad = null;
-                if (!empty($reserva->ID_LOCALITIES) && isset($localitiesMap[$reserva->ID_LOCALITIES])) {
-                    $localidad = $localitiesMap[$reserva->ID_LOCALITIES]->NOMBRE_LOCALITIES;
-                }
-                
-                // Buscar imagen usando ImageHelper con deduplicación
-                $nombre = trim($reserva->NOMBRE_RESERVAS_O_PARQUES ?? '');
-                $imagenData = \App\Helpers\ImageHelper::getReservaParqueImage($nombre, $usedImages, $imagenesMap);
-                
-                if ($imagenData['url']) {
-                    $usedImages[] = $imagenData['url'];
-                }
-                
-                $reserva_con_imagen = (object)[
-                    'id' => $reserva->ID_RESERVAS,
-                    'nombre' => $nombre ?: 'Reserva Natural',
-                    'descripcion' => $reserva->DESCRIPCION ?? '',
-                    'localidad' => $localidad,
-                    'imagen' => $imagenData['url']
-                ];
-                
-                return $reserva_con_imagen;
-            });
-            
-            return view('pages.reservas-naturales', compact('items'));
-        } catch (\Exception $e) {
-            return view('pages.reservas-naturales', [
-                'items' => collect([]),
-                'error' => 'Error al cargar reservas naturales: ' . $e->getMessage()
-            ]);
-        }
+
+            $reserva_con_imagen = (object)[
+                'id' => $item->ID_RESERVAS,
+                'nombre' => $nombre ?: 'Reserva Natural',
+                'descripcion' => $item->DESCRIPCION ?? '',
+                'localidad_municipio' => $item->localidad_municipio,
+                'localidad_departamento' => $item->localidad_departamento,
+                'imagen' => $imagenData['url']
+            ];
+
+            return $reserva_con_imagen;
+        });
+
+        return view('pages.reservas-naturales', compact('items'));
     }
 
     /**
@@ -933,8 +836,8 @@ class PuntoInteresController extends Controller
             $localidad = null;
             $departamento = null;
             if ($localidadesTableExists && !empty($actividad->ID_LOCALITITES)) {
-                $loc = \DB::table('tabla_localities')->where('ID_LOCALITIES', $actividad->ID_LOCALITITES)->first();
-                $localidad = $loc ? $loc->NOMBRE_LOCALITIES : null;
+                $loc = \DB::table('tabla_localities')->where('ID', $actividad->ID_LOCALITITES)->first();
+                $localidad = $loc ? $loc->MUNICIPIOS : null;
                 
                 // Obtener departamento si existe localidad
                 if ($loc && !empty($loc->ID_DEPARTAMENTO)) {
@@ -1119,8 +1022,8 @@ class PuntoInteresController extends Controller
             // Obtener nombre de localidad
             $localidad = null;
             if (!empty($desierto->ID_LOCALITIES)) {
-                $loc = \DB::table('tabla_localities')->where('ID_LOCALITIES', $desierto->ID_LOCALITIES)->first();
-                $localidad = $loc ? $loc->NOMBRE_LOCALITIES : null;
+                $loc = \DB::table('tabla_localities')->where('ID', $desierto->ID_LOCALITIES)->first();
+                $localidad = $loc ? $loc->MUNICIPIOS : null;
             }
             
             $item = (object)[
@@ -1152,8 +1055,8 @@ class PuntoInteresController extends Controller
             // Obtener nombre de localidad
             $localidad = null;
             if (!empty($iglesia->ID_LOCALITIES)) {
-                $loc = \DB::table('tabla_localities')->where('ID_LOCALITIES', $iglesia->ID_LOCALITIES)->first();
-                $localidad = $loc ? $loc->NOMBRE_LOCALITIES : null;
+                $loc = \DB::table('tabla_localities')->where('ID', $iglesia->ID_LOCALITIES)->first();
+                $localidad = $loc ? $loc->MUNICIPIOS : null;
             }
             
             $item = (object)[
@@ -1179,7 +1082,7 @@ class PuntoInteresController extends Controller
             set_time_limit(60);
 
             // Intentar buscar por diferentes columnas de ID
-            $museo = \DB::table('tabla_museos')->where('COL 1', $id)->first();
+            $museo = \DB::table('tabla_museos')->where('ID_MUSEO', $id)->first();
 
             if (!$museo) {
                 $museo = \DB::table('tabla_museos')->where('id_museo', $id)->first();
@@ -1238,7 +1141,7 @@ class PuntoInteresController extends Controller
 
             // Crear objeto con datos principales
             $item = (object)[
-                'id' => $id_real ?? $museo->{'COL 1'} ?? null,
+                'id' => $id_real ?? $museo->{'ID_MUSEO'} ?? null,
                 'nombre' => $nombre ?? 'Sin nombre',
                 'descripcion' => $descripcion ?? 'Sin descripción disponible',
                 'imagen' => $imagen,
@@ -1248,7 +1151,7 @@ class PuntoInteresController extends Controller
 
             // Agregar TODAS las demás columnas disponibles
             foreach ($columnas as $col) {
-                if (!isset($item->$col) && $col !== 'COL 1') {
+                if (!isset($item->$col) && $col !== 'ID_MUSEO') {
                     $item->$col = $museo->$col;
                 }
             }
@@ -1275,7 +1178,7 @@ class PuntoInteresController extends Controller
             $localidad = null;
             if (!empty($parque->ID_LOCALITIES)) {
                 $loc = \DB::table('tabla_localities')->where('ID_LOCALITIES', $parque->ID_LOCALITIES)->first();
-                $localidad = $loc ? $loc->NOMBRE_LOCALITIES : null;
+                $localidad = $loc ? $loc->MUNICIPIOS : null;
             }
             
             $item = (object)[
@@ -1308,7 +1211,7 @@ class PuntoInteresController extends Controller
             $localidad = null;
             if (!empty($playa->ID_LOCALITIES) && \Schema::hasTable('tabla_localities')) {
                 $loc = \DB::table('tabla_localities')->where('ID_LOCALITIES', $playa->ID_LOCALITIES)->first();
-                $localidad = $loc ? $loc->NOMBRE_LOCALITIES : null;
+                $localidad = $loc ? $loc->MUNICIPIOS : null;
             }
             
             $item = (object)[
@@ -1330,32 +1233,25 @@ class PuntoInteresController extends Controller
      */
     public function reservasNaturalesShow($id)
     {
-        try {
-            $reserva = \DB::table('tabla_reservas')->where('ID_RESERVAS', $id)->first();
-            
-            if (!$reserva) {
-                abort(404);
-            }
-            
-            // Obtener nombre de localidad
-            $localidad = null;
-            if (!empty($reserva->ID_LOCALITIES)) {
-                $loc = \DB::table('tabla_localities')->where('ID_LOCALITIES', $reserva->ID_LOCALITIES)->first();
-                $localidad = $loc ? $loc->NOMBRE_LOCALITIES : null;
-            }
-            
-            $item = (object)[
-                'id' => $reserva->ID_RESERVAS,
-                'nombre' => $reserva->NOMBRE_RESERVAS_O_PARQUES,
-                'descripcion' => $reserva->DESCRIPCION,
-                'localidad' => $localidad,
-                'imagen' => $this->buscarImagen($reserva->NOMBRE_RESERVAS_O_PARQUES, 'reserva')
-            ];
-            
-            return view('pages.detalle-punto-interes', compact('item'))->with('tipo', 'Reserva Natural');
-        } catch (\Exception $e) {
+        $reserva = \DB::table('tabla_reservas')->where('ID_RESERVAS', $id)->first();
+
+        if (!$reserva) {
             abort(404);
         }
+
+        // NOTA: tabla_reservas tiene ID_REGIÓN, no ID_LOCALITIES
+        // Usar ID_REGIÓN como localidad
+        $localidad = $reserva->ID_REGIÓN ?? null;
+
+        $item = (object)[
+            'id' => $reserva->ID_RESERVAS,
+            'nombre' => $reserva->NOMBRE_RESERVAS_O_PARQUES,
+            'descripcion' => $reserva->DESCRIPCION,
+            'localidad' => $localidad,
+            'imagen' => $this->buscarImagen($reserva->NOMBRE_RESERVAS_O_PARQUES, 'reserva')
+        ];
+
+        return view('pages.detalle-punto-interes', compact('item'))->with('tipo', 'Reserva Natural');
     }
 
     /**
@@ -1373,8 +1269,8 @@ class PuntoInteresController extends Controller
             // Obtener nombre de localidad
             $localidad = null;
             if (!empty($termal->ID_LOCALITIES)) {
-                $loc = \DB::table('tabla_localities')->where('ID_LOCALITIES', $termal->ID_LOCALITIES)->first();
-                $localidad = $loc ? $loc->NOMBRE_LOCALITIES : null;
+                $loc = \DB::table('tabla_localities')->where('ID', $termal->ID_LOCALITIES)->first();
+                $localidad = $loc ? $loc->MUNICIPIOS : null;
             }
             
             $item = (object)[
@@ -1458,28 +1354,11 @@ class PuntoInteresController extends Controller
     public function ciclismo()
     {
         try {
-            // Obtener datos de la tabla tabla_ciclismo
-            $ciclismo = \DB::table('tabla_ciclismo')->get();
-            
-            // Generar slugs para rutas que no tienen
-            foreach ($ciclismo as $ruta) {
-                if (empty($ruta->slug) && !empty($ruta->NOMBRE_RUTA_CICLISMO)) {
-                    $slug = \Illuminate\Support\Str::slug($ruta->NOMBRE_RUTA_CICLISMO);
-                    \DB::table('tabla_ciclismo')
-                        ->where('ID_CICLISMO', $ruta->ID_CICLISMO)
-                        ->update(['slug' => $slug]);
-                    $ruta->slug = $slug;
-                }
-            }
-            
-            // Cargar localidades en memoria una sola vez (evitar N+1)
-            $localitiesMap = collect();
-            if (\Schema::hasTable('tabla_localities')) {
-                $localitiesMap = \DB::table('tabla_localities')
-                    ->select('ID_LOCALITIES', 'NOMBRE_LOCALITIES')
-                    ->get()
-                    ->keyBy('ID_LOCALITIES');
-            }
+            // Obtener datos de la tabla tabla_ciclismo con leftJoin a localidades
+            $ciclismo = \DB::table('tabla_ciclismo as c')
+                ->leftJoin('tabla_localities as l', 'c.ID_LOCALITIES', '=', 'l.ID')
+                ->select('c.*', 'l.MUNICIPIOS as localidad_nombre', 'l.DEPARTAMENTO as localidad_departamento')
+                ->get();
             
             // Cargar imágenes en memoria una sola vez - CACHED
             $imagenesMap = \Cache::remember('imagenes_map_global', 1800, function () {
@@ -1489,12 +1368,10 @@ class PuntoInteresController extends Controller
             });
             
             // Usar mapa de imágenes para obtener imágenes desde tabla_imagenes
-            $items = $ciclismo->map(function($ruta) use ($localitiesMap, $imagenesMap) {
-                // Obtener nombre de localidad desde mapa en memoria
-                $localidad = null;
-                if (!empty($ruta->ID_LOCALITIES) && isset($localitiesMap[$ruta->ID_LOCALITIES])) {
-                    $localidad = $localitiesMap[$ruta->ID_LOCALITIES]->NOMBRE_LOCALITIES;
-                }
+            $items = $ciclismo->map(function($ruta) use ($imagenesMap) {
+                // Obtener nombre de localidad desde el leftJoin
+                $localidad = $ruta->localidad_nombre ?? null;
+                $departamento = $ruta->localidad_departamento ?? null;
                 
                 // Buscar imagen usando mapa en memoria (evitar query en loop)
                 $nombre = trim($ruta->NOMBRE_RUTA_CICLISMO ?? '');
@@ -1556,8 +1433,8 @@ class PuntoInteresController extends Controller
             $localidad = null;
             if (!empty($ruta->ID_LOCALITIES)) {
                 try {
-                    $loc = \DB::table('tabla_localities')->where('ID_LOCALITIES', $ruta->ID_LOCALITIES)->first();
-                    $localidad = $loc ? $loc->NOMBRE_LOCALITIES : null;
+                    $loc = \DB::table('tabla_localities')->where('ID', $ruta->ID_LOCALITIES)->first();
+                    $localidad = $loc ? $loc->MUNICIPIOS : null;
                 } catch (\Exception $e) {
                     $localidad = null;
                 }

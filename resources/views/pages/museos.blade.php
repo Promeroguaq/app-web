@@ -45,36 +45,20 @@
 <!-- Museos Destacados -->
 <h2 class="font-display text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-midnight-900 mb-4 md:mb-6 lg:mb-8 text-center">Museos Destacados</h2>
 
-<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 mb-8 md:mb-12">
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6 mb-8 md:mb-12">
 
     @forelse($items as $item)
-    <div class="rounded-[20px] md:rounded-[32px] overflow-hidden bg-white shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300 w-full">
-        <a href="{{ route('puntos-interes.museos.show', $item->id) }}" class="block">
-            <div class="relative h-48 sm:h-52 md:h-56 overflow-hidden w-full @if(empty($item->imagen)) bg-gradient-to-br from-amber-700 to-amber-900 @endif">
-                @if(!empty($item->imagen))
-                <img src="{{ $item->imagen }}" alt="{{ $item->nombre }}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
-                @endif
-                <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
-                <div class="absolute top-3 left-3 md:top-4 md:left-4 bg-white/20 backdrop-blur-sm px-2 py-1 md:px-3 md:py-1.5 rounded-full text-[10px] md:text-xs text-white z-10">
-                    🏛️ Museo
-                </div>
-                <div class="absolute bottom-3 left-3 md:bottom-4 md:left-4 text-white z-10">
-                    <div class="flex gap-2 md:gap-4 text-[10px] md:text-sm font-medium">
-                        <span><i class="fas fa-landmark mr-1 text-[10px] md:text-sm"></i> Cultura</span>
-                        <span><i class="fas fa-history mr-1 text-[10px] md:text-sm"></i> Historia</span>
-                    </div>
-                </div>
-            </div>
-            <div class="p-4 md:p-5 bg-white">
-                <h3 class="font-display text-base md:text-lg lg:text-xl font-bold text-gray-900 mb-2">{{ $item->nombre }}</h3>
-                <p class="text-gray-600 text-xs md:text-sm mb-2 md:mb-3 line-clamp-2">{{ Str::limit($item->descripcion, 100) }}</p>
-                <div class="flex items-center gap-2 text-xs md:text-sm text-gray-500">
-                    <i class="fas fa-map-marker-alt text-purple-500 text-xs md:text-sm"></i>
-                    <span>{{ $item->ubicacion ?? 'Colombia' }}</span>
-                </div>
-            </div>
-        </a>
-    </div>
+    <x-cards.tourism-card
+        :id="$item->id"
+        :title="$item->nombre"
+        :description="$item->descripcion ?? 'Información turística en actualización.'"
+        :image="$item->imagen"
+        :badge="'🏛️ Museo'"
+        :location="$item->locality_departamento ?? 'Colombia'"
+        :secondaryLocation="$item->locality_municipio"
+        :detailUrl="route('puntos-interes.museos.show', $item->id)"
+        :fallbackTheme="'culture'"
+    />
     @empty
     <div class="col-span-full bg-white/80 backdrop-blur-sm p-6 md:p-8 lg:p-12 text-center text-gray-500 rounded-[20px] md:rounded-[32px] shadow-lg">
         <i class="fas fa-landmark text-3xl md:text-4xl mb-3 md:mb-4 opacity-50"></i>

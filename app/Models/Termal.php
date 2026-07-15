@@ -10,11 +10,18 @@ class Termal extends Model
     use HasFactory;
 
     protected $table = 'tabla_termales';
+    protected $primaryKey = 'ID_TERMALES';
 
     protected $fillable = [
-        'nombre',
-        'locality_id',
-        'descripcion',
-        'country_id'
+        'ID_TERMALES',
+        'NOMBRE_TERMAL',
+        'DESCRIPCION',
+        'ID_LOCALITIES',
+        'DEPARTAMENTO',
     ];
+
+    public function locality()
+    {
+        return $this->belongsTo(Locality::class, 'ID_LOCALITIES', 'ID');
+    }
 }

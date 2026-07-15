@@ -65,20 +65,25 @@ class SearchController extends Controller
         }
 
         // Buscar en Municipios
-        $municipios = \DB::table('tabla_municipios')
-            ->where('NOMBRE_MUNICIPIOS', 'LIKE', "%{$query}%")
-            ->select('ID_MUNICIPIOS as id', 'NOMBRE_MUNICIPIOS as nombre', 'ID_DEPARTAMENTO')
-            ->take(8)
-            ->get();
+        try {
+            $municipios = \DB::table('tabla_localities')
+                ->where(function ($q) use ($query) {
+                    $q->where('MUNICIPIOS', 'LIKE', "%{$query}%")
+                      ->orWhere('DEPARTAMENTO', 'LIKE', "%{$query}%")
+                      ->orWhere('REGION', 'LIKE', "%{$query}%");
+                })
+                ->select([
+                    'ID as id',
+                    'MUNICIPIOS as nombre',
+                    'DEPARTAMENTO as departamento',
+                    'REGION as region',
+                ])
+                ->take(8)
+                ->get();
 
-        $municipiosFormatted = collect();
-        foreach ($municipios as $municipio) {
-            $depto = \DB::table('tabla_departamentos')
-                ->where('ID_DEPARTAMENTO', $municipio->ID_DEPARTAMENTO)
-                ->first();
-
-            if ($depto) {
-                $deptoSlug = \Illuminate\Support\Str::slug($depto->NOMBRE_DEPARTAMENTO);
+            $municipiosFormatted = collect();
+            foreach ($municipios as $municipio) {
+                $deptoSlug = \Illuminate\Support\Str::slug($municipio->departamento);
                 $muniSlug = \Illuminate\Support\Str::slug($municipio->nombre);
 
                 $municipiosFormatted->push([
@@ -86,14 +91,17 @@ class SearchController extends Controller
                     'nombre' => $municipio->nombre,
                     'tipo' => 'Municipio',
                     'categoria' => 'Destinos',
-                    'ubicacion' => $depto->NOMBRE_DEPARTAMENTO,
-                    'url' => route('municipios.show.slugs', [
-                        'departmentSlug' => $deptoSlug,
-                        'municipalitySlug' => $muniSlug
-                    ]),
+                    'ubicacion' => $municipio->departamento,
+                    'region' => $municipio->region,
+                    'url' => route('municipios.show', ['id' => $municipio->id]),
                     'imagen' => $this->buscarImagen($municipio->nombre)
                 ]);
             }
+        } catch (\Throwable $exception) {
+            logger()->warning('Error searching municipalities', [
+                'message' => $exception->getMessage(),
+            ]);
+            $municipiosFormatted = collect();
         }
 
         if ($municipiosFormatted->isNotEmpty()) {
@@ -141,7 +149,7 @@ class SearchController extends Controller
             $museos = \DB::table('tabla_museos')
                 ->where('NOMBRE_MUSEO', 'LIKE', '%' . $query . '%')
                 ->select([
-                    'COL 1 as search_id',
+                    'ID as search_id',
                     'NOMBRE_MUSEO as search_nombre',
                 ])
                 ->take(8)
@@ -174,10 +182,10 @@ class SearchController extends Controller
         // Buscar en Deportes de Aventura
         try {
             $aventura = \DB::table('tabla_deporte_aventura')
-                ->where('NOMBRE_DEPORTE_AVENTURA', 'LIKE', '%' . $query . '%')
+                ->where('NOMBREDEPORTE_AVENTURA', 'LIKE', '%' . $query . '%')
                 ->select([
-                    'ID_DEPORTES as search_id',
-                    'NOMBRE_DEPORTE_AVENTURA as search_nombre',
+                    'ID as search_id',
+                    'NOMBREDEPORTE_AVENTURA as search_nombre',
                 ])
                 ->take(8)
                 ->get()
@@ -188,7 +196,7 @@ class SearchController extends Controller
                         'tipo' => 'Deporte de Aventura',
                         'categoria' => 'Actividades',
                         'ubicacion' => 'Colombia',
-                        'url' => route('puntos-interes.deportes-aventura.show', ['slug' => \Illuminate\Support\Str::slug($item->search_nombre)]),
+                        'url' => route('puntos-interes.deportes-aventura.show', ['id' => $item->search_id]),
                         'imagen' => $this->buscarImagen($item->search_nombre)
                     ];
                 });
@@ -209,7 +217,7 @@ class SearchController extends Controller
             $termales = \DB::table('tabla_termales')
                 ->where('NOMBRE_TERMAL', 'LIKE', '%' . $query . '%')
                 ->select([
-                    'ID_TERMALES as search_id',
+                    'ID as search_id',
                     'NOMBRE_TERMAL as search_nombre',
                 ])
                 ->take(8)
@@ -362,7 +370,7 @@ class SearchController extends Controller
             $parques = \DB::table('tabla_parque_tematicos')
                 ->where('NOMBRE_PARQUES_TEMÁTICOS', 'LIKE', '%' . $query . '%')
                 ->select([
-                    'ID_PARQUES as search_id',
+                    'ID as search_id',
                     'NOMBRE_PARQUES_TEMÁTICOS as search_nombre',
                 ])
                 ->take(8)
@@ -454,7 +462,7 @@ class SearchController extends Controller
         try {
             $actividades = \DB::table('tabla_actividad_parque')
                 ->where('NOMBRE_ACTIVIDAD_EN_PARQUE', 'LIKE', '%' . $query . '%')
-                ->select('ID_ACTIVIDAD as id', 'NOMBRE_ACTIVIDAD_EN_PARQUE as nombre')
+                ->select('ID as id', 'NOMBRE_ACTIVIDAD_EN_PARQUE as nombre')
                 ->take(8)
                 ->get()
                 ->map(function ($item) {
@@ -464,7 +472,7 @@ class SearchController extends Controller
                         'tipo' => 'Actividad',
                         'categoria' => 'Actividades',
                         'ubicacion' => 'Colombia',
-                        'url' => route('actividades.show', ['id' => $item->id]),
+                        'url' => route('puntos-interes.actividades-parques.show', ['id' => $item->id]),
                         'imagen' => $this->buscarImagen($item->nombre)
                     ];
                 });

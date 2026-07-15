@@ -10,7 +10,6 @@ class ActividadParque extends Model
     use HasFactory;
 
     protected $table = 'tabla_actividad_parque';
-
     protected $primaryKey = 'ID_ACTIVIDAD';
 
     protected $fillable = [
@@ -21,4 +20,10 @@ class ActividadParque extends Model
     ];
 
     public $timestamps = false;
+
+    public function locality()
+    {
+        // Nota: La columna tiene error tipográfico: ID_LOCALITITES
+        return $this->belongsTo(Locality::class, 'ID_LOCALITITES', 'ID');
+    }
 }

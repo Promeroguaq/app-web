@@ -8,14 +8,18 @@ class Region extends Model
 {
     use HasFactory;
 
+    protected $table = 'tabla_regiones';
+    protected $primaryKey = 'ID_REGION';
+
     protected $fillable = [
-        'nombre_region',
-        'locality_id',
-        'descripcion'
+        'ID_REGION',
+        'NOMBRE_REGION',
+        'DESCRIPCION',
+        'ID_LOCALITIES',
     ];
 
     public function locality()
     {
-        return $this->belongsTo(Locality::class);
+        return $this->belongsTo(Locality::class, 'ID_LOCALITIES', 'ID');
     }
 }

@@ -117,46 +117,30 @@ class ImageResolver
      */
     public static function coverFor(Model $entity, ?string $category = null): ?string
     {
-        // Buscar imagen principal asociada directamente a la entidad
-        $query = Imagen::where('imageable_id', $entity->id)
-            ->where('imageable_type', get_class($entity))
-            ->principal();
-        
-        if ($category) {
-            $query->byCategoria($category);
-        }
-        
-        $imagen = $query->ordenados()->first();
-        
-        if ($imagen) {
-            return self::toPublicUrl($imagen);
-        }
-        
-        // Si no hay imagen principal, buscar cualquier imagen de la categoría
-        $query = Imagen::where('imageable_id', $entity->id)
-            ->where('imageable_type', get_class($entity));
-        
-        if ($category) {
-            $query->byCategoria($category);
-        }
-        
-        $imagen = $query->ordenados()->first();
-        
-        if ($imagen) {
-            return self::toPublicUrl($imagen);
-        }
-        
-        // Fallback: buscar por nombre en toda la tabla (para datos sin relaciones)
+        // La tabla_imagenes solo tiene: ID_IMAGEN, NOMBRE_IMAGEN, RUTA
+        // No tiene relaciones polimórficas, así que buscamos por nombre
         $nombre = self::getEntityName($entity);
-        if ($nombre) {
-            $imagen = Imagen::where('NOMBRE_IMAGEN', 'like', "%{$nombre}%")
-                ->when($category, function($q) use ($category) {
-                    return $q->where('RUTA', 'like', "%{$category}%");
-                })
-                ->first();
+        
+        if (!$nombre) {
+            return null;
+        }
+
+        // Buscar por nombre exacto
+        $imagen = Imagen::where('NOMBRE_IMAGEN', $nombre)->first();
+        
+        if ($imagen) {
+            return self::toPublicUrl($imagen);
+        }
+        
+        // Buscar por nombre normalizado
+        $imagenes = Imagen::all();
+        $normalizedName = self::normalizeText($nombre);
+        
+        foreach ($imagenes as $img) {
+            $imgNormalized = self::normalizeText($img->NOMBRE_IMAGEN ?? '');
             
-            if ($imagen) {
-                return self::toPublicUrl($imagen);
+            if ($imgNormalized === $normalizedName) {
+                return self::toPublicUrl($img);
             }
         }
         
@@ -182,19 +166,34 @@ class ImageResolver
      */
     public static function galleryFor(Model $entity, ?string $category = null, int $limit = 5): array
     {
-        $query = Imagen::where('imageable_id', $entity->id)
-            ->where('imageable_type', get_class($entity))
-            ->ordenados();
+        // La tabla_imagenes solo tiene: ID_IMAGEN, NOMBRE_IMAGEN, RUTA
+        // No tiene relaciones polimórficas, así que buscamos por nombre
+        $nombre = self::getEntityName($entity);
         
-        if ($category) {
-            $query->byCategoria($category);
+        if (!$nombre) {
+            return [];
+        }
+
+        // Buscar por nombre exacto
+        $imagen = Imagen::where('NOMBRE_IMAGEN', $nombre)->first();
+        
+        if ($imagen) {
+            return [self::toPublicUrl($imagen)];
         }
         
-        $imagenes = $query->limit($limit)->get();
+        // Buscar por nombre normalizado
+        $imagenes = Imagen::all();
+        $normalizedName = self::normalizeText($nombre);
         
-        return $imagenes->map(function($imagen) {
-            return self::toPublicUrl($imagen);
-        })->toArray();
+        foreach ($imagenes as $img) {
+            $imgNormalized = self::normalizeText($img->NOMBRE_IMAGEN ?? '');
+            
+            if ($imgNormalized === $normalizedName) {
+                return [self::toPublicUrl($img)];
+            }
+        }
+        
+        return [];
     }
 
     /**
@@ -262,9 +261,10 @@ class ImageResolver
      *
      * @param object $feria - Objeto de feria (puede ser modelo o stdClass)
      * @param array &$usedImages - Array de IDs de imágenes ya usadas (por referencia)
+     * @param \Illuminate\Support\Collection|null $imagenesMap - Mapa de imágenes pre-cargadas (opcional)
      * @return array - Array con ['url' => string|null, 'id' => string|null, 'match_type' => string]
      */
-    public static function forFeria(object $feria, array &$usedImages = []): array
+    public static function forFeria(object $feria, array &$usedImages = [], $imagenesMap = null): array
     {
         $nombre = $feria->NOMBRE_FERIAS_Y_FIESTAS ?? $feria->nombre ?? null;
         $id = $feria->ID_FIESTA ?? $feria->id ?? null;
@@ -282,36 +282,15 @@ class ImageResolver
             'normalized' => $normalizedName,
         ]);
 
-        // 1. Relación directa por imageable_id si existe
-        if ($id) {
-            $imagen = \App\Models\Imagen::where('imageable_id', $id)
-                ->where('imageable_type', 'App\\Models\\FeriaFiesta')
-                ->whereNotIn('ID_IMAGEN', $usedImages)
-                ->principal()
-                ->ordenados()
-                ->first();
-
-            if ($imagen) {
-                $usedImages[] = $imagen->ID_IMAGEN;
-                Log::info('Imagen encontrada (relación directa)', [
-                    'feria' => $nombre,
-                    'imagen' => $imagen->NOMBRE_IMAGEN,
-                    'ruta' => $imagen->RUTA,
-                ]);
-                return [
-                    'url' => self::toPublicUrl($imagen),
-                    'id' => $imagen->ID_IMAGEN,
-                    'match_type' => 'direct_relation'
-                ];
-            }
+        // Usar imágenes pre-cargadas si se proporcionan, sino cargarlas
+        if ($imagenesMap === null) {
+            $imagenesMap = \App\Models\Imagen::whereNotIn('ID_IMAGEN', $usedImages)->get();
         }
 
-        // 2. Coincidencia exacta por NOMBRE_IMAGEN
-        $imagen = \App\Models\Imagen::where('NOMBRE_IMAGEN', $nombre)
-            ->whereNotIn('ID_IMAGEN', $usedImages)
-            ->first();
+        // 1. Coincidencia exacta por NOMBRE_IMAGEN
+        $imagen = $imagenesMap->firstWhere('NOMBRE_IMAGEN', $nombre);
 
-        if ($imagen) {
+        if ($imagen && !in_array($imagen->ID_IMAGEN, $usedImages)) {
             $usedImages[] = $imagen->ID_IMAGEN;
             Log::info('Imagen encontrada (coincidencia exacta)', [
                 'feria' => $nombre,
@@ -325,9 +304,12 @@ class ImageResolver
             ];
         }
 
-        // 3. Coincidencia normalizada
-        $imagenes = \App\Models\Imagen::whereNotIn('ID_IMAGEN', $usedImages)->get();
-        foreach ($imagenes as $img) {
+        // 2. Coincidencia normalizada
+        foreach ($imagenesMap as $img) {
+            if (in_array($img->ID_IMAGEN, $usedImages)) {
+                continue;
+            }
+            
             $imgNormalized = self::normalizeText($img->NOMBRE_IMAGEN ?? '');
 
             if ($imgNormalized === $normalizedName) {
@@ -346,24 +328,18 @@ class ImageResolver
             }
         }
 
-        // 4. Coincidencia por palabras clave fuertes
+        // 3. Coincidencia por palabras clave fuertes
         $palabrasClave = ['flores', 'carnaval', 'wayuu', 'cali', 'manizales', 'barranquilla', 'salsa', 'teatro', 'feria', 'festival', 'fiesta', 'negros', 'blancos'];
 
         foreach ($palabrasClave as $palabra) {
             if (str_contains($normalizedName, $palabra)) {
-                foreach ($imagenes as $img) {
+                foreach ($imagenesMap as $img) {
+                    if (in_array($img->ID_IMAGEN, $usedImages)) {
+                        continue;
+                    }
+                    
                     $imgNormalized = self::normalizeText($img->NOMBRE_IMAGEN ?? '');
                     if (str_contains($imgNormalized, $palabra)) {
-                        // Verificar que no esté ya usada
-                        if (in_array($img->ID_IMAGEN, $usedImages)) {
-                            Log::info('Imagen descartada por estar repetida', [
-                                'feria' => $nombre,
-                                'imagen' => $img->NOMBRE_IMAGEN,
-                                'palabra' => $palabra,
-                            ]);
-                            continue;
-                        }
-
                         $usedImages[] = $img->ID_IMAGEN;
                         Log::info('Imagen encontrada (palabra clave)', [
                             'feria' => $nombre,

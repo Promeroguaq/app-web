@@ -511,6 +511,11 @@ Route::prefix('municipios')
         Route::get('/', [MunicipioController::class, 'index'])
             ->name('index');
 
+        // Detalle por ID (ruta simple y confiable)
+        Route::get('/{id}', [MunicipioController::class, 'show'])
+            ->whereNumber('id')
+            ->name('show');
+
         // Municipios pertenecientes a un departamento.
         Route::get(
             '/departamento/{departamento_id}',

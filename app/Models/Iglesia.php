@@ -10,17 +10,18 @@ class Iglesia extends Model
     use HasFactory;
 
     protected $table = 'tabla_iglesias';
-
-    protected $primaryKey = 'id_iglesia';
+    protected $primaryKey = 'ID_IGLESIA';
 
     protected $fillable = [
-        'nombre_iglesia',
-        'id_localities',
-        'descripcion'
+        'ID_IGLESIA',
+        'NOMBRE_IGLESIA',
+        'DESCRIPCION',
+        'ID_LOCALITIES',
+        'DEPARTAMENTO',
     ];
 
-    public function localidad()
+    public function locality()
     {
-        return $this->belongsTo(Locality::class, 'id_localities');
+        return $this->belongsTo(Locality::class, 'ID_LOCALITIES', 'ID');
     }
 }
