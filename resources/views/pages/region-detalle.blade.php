@@ -78,11 +78,19 @@ function getDestinationUrl($item, $regionSlug = null) {
 <div class="max-w-7xl mx-auto px-4 md:px-6 lg:px-8">
 
 <!-- Hero Section -->
-<div class="hero-section rounded-[32px] mb-12 relative overflow-hidden @if(isset($region->heroImage) && $region->heroImage) @elseif(isset($region->heroGradient) && $region->heroGradient) @else bg-gradient-to-br from-blue-900 to-blue-700 @endif" @if(isset($region->heroGradient) && $region->heroGradient) style="background: {{ $region->heroGradient }};" @endif>
+<div class="hero-section rounded-[32px] mb-12 relative overflow-hidden h-[280px] md:h-[320px] lg:h-[360px] @if(isset($region->heroImage) && $region->heroImage) @elseif(isset($region->heroGradient) && $region->heroGradient) @else bg-gradient-to-br from-blue-900 to-blue-700 @endif" @if(isset($region->heroGradient) && $region->heroGradient) style="background: {{ $region->heroGradient }};" @endif>
     @if(isset($region->heroImage) && $region->heroImage)
-    <img src="{{ $region->heroImage }}" alt="{{ $region->name }}" class="hero-image rounded-[32px]">
+    <img src="{{ $region->heroImage }}" alt="{{ $region->name }}" class="absolute inset-0 h-full w-full object-cover rounded-[32px]">
     @endif
-    <div class="hero-overlay rounded-[32px]"></div>
+    @if(isset($region->heroImage) && $region->heroImage)
+    <!-- Overlay Layers for Image -->
+    <div class="absolute inset-0 rounded-[32px]" style="background: linear-gradient(to right, rgba(15, 23, 42, 0.85) 0%, rgba(30, 58, 138, 0.5) 40%, rgba(30, 58, 138, 0.2) 70%, rgba(30, 58, 138, 0.05) 100%);"></div>
+    <div class="absolute inset-0 rounded-[32px] bg-gradient-to-t from-blue-900/50 via-transparent to-transparent"></div>
+    @elseif(isset($region->heroGradient) && $region->heroGradient)
+    <!-- Overlay for Gradient Fallback -->
+    <div class="absolute inset-0 rounded-[32px]" style="background: linear-gradient(to right, rgba(15, 23, 42, 0.6) 0%, rgba(15, 23, 42, 0.3) 50%, rgba(15, 23, 42, 0.1) 100%);"></div>
+    <div class="absolute inset-0 rounded-[32px] bg-gradient-to-t from-blue-900/30 via-transparent to-transparent"></div>
+    @endif
     <div class="absolute bottom-0 left-0 right-0 p-8 md:p-16 text-white">
         <div class="flex flex-wrap gap-3 mb-6">
             <div class="glass-badge">{{ $region->departmentCount ?? 0 }} departamentos</div>
@@ -92,7 +100,7 @@ function getDestinationUrl($item, $regionSlug = null) {
             {{ $region->name }}
         </h1>
         <p class="text-lg md:text-xl opacity-90 max-w-2xl mb-8" style="text-shadow: 1px 1px 4px rgba(0,0,0,0.5);">
-            {{ $region->subtitle }}
+            {{ data_get($region, 'subtitle', data_get($region, 'description', '')) }}
         </p>
         <div class="flex flex-wrap gap-4">
             <button onclick="scrollToSection('departamentos')" class="px-6 py-3 bg-white text-midnight-900 rounded-full font-semibold hover:shadow-lg transition-all cursor-pointer">
@@ -126,48 +134,37 @@ function getDestinationUrl($item, $regionSlug = null) {
         @if(isset($region->departments) && count($region->departments) > 0)
             @foreach($region->departments as $dept)
             @php
-                $deptUrl = getDestinationUrl($dept, $region->slug ?? null);
+                $deptUrl = route('departamentos.show.slug', ['slug' => $dept->slug]);
             @endphp
-            @if($deptUrl !== '/')
             <a href="{{ $deptUrl }}" class="cinematic-card group cursor-pointer rounded-[32px] overflow-hidden hover:-translate-y-2 hover:scale-[1.01] transition-all duration-500" aria-label="Ver departamento {{ $dept->name }}">
                 <div class="relative h-48">
                     @if(!empty($dept->image_url))
                         <img src="{{ $dept->image_url }}" alt="{{ $dept->name }}" class="w-full h-full object-cover">
                     @else
-                        <div class="w-full h-full bg-gradient-to-br from-[#1D4ED8] to-[#1E40AF]"></div>
+                        <div class="w-full h-full bg-gradient-to-br from-[#1D4ED8] to-[#1E40AF] flex items-center justify-center">
+                            <i class="fas fa-map-marker-alt text-white/30 text-4xl"></i>
+                        </div>
                     @endif
                     <div class="absolute inset-0 bg-black/20 group-hover:bg-black/30 transition-all"></div>
                     <div class="absolute bottom-0 left-0 right-0 p-6 text-white">
                         <h3 class="font-display text-xl font-bold mb-1">{{ $dept->name }}</h3>
-                        <p class="text-sm opacity-90">{{ $dept->capital ?? '' }}</p>
+                        <p class="text-sm opacity-90">Región: {{ $dept->region ?? '' }}</p>
                     </div>
                 </div>
                 <div class="p-6 bg-white">
-                    <p class="text-gray-600 text-sm mb-4">{{ $dept->description ?? '' }}</p>
+                    <div class="flex items-center gap-2 text-sm text-gray-500 mb-3">
+                        <i class="fas fa-city text-[#1D4ED8]"></i>
+                        <span>{{ $dept->total_municipios ?? 0 }} municipios</span>
+                    </div>
+                    <p class="text-gray-600 text-sm mb-4 line-clamp-2">{{ data_get($dept, 'description', 'Información turística en actualización.') }}</p>
                     <span class="text-[#1D4ED8] font-semibold text-sm group-hover:translate-x-2 transition-transform inline-flex items-center gap-2">
                         Ver departamento <i class="fas fa-arrow-right"></i>
                     </span>
                 </div>
             </a>
-            @else
-            <div class="cinematic-card rounded-[32px] overflow-hidden opacity-50">
-                <div class="relative h-48 bg-gradient-to-br from-gray-400 to-gray-500">
-                    <div class="absolute bottom-0 left-0 right-0 p-6 text-white">
-                        <h3 class="font-display text-xl font-bold mb-1">{{ $dept->name }}</h3>
-                        <p class="text-sm opacity-90">{{ $dept->capital ?? '' }}</p>
-                    </div>
-                </div>
-                <div class="p-6 bg-white">
-                    <p class="text-gray-600 text-sm mb-4">{{ $dept->description ?? '' }}</p>
-                    <span class="text-gray-400 font-semibold text-sm inline-flex items-center gap-2">
-                        No disponible
-                    </span>
-                </div>
-            </div>
-            @endif
             @endforeach
         @else
-            <p class="text-gray-600 col-span-3">No hay departamentos disponibles.</p>
+            <p class="text-gray-600 col-span-3">No hay departamentos disponibles para esta región.</p>
         @endif
     </div>
 </div>
